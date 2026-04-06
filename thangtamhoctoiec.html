@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thắng Tâm Học TOEIC</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --purple:#534AB7;--purple-light:#EEEDFE;--purple-dark:#26215C;
+    --teal:#0F6E56;--teal-light:#E1F5EE;
+    --red-light:#FCEBEB;--red:#A32D2D;
+    --green-light:#EAF3DE;--green:#3B6D11;
+    --amber:#BA7517;--amber-light:#FAEEDA;
+    --gray:#888;--gray-light:#F5F5F3;--gray-border:#E0DDD5;
+    --text:#1a1a1a;--text-muted:#666;
+    --bg:#FAFAF8;--card:#fff;
+    --radius:10px;--radius-lg:14px;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
+
+  /* HEADER */
+  header{background:var(--purple-dark);color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+  header h1{font-size:18px;font-weight:600;letter-spacing:0.3px}
+  header span{font-size:13px;opacity:0.7}
+  .header-right{display:flex;align-items:center;gap:16px}
+  .total-prog{font-size:12px;background:rgba(255,255,255,0.15);padding:4px 12px;border-radius:20px}
+
+  /* LAYOUT */
+  .layout{display:flex;min-height:calc(100vh - 56px)}
+  .sidebar{width:220px;min-width:220px;background:var(--card);border-right:1px solid var(--gray-border);padding:16px 0;overflow-y:auto;max-height:calc(100vh - 56px);position:sticky;top:56px}
+  .main{flex:1;padding:24px;max-width:860px}
+
+  /* SIDEBAR */
+  .sidebar-title{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;padding:0 16px 8px}
+  .day-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:background 0.15s;border-left:3px solid transparent}
+  .day-item:hover{background:var(--gray-light)}
+  .day-item.active{background:var(--purple-light);border-left-color:var(--purple);color:var(--purple-dark)}
+  .day-item .day-num{font-weight:600;font-size:13px;min-width:52px}
+  .day-item .day-topic{font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .day-item.active .day-topic{color:var(--purple)}
+  .day-item .check{margin-left:auto;font-size:14px}
+
+  /* TOPIC HEADER */
+  .topic-header{background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:20px}
+  .topic-header h2{font-size:20px;font-weight:600;color:var(--purple-dark);margin-bottom:4px}
+  .topic-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500}
+  .badge-purple{background:var(--purple-light);color:var(--purple-dark)}
+  .badge-teal{background:var(--teal-light);color:var(--teal)}
+  .progress-wrap{margin-top:12px}
+  .progress-label{font-size:12px;color:var(--text-muted);margin-bottom:4px;display:flex;justify-content:space-between}
+  .progress-bar{height:6px;background:var(--gray-light);border-radius:3px;overflow:hidden}
+  .progress-fill{height:100%;background:var(--purple);border-radius:3px;transition:width 0.4s}
+
+  /* TABS */
+  .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--gray-border);padding-bottom:0}
+  .tab{padding:9px 18px;cursor:pointer;font-size:14px;color:var(--text-muted);border-bottom:2px solid transparent;margin-bottom:-1px;border-radius:var(--radius) var(--radius) 0 0;transition:all 0.15s}
+  .tab:hover{background:var(--gray-light);color:var(--text)}
+  .tab.active{color:var(--purple);border-bottom-color:var(--purple);background:var(--purple-light);font-weight:500}
+
+  /* WORD LIST */
+  .word-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--gray-border)}
+  .word-table th{background:var(--gray-light);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);padding:10px 14px;text-align:left;border-bottom:1px solid var(--gray-border)}
+  .word-table td{padding:10px 14px;border-bottom:1px solid var(--gray-border);font-size:14px;vertical-align:middle}
+  .word-table tr:last-child td{border-bottom:none}
+  .word-table tr:hover td{background:#FAFAFA}
+  .word-en{font-weight:600;color:var(--purple-dark)}
+  .word-ph{color:var(--text-muted);font-size:13px}
+  .word-type{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;background:var(--purple-light);color:var(--purple-dark);font-weight:500}
+  .word-vi{color:var(--teal);font-weight:500}
+
+  /* FLASHCARD */
+  .fc-container{display:flex;flex-direction:column;align-items:center;gap:16px}
+  .flashcard{width:100%;max-width:500px;min-height:200px;background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);padding:36px 32px;text-align:center;cursor:pointer;transition:box-shadow 0.2s,transform 0.1s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;user-select:none}
+  .flashcard:hover{box-shadow:0 4px 16px rgba(83,74,183,0.12);transform:translateY(-1px)}
+  .fc-word{font-size:34px;font-weight:700;color:var(--purple-dark)}
+  .fc-ph{font-size:15px;color:var(--text-muted)}
+  .fc-type{font-size:12px;padding:3px 12px;border-radius:20px;background:var(--purple-light);color:var(--purple-dark)}
+  .fc-hint{font-size:13px;color:var(--text-muted);margin-top:8px}
+  .fc-meaning{font-size:26px;font-weight:600;color:var(--teal)}
+  .fc-nav{display:flex;align-items:center;gap:16px}
+  .fc-nav button{padding:9px 22px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;font-family:inherit;transition:all 0.15s}
+  .fc-nav button:hover{background:var(--gray-light)}
+  .fc-counter{font-size:14px;color:var(--text-muted);min-width:60px;text-align:center}
+  .fc-rating{display:flex;gap:10px;margin-top:4px}
+  .fc-rating button{padding:7px 20px;border:none;border-radius:var(--radius);cursor:pointer;font-size:13px;font-family:inherit;font-weight:500}
+  .btn-know{background:var(--green-light);color:var(--green)}
+  .btn-know:hover{background:#d5edbc}
+  .btn-dontknow{background:var(--red-light);color:var(--red)}
+  .btn-dontknow:hover{background:#f5c8c8}
+
+  /* QUIZ */
+  .quiz-wrap{max-width:580px}
+  .score-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .score-chip{padding:5px 16px;border-radius:20px;font-size:13px;font-weight:500}
+  .score-chip.correct{background:var(--green-light);color:var(--green)}
+  .score-chip.wrong{background:var(--red-light);color:var(--red)}
+  .score-chip.total{background:var(--purple-light);color:var(--purple-dark)}
+  .quiz-q{background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:16px;font-size:16px;font-weight:500;line-height:1.5}
+  .quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .opt{padding:12px 16px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;text-align:left;font-family:inherit;line-height:1.4;transition:all 0.15s}
+  .opt:hover:not(:disabled){background:var(--gray-light);border-color:#bbb}
+  .opt.correct{background:var(--green-light);border-color:var(--green);color:var(--green);font-weight:500}
+  .opt.wrong{background:var(--red-light);border-color:var(--red);color:var(--red)}
+  .feedback{padding:12px 16px;border-radius:var(--radius);font-size:14px;margin-bottom:14px}
+  .feedback.ok{background:var(--green-light);color:var(--green)}
+  .feedback.fail{background:var(--red-light);color:var(--red)}
+  .btn-primary{padding:10px 24px;background:var(--purple);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-size:14px;font-family:inherit;font-weight:500;transition:background 0.15s}
+  .btn-primary:hover{background:var(--purple-dark)}
+
+  /* FILL */
+  .fill-wrap{max-width:560px}
+  .fill-input{width:100%;padding:11px 16px;border:1px solid var(--gray-border);border-radius:var(--radius);font-size:16px;font-family:inherit;background:var(--card);color:var(--text);margin-bottom:10px;transition:border-color 0.15s}
+  .fill-input:focus{outline:none;border-color:var(--purple)}
+  .fill-actions{display:flex;gap:8px;margin-bottom:14px}
+
+  /* MATCH */
+  .match-info{font-size:13px;color:var(--text-muted);margin-bottom:14px}
+  .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+  .match-btn{padding:11px 14px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;font-family:inherit;text-align:center;line-height:1.3;transition:all 0.15s}
+  .match-btn:hover:not([disabled]){background:var(--gray-light)}
+  .match-btn.selected{background:var(--purple-light);border-color:var(--purple);color:var(--purple-dark);font-weight:500}
+  .match-btn.matched{background:var(--green-light);border-color:var(--green);color:var(--green);cursor:default}
+  .match-btn.err{background:var(--red-light);border-color:var(--red)}
+
+  /* STATS */
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+  .stat-card{background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);padding:16px;text-align:center}
+  .stat-num{font-size:28px;font-weight:700;color:var(--purple)}
+  .stat-label{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+  /* RESPONSIVE */
+  @media(max-width:640px){
+    .sidebar{display:none}
+    .main{padding:16px}
+    .quiz-opts{grid-template-columns:1fr}
+    .match-grid{grid-template-columns:1fr}
+  }
+  @media(max-width:480px){
+    .fc-word{font-size:26px}
+    .fc-meaning{font-size:20px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎓 Thắng Tâm Học TOEIC</h1>
+  <div class="header-right">
+    <span class="total-prog" id="totalProg">0 / 1000 từ</span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="mainContent"></main>
+</div>
+
+<script>
+// ============================================================
+// DATA: 1000 từ TOEIC chia theo 67 ngày (15 từ/ngày)
+// ============================================================
+const DAYS = [
+  {topic:"Công việc & Nghề nghiệp",words:[
+    {w:"ability",tp:"n",ph:"/əˈbɪl.ə.ti/",m:"năng lực, khả năng"},
+    {w:"accomplish",tp:"v",ph:"/əˈkɑːm.plɪʃ/",m:"hoàn thành, thực hiện"},
+    {w:"career",tp:"n",ph:"/kəˈrɪr/",m:"sự nghiệp"},
+    {w:"competent",tp:"adj",ph:"/ˈkɑːm.pə.tənt/",m:"có khả năng, đủ trình độ"},
+    {w:"employer",tp:"n",ph:"/ɪmˈplɔɪ.ər/",m:"người sử dụng lao động"},
+    {w:"employment",tp:"n",ph:"/ɪmˈplɔɪ.mənt/",m:"việc làm"},
+    {w:"hire",tp:"v",ph:"/haɪr/",m:"thuê, mướn"},
+    {w:"intern",tp:"n",ph:"/ɪnˈtɜːrn/",m:"thực tập sinh"},
+    {w:"occupation",tp:"n",ph:"/ˌɒk.jʊˈpeɪ.ʃən/",m:"nghề nghiệp"},
+    {w:"personnel",tp:"n",ph:"/ˌpɜːr.sənˈel/",m:"nhân viên"},
+    {w:"profession",tp:"n",ph:"/prəˈfeʃ.ən/",m:"nghề nghiệp"},
+    {w:"qualify",tp:"v",ph:"/ˈkwɒl.ɪ.faɪ/",m:"đủ điều kiện, tư cách"},
+    {w:"recruit",tp:"v",ph:"/rɪˈkruːt/",m:"tuyển dụng"},
+    {w:"salary",tp:"n",ph:"/ˈsæl.ər.i/",m:"tiền lương"},
+    {w:"staff",tp:"n",ph:"/stæf/",m:"nhân viên"}
+  ]},
+  {topic:"Tài chính & Ngân hàng",words:[
+    {w:"accounting",tp:"n",ph:"/əˈkaʊn.tɪŋ/",m:"kế toán, thanh toán"},
+    {w:"audit",tp:"n/v",ph:"/ˈɔː.dɪt/",m:"kiểm toán"},
+    {w:"balance",tp:"n",ph:"/ˈbæl.əns/",m:"sự cân bằng, số dư"},
+    {w:"bankrupt",tp:"adj",ph:"/ˈbæŋk.rʌpt/",m:"phá sản"},
+    {w:"budget",tp:"n",ph:"/ˈbʌdʒ.ɪt/",m:"ngân sách"},
+    {w:"capital",tp:"n",ph:"/ˈkæp.ɪ.tl/",m:"nguồn vốn, thủ đô"},
+    {w:"currency",tp:"n",ph:"/ˈkɜːr.ən.si/",m:"tiền tệ"},
+    {w:"debt",tp:"n",ph:"/det/",m:"khoản nợ"},
+    {w:"deduct",tp:"v",ph:"/dɪˈdʌkt/",m:"khấu trừ, trừ đi"},
+    {w:"dividend",tp:"n",ph:"/ˈdɪv.ɪ.dend/",m:"cổ tức"},
+    {w:"expenditure",tp:"n",ph:"/ɪkˈspen.dɪ.tʃər/",m:"chi phí, phí tổn"},
+    {w:"inflation",tp:"n",ph:"/ɪnˈfleɪ.ʃən/",m:"lạm phát"},
+    {w:"invest",tp:"v",ph:"/ɪnˈvest/",m:"đầu tư"},
+    {w:"loan",tp:"n",ph:"/loʊn/",m:"sự vay nợ"},
+    {w:"profit",tp:"n",ph:"/ˈprɒf.ɪt/",m:"lợi nhuận"}
+  ]},
+  {topic:"Quản lý & Tổ chức",words:[
+    {w:"administration",tp:"n",ph:"/ədˌmɪn.ɪˈstreɪ.ʃən/",m:"sự quản lý, quản trị"},
+    {w:"agenda",tp:"n",ph:"/əˈdʒen.də/",m:"chương trình nghị sự"},
+    {w:"assign",tp:"v",ph:"/əˈsaɪn/",m:"phân công, chia việc"},
+    {w:"committee",tp:"n",ph:"/kəˈmɪt.i/",m:"ủy ban"},
+    {w:"department",tp:"n",ph:"/dɪˈpɑːrt.mənt/",m:"khoa, bộ phận"},
+    {w:"director",tp:"n",ph:"/dɪˈrek.tər/",m:"giám đốc"},
+    {w:"executive",tp:"n",ph:"/ɪɡˈzek.jʊ.tɪv/",m:"lãnh đạo điều hành"},
+    {w:"headquarters",tp:"n",ph:"/ˈhedˌkwɔːr.tərz/",m:"trụ sở, bộ chỉ huy"},
+    {w:"manage",tp:"v",ph:"/ˈmæn.ɪdʒ/",m:"quản lý"},
+    {w:"mandatory",tp:"adj",ph:"/ˈmæn.də.tɔːr.i/",m:"bắt buộc"},
+    {w:"organize",tp:"v",ph:"/ˈɔːr.ɡə.naɪz/",m:"tổ chức, sắp xếp"},
+    {w:"policy",tp:"n",ph:"/ˈpɒl.ɪ.si/",m:"chính sách"},
+    {w:"responsibility",tp:"n",ph:"/rɪˌspɒn.səˈbɪl.ɪ.ti/",m:"trách nhiệm"},
+    {w:"supervise",tp:"v",ph:"/ˈsuː.pər.vaɪz/",m:"giám sát"},
+    {w:"authority",tp:"n",ph:"/əˈθɔːr.ɪ.ti/",m:"quyền thế, nhà chức trách"}
+  ]},
+  {topic:"Bán hàng & Marketing",words:[
+    {w:"advertise",tp:"v",ph:"/ˈæd.vər.taɪz/",m:"quảng cáo"},
+    {w:"affordable",tp:"adj",ph:"/əˈfɔːr.də.bl/",m:"vừa túi tiền"},
+    {w:"brand",tp:"n",ph:"/brænd/",m:"nhãn hàng, thương hiệu"},
+    {w:"campaign",tp:"n",ph:"/kæmˈpeɪn/",m:"chiến dịch"},
+    {w:"competitive",tp:"adj",ph:"/kəmˈpet.ɪ.tɪv/",m:"có tính cạnh tranh"},
+    {w:"consumer",tp:"n",ph:"/kənˈsuː.mər/",m:"người tiêu dùng"},
+    {w:"customer",tp:"n",ph:"/ˈkʌs.tə.mər/",m:"khách hàng"},
+    {w:"discount",tp:"n",ph:"/ˈdɪs.kaʊnt/",m:"sự giảm giá"},
+    {w:"feedback",tp:"n",ph:"/ˈfiːd.bæk/",m:"phản hồi"},
+    {w:"launch",tp:"v",ph:"/lɔːntʃ/",m:"ra mắt, khởi chạy"},
+    {w:"marketing",tp:"n",ph:"/ˈmɑːr.kɪ.tɪŋ/",m:"tiếp thị"},
+    {w:"merchandise",tp:"n",ph:"/ˈmɜːr.tʃən.daɪz/",m:"hàng hóa"},
+    {w:"promotion",tp:"n",ph:"/prəˈmoʊ.ʃən/",m:"khuyến mãi, thăng chức"},
+    {w:"retail",tp:"n",ph:"/ˈriː.teɪl/",m:"bán lẻ"},
+    {w:"wholesale",tp:"n",ph:"/ˈhoʊl.seɪl/",m:"bán sỉ"}
+  ]},
+  {topic:"Du lịch & Vận tải",words:[
+    {w:"airline",tp:"n",ph:"/ˈer.laɪn/",m:"công ty hàng không"},
+    {w:"aisle",tp:"n",ph:"/aɪl/",m:"lối đi giữa các dãy ghế"},
+    {w:"baggage claim",tp:"n",ph:"/ˈbæɡ.ɪdʒ kleɪm/",m:"chỗ nhận hành lý"},
+    {w:"cancel",tp:"v",ph:"/ˈkæn.sl/",m:"hủy bỏ"},
+    {w:"check in",tp:"v",ph:"/tʃek ɪn/",m:"làm thủ tục nhận phòng/vé"},
+    {w:"destination",tp:"n",ph:"/ˌdes.tɪˈneɪ.ʃən/",m:"điểm đến"},
+    {w:"fare",tp:"n",ph:"/fer/",m:"tiền vé, tiền xe"},
+    {w:"flight",tp:"n",ph:"/flaɪt/",m:"chuyến bay"},
+    {w:"itinerary",tp:"n",ph:"/aɪˈtɪn.ər.er.i/",m:"lịch trình hành trình"},
+    {w:"luggage",tp:"n",ph:"/ˈlʌɡ.ɪdʒ/",m:"hành lý"},
+    {w:"reservation",tp:"n",ph:"/ˌrez.ərˈveɪ.ʃən/",m:"sự đặt trước"},
+    {w:"route",tp:"n",ph:"/raʊt/",m:"tuyến đường, lộ trình"},
+    {w:"runway",tp:"n",ph:"/ˈrʌn.weɪ/",m:"đường băng"},
+    {w:"sightseeing",tp:"n",ph:"/ˈsaɪtˌsiː.ɪŋ/",m:"tham quan"},
+    {w:"tourism",tp:"n",ph:"/ˈtʊr.ɪ.zəm/",m:"du lịch"}
+  ]},
+  {topic:"Văn phòng & Thiết bị",words:[
+    {w:"appliance",tp:"n",ph:"/əˈplaɪ.əns/",m:"thiết bị, dụng cụ"},
+    {w:"binder",tp:"n",ph:"/ˈbaɪn.dər/",m:"bìa ôm tài liệu"},
+    {w:"briefcase",tp:"n",ph:"/ˈbriːf.keɪs/",m:"cặp tài liệu"},
+    {w:"document",tp:"n",ph:"/ˈdɒk.jʊ.mənt/",m:"tài liệu, văn kiện"},
+    {w:"folder",tp:"n",ph:"/ˈfoʊl.dər/",m:"bìa cứng, xấp tài liệu"},
+    {w:"install",tp:"v",ph:"/ɪnˈstɔːl/",m:"cài đặt"},
+    {w:"laptop",tp:"n",ph:"/ˈlæp.tɒp/",m:"máy tính xách tay"},
+    {w:"software",tp:"n",ph:"/ˈsɒft.weər/",m:"phần mềm"},
+    {w:"stapler",tp:"n",ph:"/ˈsteɪ.plər/",m:"máy bấm kim"},
+    {w:"stationery",tp:"n",ph:"/ˈsteɪ.ʃən.er.i/",m:"đồ dùng văn phòng"},
+    {w:"switchboard",tp:"n",ph:"/ˈswɪtʃ.bɔːrd/",m:"tổng đài"},
+    {w:"update",tp:"v",ph:"/ʌpˈdeɪt/",m:"cập nhật"},
+    {w:"website",tp:"n",ph:"/ˈweb.saɪt/",m:"trang web"},
+    {w:"printer",tp:"n",ph:"/ˈprɪn.tər/",m:"máy in"},
+    {w:"device",tp:"n",ph:"/dɪˈvaɪs/",m:"thiết bị, máy móc"}
+  ]},
+  {topic:"Hợp đồng & Pháp lý",words:[
+    {w:"agreement",tp:"n",ph:"/əˈɡriː.mənt/",m:"hợp đồng, giao kèo"},
+    {w:"authorize",tp:"v",ph:"/ˈɔː.θər.aɪz/",m:"ủy quyền, cấp quyền"},
+    {w:"certificate",tp:"n",ph:"/sərˈtɪf.ɪ.kɪt/",m:"giấy chứng nhận"},
+    {w:"comply",tp:"v",ph:"/kəmˈplaɪ/",m:"tuân theo"},
+    {w:"dispute",tp:"n",ph:"/dɪˈspjuːt/",m:"tranh chấp"},
+    {w:"insurance",tp:"n",ph:"/ɪnˈʃʊər.əns/",m:"bảo hiểm"},
+    {w:"lease",tp:"n",ph:"/liːs/",m:"hợp đồng thuê"},
+    {w:"liability",tp:"n",ph:"/ˌlaɪ.əˈbɪl.ɪ.ti/",m:"trách nhiệm pháp lý"},
+    {w:"license",tp:"n",ph:"/ˈlaɪ.səns/",m:"bản quyền, giấy phép"},
+    {w:"obligation",tp:"n",ph:"/ˌɒb.lɪˈɡeɪ.ʃən/",m:"nghĩa vụ, bổn phận"},
+    {w:"permit",tp:"v",ph:"/pərˈmɪt/",m:"cho phép"},
+    {w:"warranty",tp:"n",ph:"/ˈwɒr.ən.ti/",m:"sự bảo đảm, bảo hành"},
+    {w:"regulation",tp:"n",ph:"/ˌreɡ.jʊˈleɪ.ʃən/",m:"quy định"},
+    {w:"clause",tp:"n",ph:"/klɔːz/",m:"điều khoản"},
+    {w:"contract",tp:"n",ph:"/ˈkɒn.trækt/",m:"hợp đồng"}
+  ]},
+  {topic:"Giao tiếp & Cuộc họp",words:[
+    {w:"agenda",tp:"n",ph:"/əˈdʒen.də/",m:"chương trình nghị sự"},
+    {w:"apologize",tp:"v",ph:"/əˈpɒl.ə.dʒaɪz/",m:"xin lỗi"},
+    {w:"briefing",tp:"n",ph:"/ˈbriː.fɪŋ/",m:"sự chỉ dẫn, hướng dẫn"},
+    {w:"conclude",tp:"v",ph:"/kənˈkluːd/",m:"kết luận, kết thúc"},
+    {w:"confirm",tp:"v",ph:"/kənˈfɜːrm/",m:"xác nhận"},
+    {w:"discuss",tp:"v",ph:"/dɪˈskʌs/",m:"thảo luận"},
+    {w:"emphasize",tp:"v",ph:"/ˈem.fə.saɪz/",m:"nhấn mạnh"},
+    {w:"meeting",tp:"n",ph:"/ˈmiː.tɪŋ/",m:"cuộc họp"},
+    {w:"memorandum",tp:"n",ph:"/ˌmem.əˈræn.dəm/",m:"bản ghi nhớ"},
+    {w:"mention",tp:"v",ph:"/ˈmen.ʃən/",m:"đề cập"},
+    {w:"negotiate",tp:"v",ph:"/nɪˈɡoʊ.ʃi.eɪt/",m:"đàm phán, thương lượng"},
+    {w:"present",tp:"v",ph:"/prɪˈzent/",m:"trình bày"},
+    {w:"propose",tp:"v",ph:"/prəˈpoʊz/",m:"đề xuất"},
+    {w:"seminar",tp:"n",ph:"/ˈsem.ɪ.nɑːr/",m:"hội nghị chuyên đề"},
+    {w:"suggest",tp:"v",ph:"/səˈdʒest/",m:"đề xuất, gợi ý"}
+  ]},
+  {topic:"Sản xuất & Kho bãi",words:[
+    {w:"assemble",tp:"v",ph:"/əˈsem.bl/",m:"lắp ráp, thu thập"},
+    {w:"consignment",tp:"n",ph:"/kənˈsaɪn.mənt/",m:"hoạt động gửi hàng để bán"},
+    {w:"deliver",tp:"v",ph:"/dɪˈlɪv.ər/",m:"giao hàng, phân phối"},
+    {w:"distribute",tp:"v",ph:"/dɪˈstrɪb.juːt/",m:"phân phát, phân bổ"},
+    {w:"factory",tp:"n",ph:"/ˈfæk.tər.i/",m:"nhà máy, xí nghiệp"},
+    {w:"inventory",tp:"n",ph:"/ˈɪn.vən.tɔːr.i/",m:"kiểm kê, bản kiểm kê"},
+    {w:"manufacture",tp:"v",ph:"/ˌmæn.jʊˈfæk.tʃər/",m:"sản xuất, chế tạo"},
+    {w:"packaging",tp:"n",ph:"/ˈpæk.ɪ.dʒɪŋ/",m:"đóng gói"},
+    {w:"shipment",tp:"n",ph:"/ˈʃɪp.mənt/",m:"việc gửi hàng"},
+    {w:"shipping",tp:"n",ph:"/ˈʃɪp.ɪŋ/",m:"vận chuyển hàng"},
+    {w:"stock",tp:"n",ph:"/stɒk/",m:"kho hàng, kho dự trữ"},
+    {w:"supplier",tp:"n",ph:"/səˈplaɪ.ər/",m:"nhà cung cấp"},
+    {w:"supply",tp:"v",ph:"/səˈplaɪ/",m:"cung cấp"},
+    {w:"warehouse",tp:"n",ph:"/ˈwer.haʊs/",m:"kho hàng"},
+    {w:"transit",tp:"n",ph:"/ˈtræn.zɪt/",m:"vận chuyển"}
+  ]},
+  {topic:"Tuyển dụng & Đào tạo",words:[
+    {w:"applicant",tp:"n",ph:"/ˈæp.lɪ.kənt/",m:"người ứng tuyển"},
+    {w:"application",tp:"n",ph:"/ˌæp.lɪˈkeɪ.ʃən/",m:"đơn ứng tuyển, ứng dụng"},
+    {w:"appoint",tp:"v",ph:"/əˈpɔɪnt/",m:"bổ nhiệm, chỉ định"},
+    {w:"candidate",tp:"n",ph:"/ˈkæn.dɪ.dɪt/",m:"ứng cử viên"},
+    {w:"cover letter",tp:"n",ph:"/ˈkʌv.ər ˌlet.ər/",m:"thư xin việc"},
+    {w:"credentials",tp:"n",ph:"/krɪˈden.ʃəlz/",m:"giấy ủy nhiệm, chứng chỉ"},
+    {w:"internship",tp:"n",ph:"/ˈɪn.tɜːrn.ʃɪp/",m:"kỳ thực tập"},
+    {w:"interview",tp:"n/v",ph:"/ˈɪn.tər.vjuː/",m:"phỏng vấn"},
+    {w:"probationary",tp:"adj",ph:"/prəˈbeɪ.ʃən.er.i/",m:"đang trong thời gian thử việc"},
+    {w:"qualification",tp:"n",ph:"/ˌkwɒl.ɪ.fɪˈkeɪ.ʃən/",m:"năng lực, phẩm chất"},
+    {w:"qualified",tp:"adj",ph:"/ˈkwɒl.ɪ.faɪd/",m:"đủ điều kiện, có bằng cấp"},
+    {w:"recruitment",tp:"n",ph:"/rɪˈkruːt.mənt/",m:"sự tuyển dụng"},
+    {w:"resume",tp:"n",ph:"/ˈrez.jʊ.meɪ/",m:"hồ sơ xin việc"},
+    {w:"training",tp:"n",ph:"/ˈtreɪ.nɪŋ/",m:"đào tạo, huấn luyện"},
+    {w:"vacancy",tp:"n",ph:"/ˈveɪ.kən.si/",m:"vị trí bỏ trống"}
+  ]},
+  {topic:"Khách hàng & Dịch vụ",words:[
+    {w:"accommodate",tp:"v",ph:"/əˈkɒm.ə.deɪt/",m:"dàn xếp, hỗ trợ"},
+    {w:"assistance",tp:"n",ph:"/əˈsɪs.təns/",m:"sự giúp đỡ, hỗ trợ"},
+    {w:"client",tp:"n",ph:"/ˈklaɪ.ənt/",m:"khách hàng"},
+    {w:"complaint",tp:"n",ph:"/kəmˈpleɪnt/",m:"lời phàn nàn"},
+    {w:"courtesy",tp:"n",ph:"/ˈkɜːr.tə.si/",m:"sự lịch sự"},
+    {w:"inquire",tp:"v",ph:"/ɪnˈkwaɪər/",m:"hỏi thăm, thắc mắc"},
+    {w:"inquiry",tp:"n",ph:"/ˈɪŋ.kwɪr.i/",m:"sự điều tra, thắc mắc"},
+    {w:"refund",tp:"n/v",ph:"/ˈriː.fʌnd/",m:"trả lại tiền"},
+    {w:"replace",tp:"v",ph:"/rɪˈpleɪs/",m:"thay thế"},
+    {w:"resolve",tp:"v",ph:"/rɪˈzɒlv/",m:"giải quyết, quyết tâm"},
+    {w:"respond",tp:"v",ph:"/rɪˈspɒnd/",m:"hưởng ứng, trả lời"},
+    {w:"satisfaction",tp:"n",ph:"/ˌsæt.ɪsˈfæk.ʃən/",m:"sự hài lòng"},
+    {w:"satisfy",tp:"v",ph:"/ˈsæt.ɪs.faɪ/",m:"làm hài lòng"},
+    {w:"service",tp:"n",ph:"/ˈsɜːr.vɪs/",m:"dịch vụ"},
+    {w:"support",tp:"v",ph:"/səˈpɔːrt/",m:"hỗ trợ"}
+  ]},
+  {topic:"Nhà hàng & Ẩm thực",words:[
+    {w:"appetizer",tp:"n",ph:"/ˈæp.ə.taɪ.zər/",m:"món khai vị"},
+    {w:"beverage",tp:"n",ph:"/ˈbev.ər.ɪdʒ/",m:"đồ uống"},
+    {w:"cafeteria",tp:"n",ph:"/ˌkæf.əˈtɪr.i.ə/",m:"quán ăn tự phục vụ"},
+    {w:"chef",tp:"n",ph:"/ʃef/",m:"đầu bếp"},
+    {w:"dessert",tp:"n",ph:"/dɪˈzɜːrt/",m:"món tráng miệng"},
+    {w:"dish",tp:"n",ph:"/dɪʃ/",m:"đĩa đựng thức ăn, món ăn"},
+    {w:"entrée",tp:"n",ph:"/ˈɒn.treɪ/",m:"món chính"},
+    {w:"grill",tp:"v",ph:"/ɡrɪl/",m:"nướng"},
+    {w:"menu",tp:"n",ph:"/ˈmen.juː/",m:"thực đơn"},
+    {w:"napkin",tp:"n",ph:"/ˈnæp.kɪn/",m:"khăn ăn"},
+    {w:"recipe",tp:"n",ph:"/ˈres.ɪ.pi/",m:"công thức nấu ăn"},
+    {w:"reservation",tp:"n",ph:"/ˌrez.ərˈveɪ.ʃən/",m:"đặt bàn, đặt trước"},
+    {w:"starter",tp:"n",ph:"/ˈstɑːr.tər/",m:"món khai vị"},
+    {w:"tip",tp:"n",ph:"/tɪp/",m:"tiền boa, tiền tip"},
+    {w:"towel",tp:"n",ph:"/ˈtaʊ.əl/",m:"khăn lau"}
+  ]},
+  {topic:"Bất động sản",words:[
+    {w:"accommodation",tp:"n",ph:"/əˌkɒm.əˈdeɪ.ʃən/",m:"chỗ ở, nơi ở"},
+    {w:"deposit",tp:"n",ph:"/dɪˈpɒz.ɪt/",m:"tiền đặt cọc"},
+    {w:"facility",tp:"n",ph:"/fəˈsɪl.ɪ.ti/",m:"cơ sở vật chất"},
+    {w:"harbor",tp:"n",ph:"/ˈhɑːr.bər/",m:"bến cảng"},
+    {w:"landlord",tp:"n",ph:"/ˈlænd.lɔːrd/",m:"chủ nhà cho thuê"},
+    {w:"lobby",tp:"n",ph:"/ˈlɒb.i/",m:"hành lang, sảnh"},
+    {w:"mortgage",tp:"n",ph:"/ˈmɔːr.ɡɪdʒ/",m:"thế chấp"},
+    {w:"premises",tp:"n",ph:"/ˈprem.ɪ.sɪz/",m:"cơ sở, tòa nhà"},
+    {w:"property",tp:"n",ph:"/ˈprɒp.ər.ti/",m:"tài sản, bất động sản"},
+    {w:"renovation",tp:"n",ph:"/ˌren.əˈveɪ.ʃən/",m:"sự cải tạo, nâng cấp"},
+    {w:"rent",tp:"n",ph:"/rent/",m:"tiền thuê"},
+    {w:"spacious",tp:"adj",ph:"/ˈspeɪ.ʃəs/",m:"rộng rãi"},
+    {w:"tenant",tp:"n",ph:"/ˈten.ənt/",m:"người thuê nhà"},
+    {w:"utility bill",tp:"n",ph:"/juːˈtɪl.ɪ.ti bɪl/",m:"hóa đơn điện nước"},
+    {w:"vacant",tp:"adj",ph:"/ˈveɪ.kənt/",m:"bỏ trống"}
+  ]},
+  {topic:"Sức khỏe & Y tế",words:[
+    {w:"diagnose",tp:"v",ph:"/ˌdaɪ.əɡˈnoʊz/",m:"chẩn đoán"},
+    {w:"emergency",tp:"n",ph:"/ɪˈmɜːr.dʒən.si/",m:"trường hợp khẩn cấp"},
+    {w:"examine",tp:"v",ph:"/ɪɡˈzæm.ɪn/",m:"kiểm tra, khám"},
+    {w:"medical",tp:"adj",ph:"/ˈmed.ɪ.kəl/",m:"thuộc y học"},
+    {w:"medication",tp:"n",ph:"/ˌmed.ɪˈkeɪ.ʃən/",m:"thuốc, sự dùng thuốc"},
+    {w:"medicine",tp:"n",ph:"/ˈmed.ɪ.sɪn/",m:"y học, thuốc"},
+    {w:"prescription",tp:"n",ph:"/prɪˈskrɪp.ʃən/",m:"đơn thuốc"},
+    {w:"prevention",tp:"n",ph:"/prɪˈven.ʃən/",m:"sự ngăn ngừa"},
+    {w:"recovery",tp:"n",ph:"/rɪˈkʌv.ər.i/",m:"sự hồi phục"},
+    {w:"symptom",tp:"n",ph:"/ˈsɪmp.təm/",m:"triệu chứng"},
+    {w:"treatment",tp:"n",ph:"/ˈtriːt.mənt/",m:"sự điều trị"},
+    {w:"vaccination",tp:"n",ph:"/ˌvæk.sɪˈneɪ.ʃən/",m:"tiêm chủng"},
+    {w:"welfare",tp:"n",ph:"/ˈwel.fer/",m:"phúc lợi"},
+    {w:"insurance",tp:"n",ph:"/ɪnˈʃʊər.əns/",m:"bảo hiểm y tế"},
+    {w:"clinic",tp:"n",ph:"/ˈklɪn.ɪk/",m:"phòng khám"}
+  ]},
+  {topic:"Công nghệ & Phần mềm",words:[
+    {w:"access",tp:"n/v",ph:"/ˈæk.ses/",m:"quyền truy cập; truy cập"},
+    {w:"browser",tp:"n",ph:"/ˈbraʊ.zər/",m:"trình duyệt"},
+    {w:"compatible",tp:"adj",ph:"/kəmˈpæt.ɪ.bl/",m:"tương thích, phù hợp"},
+    {w:"connect",tp:"v",ph:"/kəˈnekt/",m:"kết nối"},
+    {w:"database",tp:"n",ph:"/ˈdeɪ.tə.beɪs/",m:"cơ sở dữ liệu"},
+    {w:"developer",tp:"n",ph:"/dɪˈvel.ə.pər/",m:"lập trình viên"},
+    {w:"download",tp:"v",ph:"/ˈdaʊn.loʊd/",m:"tải xuống"},
+    {w:"engineering",tp:"n",ph:"/ˌen.dʒɪˈnɪr.ɪŋ/",m:"kỹ thuật"},
+    {w:"log on",tp:"v",ph:"/lɒɡ ɒn/",m:"đăng nhập hệ thống"},
+    {w:"network",tp:"n",ph:"/ˈnet.wɜːrk/",m:"mạng lưới"},
+    {w:"software",tp:"n",ph:"/ˈsɒft.weər/",m:"phần mềm"},
+    {w:"system",tp:"n",ph:"/ˈsɪs.təm/",m:"hệ thống"},
+    {w:"upgrade",tp:"v",ph:"/ʌpˈɡreɪd/",m:"nâng cấp"},
+    {w:"virus",tp:"n",ph:"/ˈvaɪ.rəs/",m:"virus"},
+    {w:"wireless",tp:"adj",ph:"/ˈwaɪər.ləs/",m:"không dây"}
+  ]},
+  {topic:"Kinh doanh & Phát triển",words:[
+    {w:"achieve",tp:"v",ph:"/əˈtʃiːv/",m:"đạt được, giành được"},
+    {w:"acquire",tp:"v",ph:"/əˈkwaɪər/",m:"thu nạp được, giành được"},
+    {w:"advance",tp:"n/v",ph:"/ədˈvæns/",m:"sự tiến lên; tiến lên"},
+    {w:"advantage",tp:"n",ph:"/ədˈvæn.tɪdʒ/",m:"lợi thế"},
+    {w:"corporation",tp:"n",ph:"/ˌkɔːr.pəˈreɪ.ʃən/",m:"tập đoàn, công ty"},
+    {w:"develop",tp:"v",ph:"/dɪˈvel.əp/",m:"phát triển"},
+    {w:"enterprise",tp:"n",ph:"/ˈen.tər.praɪz/",m:"doanh nghiệp"},
+    {w:"expand",tp:"v",ph:"/ɪkˈspænd/",m:"mở rộng"},
+    {w:"growth",tp:"n",ph:"/ɡroʊθ/",m:"sự tăng trưởng"},
+    {w:"merger",tp:"n",ph:"/ˈmɜːr.dʒər/",m:"sự sáp nhập"},
+    {w:"objective",tp:"n",ph:"/əbˈdʒek.tɪv/",m:"mục tiêu"},
+    {w:"opportunity",tp:"n",ph:"/ˌɒp.ərˈtjuː.nɪ.ti/",m:"cơ hội"},
+    {w:"strategy",tp:"n",ph:"/ˈstræt.ə.dʒi/",m:"chiến lược"},
+    {w:"takeover",tp:"n",ph:"/ˈteɪk.oʊ.vər/",m:"tiếp quản"},
+    {w:"venture",tp:"n",ph:"/ˈven.tʃər/",m:"liên doanh"}
+  ]},
+  {topic:"Đánh giá & Phân tích",words:[
+    {w:"accurate",tp:"adj",ph:"/ˈæk.jʊ.rɪt/",m:"đúng đắn, chính xác"},
+    {w:"analysis",tp:"n",ph:"/əˈnæl.ɪ.sɪs/",m:"sự phân tích"},
+    {w:"analyze",tp:"v",ph:"/ˈæn.ə.laɪz/",m:"phân tích"},
+    {w:"assess",tp:"v",ph:"/əˈses/",m:"đánh giá, định giá"},
+    {w:"compare",tp:"v",ph:"/kəmˈper/",m:"so sánh"},
+    {w:"criterion",tp:"n",ph:"/kraɪˈtɪr.i.ən/",m:"tiêu chí đánh giá"},
+    {w:"evaluate",tp:"v",ph:"/ɪˈvæl.jʊ.eɪt/",m:"ước lượng, đánh giá"},
+    {w:"evidence",tp:"n",ph:"/ˈev.ɪ.dəns/",m:"bằng chứng"},
+    {w:"examine",tp:"v",ph:"/ɪɡˈzæm.ɪn/",m:"khảo sát, kiểm tra"},
+    {w:"forecast",tp:"n/v",ph:"/ˈfɔːr.kæst/",m:"dự đoán, tiên đoán"},
+    {w:"identify",tp:"v",ph:"/aɪˈden.tɪ.faɪ/",m:"nhận diện, nhận biết"},
+    {w:"indicate",tp:"v",ph:"/ˈɪn.dɪ.keɪt/",m:"chỉ ra, biểu thị"},
+    {w:"investigate",tp:"v",ph:"/ɪnˈves.tɪ.ɡeɪt/",m:"điều tra"},
+    {w:"rational",tp:"adj",ph:"/ˈræʃ.ən.əl/",m:"có lý trí, hợp lý"},
+    {w:"review",tp:"v",ph:"/rɪˈvjuː/",m:"xem xét lại, đánh giá"}
+  ]},
+  {topic:"Thương mại quốc tế",words:[
+    {w:"abroad",tp:"adv",ph:"/əˈbrɔːd/",m:"ở nước ngoài"},
+    {w:"agricultural",tp:"adj",ph:"/ˌæɡ.rɪˈkʌl.tʃər.əl/",m:"thuộc nông nghiệp"},
+    {w:"export",tp:"n/v",ph:"/ˈek.spɔːrt/",m:"xuất khẩu"},
+    {w:"foreign",tp:"adj",ph:"/ˈfɒr.ɪn/",m:"nước ngoài"},
+    {w:"global",tp:"adj",ph:"/ˈɡloʊ.bəl/",m:"toàn cầu"},
+    {w:"import",tp:"n/v",ph:"/ˈɪm.pɔːrt/",m:"nhập khẩu"},
+    {w:"international",tp:"adj",ph:"/ˌɪn.tərˈnæʃ.ən.əl/",m:"quốc tế"},
+    {w:"livestock",tp:"n",ph:"/ˈlaɪv.stɒk/",m:"vật nuôi, thú nuôi"},
+    {w:"quota",tp:"n",ph:"/ˈkwoʊ.tə/",m:"hạn ngạch"},
+    {w:"raw",tp:"adj",ph:"/rɔː/",m:"thô, nguyên liệu"},
+    {w:"tariff",tp:"n",ph:"/ˈtær.ɪf/",m:"thuế quan"},
+    {w:"trade",tp:"n",ph:"/treɪd/",m:"thương mại, trao đổi"},
+    {w:"transfer",tp:"v",ph:"/ˈtræns.fɜːr/",m:"chuyển, chuyển khoản"},
+    {w:"transportation",tp:"n",ph:"/ˌtræn.spɔːrˈteɪ.ʃən/",m:"vận chuyển"},
+    {w:"zone",tp:"n",ph:"/zoʊn/",m:"vùng, khu vực"}
+  ]},
+  {topic:"Kỹ năng & Phẩm chất",words:[
+    {w:"ambitious",tp:"adj",ph:"/æmˈbɪʃ.əs/",m:"có tham vọng"},
+    {w:"cautious",tp:"adj",ph:"/ˈkɔː.ʃəs/",m:"thận trọng, cẩn thận"},
+    {w:"consistent",tp:"adj",ph:"/kənˈsɪs.tənt/",m:"nhất quán, kiên định"},
+    {w:"creative",tp:"adj",ph:"/kriˈeɪ.tɪv/",m:"sáng tạo"},
+    {w:"dedicated",tp:"adj",ph:"/ˈded.ɪ.keɪ.tɪd/",m:"tận tâm, cống hiến"},
+    {w:"diligent",tp:"adj",ph:"/ˈdɪl.ɪ.dʒənt/",m:"chăm chỉ, cần cù"},
+    {w:"efficient",tp:"adj",ph:"/ɪˈfɪʃ.ənt/",m:"năng suất cao, hiệu suất tốt"},
+    {w:"enthusiastic",tp:"adj",ph:"/ɪnˌθjuː.ziˈæs.tɪk/",m:"nhiệt tình, hứng khởi"},
+    {w:"flexible",tp:"adj",ph:"/ˈflek.sɪ.bl/",m:"linh hoạt"},
+    {w:"frank",tp:"adj",ph:"/fræŋk/",m:"ngay thẳng, bộc trực"},
+    {w:"imaginative",tp:"adj",ph:"/ɪˈmædʒ.ɪ.nə.tɪv/",m:"giàu tưởng tượng, sáng tạo"},
+    {w:"knowledgeable",tp:"adj",ph:"/ˈnɒl.ɪ.dʒə.bl/",m:"thông thạo, am hiểu"},
+    {w:"optimistic",tp:"adj",ph:"/ˌɒp.tɪˈmɪs.tɪk/",m:"lạc quan"},
+    {w:"reliable",tp:"adj",ph:"/rɪˈlaɪ.ə.bl/",m:"đáng tin cậy"},
+    {w:"systematic",tp:"adj",ph:"/ˌsɪs.təˈmæt.ɪk/",m:"có hệ thống"}
+  ]},
+  {topic:"Tài liệu & Thư từ",words:[
+    {w:"attachment",tp:"n",ph:"/əˈtætʃ.mənt/",m:"phần kèm thêm"},
+    {w:"bulletin",tp:"n",ph:"/ˈbʊl.ɪ.tɪn/",m:"bảng thông báo, tập san"},
+    {w:"correspondence",tp:"n",ph:"/ˌkɒr.ɪˈspɒn.dəns/",m:"sự trao đổi thư từ"},
+    {w:"cover letter",tp:"n",ph:"/ˈkʌv.ər ˌlet.ər/",m:"thư trình bày nguyện vọng"},
+    {w:"draft",tp:"n/v",ph:"/drɑːft/",m:"bản thảo; soạn thảo"},
+    {w:"enclose",tp:"v",ph:"/ɪnˈkloʊz/",m:"gửi kèm"},
+    {w:"express",tp:"v",ph:"/ɪkˈspres/",m:"trình bày, diễn đạt"},
+    {w:"file",tp:"n",ph:"/faɪl/",m:"hồ sơ, túi đựng tài liệu"},
+    {w:"invoice",tp:"n",ph:"/ˈɪn.vɔɪs/",m:"hóa đơn"},
+    {w:"notify",tp:"v",ph:"/ˈnoʊ.tɪ.faɪ/",m:"thông báo"},
+    {w:"questionnaire",tp:"n",ph:"/ˌkwes.tʃəˈner/",m:"bảng câu hỏi"},
+    {w:"receipt",tp:"n",ph:"/rɪˈsiːt/",m:"biên lai, hóa đơn"},
+    {w:"report",tp:"n",ph:"/rɪˈpɔːrt/",m:"báo cáo"},
+    {w:"submit",tp:"v",ph:"/səbˈmɪt/",m:"nộp, gửi đi"},
+    {w:"template",tp:"n",ph:"/ˈtem.plɪt/",m:"mẫu biểu, khuôn mẫu"}
+  ]}
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  day: 0,
+  tab: 'list',
+  flash: { idx: 0, flipped: false },
+  quiz: { idx: 0, correct: 0, total: 0, answered: false, shuffled: [] },
+  fill: { idx: 0, correct: 0, total: 0, answered: false, shuffled: [] },
+  match: { sel: null, done: 0, pairs: [] },
+  learned: JSON.parse(localStorage.getItem('tt_learned') || '[]'),
+  quizScores: JSON.parse(localStorage.getItem('tt_scores') || '{}')
+};
+
+function saveState() {
+  localStorage.setItem('tt_learned', JSON.stringify(state.learned));
+  localStorage.setItem('tt_scores', JSON.stringify(state.quizScores));
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function shuffle(a) { return a.slice().sort(() => Math.random() - 0.5); }
+function getWords() { return DAYS[state.day].words; }
+function totalLearned() { return state.learned.length; }
+
+function markLearned(word) {
+  if (!state.learned.includes(word)) {
+    state.learned.push(word);
+    saveState();
+    document.getElementById('totalProg').textContent = totalLearned() + ' / 1000 từ';
+  }
+}
+
+// ============================================================
+// SIDEBAR
+// ============================================================
+function renderSidebar() {
+  const sb = document.getElementById('sidebar');
+  const learnedDays = DAYS.map(d => d.words.every(w => state.learned.includes(w.w)));
+  let html = '<div class="sidebar-title">Lịch học</div>';
+  DAYS.forEach((d, i) => {
+    const done = learnedDays[i] ? '✓' : '';
+    html += `<div class="day-item${state.day===i?' active':''}" onclick="selectDay(${i})">
+      <span class="day-num">Ngày ${i+1}</span>
+      <span class="day-topic">${d.topic}</span>
+      ${done ? '<span class="check" style="color:var(--green)">✓</span>' : ''}
+    </div>`;
+  });
+  sb.innerHTML = html;
+}
+
+function selectDay(i) {
+  state.day = i;
+  state.tab = 'list';
+  state.flash = { idx: 0, flipped: false };
+  state.quiz = { idx: 0, correct: 0, total: 0, answered: false, shuffled: shuffle(DAYS[i].words) };
+  state.fill = { idx: 0, correct: 0, total: 0, answered: false, shuffled: shuffle(DAYS[i].words) };
+  renderSidebar();
+  renderMain();
+}
+
+// ============================================================
+// MAIN RENDER
+// ============================================================
+function renderMain() {
+  const d = DAYS[state.day];
+  const learnedCount = d.words.filter(w => state.learned.includes(w.w)).length;
+  const pct = Math.round((learnedCount / d.words.length) * 100);
+  const totalPct = Math.round((totalLearned() / 1000) * 100);
+
+  let html = `
+  <div class="topic-header">
+    <h2>Ngày ${state.day + 1}: ${d.topic}</h2>
+    <div class="topic-meta">
+      <span class="badge badge-purple">${d.words.length} từ</span>
+      <span class="badge badge-teal">${learnedCount} đã học</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Tiến độ hôm nay</span><span>${pct}%</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab${state.tab==='list'?' active':''}" onclick="switchTab('list')">📋 Từ vựng</div>
+    <div class="tab${state.tab==='flash'?' active':''}" onclick="switchTab('flash')">🃏 Flashcard</div>
+    <div class="tab${state.tab==='quiz'?' active':''}" onclick="switchTab('quiz')">❓ Trắc nghiệm</div>
+    <div class="tab${state.tab==='fill'?' active':''}" onclick="switchTab('fill')">✍️ Điền từ</div>
+    <div class="tab${state.tab==='match'?' active':''}" onclick="switchTab('match')">🔗 Ghép đôi</div>
+  </div>
+  <div id="tabContent"></div>`;
+
+  document.getElementById('mainContent').innerHTML = html;
+  document.getElementById('totalProg').textContent = totalLearned() + ' / 1000 từ';
+  renderTab();
+}
+
+function switchTab(t) {
+  state.tab = t;
+  if (t === 'quiz') {
+    state.quiz = { idx: 0, correct: 0, total: 0, answered: false, shuffled: shuffle(getWords()) };
+  }
+  if (t === 'fill') {
+    state.fill = { idx: 0, correct: 0, total: 0, answered: false, shuffled: shuffle(getWords()) };
+  }
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    el.className = 'tab' + (['list','flash','quiz','fill','match'][i] === t ? ' active' : '');
+  });
+  renderTab();
+}
+
+function renderTab() {
+  const tc = document.getElementById('tabContent');
+  if (!tc) return;
+  switch(state.tab) {
+    case 'list':  tc.innerHTML = renderList();  break;
+    case 'flash': tc.innerHTML = renderFlash(); setupFlashEvents(); break;
+    case 'quiz':  tc.innerHTML = renderQuiz();  break;
+    case 'fill':  tc.innerHTML = renderFill();  setupFillEvents(); break;
+    case 'match': tc.innerHTML = renderMatch(); break;
+  }
+}
+
+// ============================================================
+// LIST TAB
+// ============================================================
+function renderList() {
+  const words = getWords();
+  let rows = words.map(w => {
+    const known = state.learned.includes(w.w);
+    return `<tr>
+      <td><span class="word-en">${w.w}</span></td>
+      <td><span class="word-ph">${w.ph}</span></td>
+      <td><span class="word-type">${w.tp}</span></td>
+      <td><span class="word-vi">${w.m}</span></td>
+      <td><button onclick="markLearned('${w.w.replace(/'/g,"\\'")}');this.textContent='✓';this.style.color='var(--green)';this.style.background='var(--green-light)'"
+        style="padding:4px 12px;border:1px solid var(--gray-border);border-radius:20px;background:${known?'var(--green-light)':'var(--card)'};color:${known?'var(--green)':'var(--text-muted)'};cursor:pointer;font-size:12px;font-family:inherit">
+        ${known?'✓ Đã học':'Đánh dấu'}
+      </button></td>
+    </tr>`;
+  }).join('');
+  return `<table class="word-table">
+    <thead><tr><th>Từ</th><th>Phiên âm</th><th>Loại từ</th><th>Nghĩa</th><th></th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+// ============================================================
+// FLASHCARD TAB
+// ============================================================
+function renderFlash() {
+  const words = getWords();
+  const w = words[state.flash.idx];
+  const flipped = state.flash.flipped;
+  return `<div class="fc-container">
+    <div class="flashcard" id="fc" onclick="flipFC()">
+      ${!flipped ? `
+        <div class="fc-word">${w.w}</div>
+        <div class="fc-ph">${w.ph}</div>
+        <div class="fc-type">${w.tp}</div>
+        <div class="fc-hint">Nhấn để xem nghĩa</div>
+      ` : `
+        <div class="fc-meaning">${w.m}</div>
+        <div style="font-size:15px;color:var(--text-muted);margin-top:4px">${w.w}</div>
+        <div class="fc-rating">
+          <button class="fc-rating btn-dontknow" onclick="event.stopPropagation();rateFC(false)">😕 Chưa nhớ</button>
+          <button class="fc-rating btn-know" onclick="event.stopPropagation();rateFC(true)">✅ Đã nhớ</button>
+        </div>
+      `}
+    </div>
+    <div class="fc-nav">
+      <button onclick="prevFC()">← Trước</button>
+      <span class="fc-counter">${state.flash.idx+1} / ${words.length}</span>
+      <button onclick="nextFC()">Tiếp →</button>
+    </div>
+    <div style="font-size:13px;color:var(--text-muted);text-align:center">Dùng ← → để chuyển thẻ</div>
+  </div>`;
+}
+
+function setupFlashEvents() {
+  document.onkeydown = e => {
+    if (state.tab !== 'flash') return;
+    if (e.key === 'ArrowRight') nextFC();
+    if (e.key === 'ArrowLeft') prevFC();
+    if (e.key === ' ') { e.preventDefault(); flipFC(); }
+  };
+}
+
+function flipFC() { state.flash.flipped = !state.flash.flipped; renderTab(); }
+function nextFC() {
+  const words = getWords();
+  state.flash.idx = (state.flash.idx + 1) % words.length;
+  state.flash.flipped = false; renderTab();
+}
+function prevFC() {
+  const words = getWords();
+  state.flash.idx = (state.flash.idx - 1 + words.length) % words.length;
+  state.flash.flipped = false; renderTab();
+}
+function rateFC(knew) {
+  if (knew) markLearned(getWords()[state.flash.idx].w);
+  nextFC();
+}
+
+// ============================================================
+// QUIZ TAB
+// ============================================================
+function renderQuiz() {
+  const q = state.quiz;
+  const words = q.shuffled;
+  const qw = words[q.idx % words.length];
+  const wrongs = shuffle(getWords().filter(x => x.w !== qw.w)).slice(0, 3).map(x => x.m);
+  const opts = shuffle([qw.m, ...wrongs]);
+  return `<div class="quiz-wrap">
+    <div class="score-row">
+      <span class="score-chip correct">✓ ${q.correct}</span>
+      <span class="score-chip wrong">✗ ${q.total - q.correct}</span>
+      <span class="score-chip total">Tổng: ${q.total}</span>
+    </div>
+    <div class="quiz-q">Từ "<strong>${qw.w}</strong>" ${qw.ph} có nghĩa là gì?</div>
+    <div class="quiz-opts">
+      ${opts.map(o => `<button class="opt" onclick="answerQuiz(this,'${esc(o)}','${esc(qw.m)}','${esc(qw.w)}')">${o}</button>`).join('')}
+    </div>
+    <div id="qfb"></div>
+    <button class="btn-primary" id="nextQ" style="display:none" onclick="nextQuiz()">Câu tiếp theo →</button>
+  </div>`;
+}
+
+function esc(s) { return s.replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+
+function answerQuiz(btn, chosen, correct, word) {
+  if (state.quiz.answered) return;
+  state.quiz.answered = true;
+  state.quiz.total++;
+  document.querySelectorAll('.opt').forEach(b => b.disabled = true);
+  if (chosen === correct) {
+    state.quiz.correct++;
+    btn.classList.add('correct');
+    document.getElementById('qfb').innerHTML = `<div class="feedback ok">✅ Chính xác! <strong>${word}</strong> = ${correct}</div>`;
+    markLearned(word);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt').forEach(b => { if (b.textContent === correct) b.classList.add('correct'); });
+    document.getElementById('qfb').innerHTML = `<div class="feedback fail">❌ Sai! Đáp án đúng: <strong>${correct}</strong></div>`;
+  }
+  document.getElementById('nextQ').style.display = 'inline-block';
+}
+
+function nextQuiz() {
+  state.quiz.idx++;
+  state.quiz.answered = false;
+  renderTab();
+}
+
+// ============================================================
+// FILL TAB
+// ============================================================
+function renderFill() {
+  const f = state.fill;
+  const words = f.shuffled;
+  const qw = words[f.idx % words.length];
+  return `<div class="fill-wrap">
+    <div class="score-row">
+      <span class="score-chip correct">✓ ${f.correct}</span>
+      <span class="score-chip wrong">✗ ${f.total - f.correct}</span>
+      <span class="score-chip total">Tổng: ${f.total}</span>
+    </div>
+    <div class="quiz-q">Nghĩa: <strong>${qw.m}</strong><br>
+      <span style="font-size:13px;color:var(--text-muted)">Loại từ: ${qw.tp} | ${qw.ph}</span>
+    </div>
+    <input class="fill-input" id="fillInp" type="text" placeholder="Nhập từ tiếng Anh..." autocomplete="off" />
+    <div class="fill-actions">
+      <button class="btn-primary" onclick="checkFill('${esc(qw.w)}')">Kiểm tra</button>
+      <button style="padding:9px 16px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;font-family:inherit" onclick="hintFill('${esc(qw.w)}')">💡 Gợi ý</button>
+    </div>
+    <div id="ffb"></div>
+    <button class="btn-primary" id="nextF" style="display:none;margin-top:10px" onclick="nextFill()">Câu tiếp theo →</button>
+  </div>`;
+}
+
+function setupFillEvents() {
+  const inp = document.getElementById('fillInp');
+  if (inp) {
+    inp.focus();
+    const qw = state.fill.shuffled[state.fill.idx % state.fill.shuffled.length];
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') checkFill(qw.w); });
+  }
+}
+
+function hintFill(correct) {
+  const inp = document.getElementById('fillInp');
+  if (inp) inp.value = correct[0] + '_'.repeat(correct.length - 1);
+}
+
+function checkFill(correct) {
+  if (state.fill.answered) return;
+  const inp = document.getElementById('fillInp');
+  if (!inp) return;
+  const val = inp.value.trim().toLowerCase();
+  state.fill.answered = true;
+  state.fill.total++;
+  inp.disabled = true;
+  if (val === correct.toLowerCase()) {
+    state.fill.correct++;
+    document.getElementById('ffb').innerHTML = `<div class="feedback ok">✅ Chính xác!</div>`;
+    markLearned(correct);
+  } else {
+    document.getElementById('ffb').innerHTML = `<div class="feedback fail">❌ Sai! Đáp án đúng: <strong>${correct}</strong></div>`;
+  }
+  document.getElementById('nextF').style.display = 'inline-block';
+}
+
+function nextFill() {
+  state.fill.idx++;
+  state.fill.answered = false;
+  renderTab();
+  setupFillEvents();
+}
+
+// ============================================================
+// MATCH TAB
+// ============================================================
+let matchState = { sel: null, done: 0, words: [], meanings: [], matched: new Set(), errTimeout: null };
+
+function renderMatch() {
+  const pairs = shuffle(getWords()).slice(0, 7);
+  matchState = { sel: null, done: 0, words: shuffle(pairs.map(p => p.w)), meanings: shuffle(pairs.map(p => ({id:p.w,m:p.m}))), matched: new Set(), pairs };
+  return buildMatchHTML();
+}
+
+function buildMatchHTML() {
+  const ms = matchState;
+  const leftBtns = ms.words.map(w => {
+    const done = ms.matched.has('w_'+w);
+    return `<button class="match-btn${done?' matched':''}" id="mw_${w}" onclick="selectMatch('word','${esc(w)}')" ${done?'disabled':''}>${w}</button>`;
+  }).join('');
+  const rightBtns = ms.meanings.map(m => {
+    const done = ms.matched.has('m_'+m.id);
+    return `<button class="match-btn${done?' matched':''}" id="mm_${m.id}" onclick="selectMatch('meaning','${esc(m.id)}')" ${done?'disabled':''}>${m.m}</button>`;
+  }).join('');
+  const leftCol = ms.words.map((w,i) => `<button class="match-btn${ms.matched.has('w_'+w)?' matched':''}" id="mw_${w}" onclick="selectMatch('word','${esc(w)}')" ${ms.matched.has('w_'+w)?'disabled':''}>${w}</button>`).join('');
+  const rightCol = ms.meanings.map((m,i) => `<button class="match-btn${ms.matched.has('m_'+m.id)?' matched':''}" id="mm_${m.id}" onclick="selectMatch('meaning','${esc(m.id)}')" ${ms.matched.has('m_'+m.id)?'disabled':''}>${m.m}</button>`).join('');
+  return `
+  <div class="match-info">Nhấn một từ tiếng Anh rồi nhấn nghĩa tương ứng để ghép cặp — 7 cặp</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+    <div style="display:flex;flex-direction:column;gap:8px">${leftCol}</div>
+    <div style="display:flex;flex-direction:column;gap:8px">${rightCol}</div>
+  </div>
+  <div id="matchMsg"></div>`;
+}
+
+function selectMatch(type, id) {
+  const ms = matchState;
+  const btnId = type === 'word' ? 'mw_'+id : 'mm_'+id;
+  const btn = document.getElementById(btnId);
+  if (!btn || btn.disabled) return;
+
+  if (!ms.sel) {
+    document.querySelectorAll('.match-btn.selected').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    ms.sel = { type, id, btn };
+    return;
+  }
+  if (ms.sel.btn === btn) { btn.classList.remove('selected'); ms.sel = null; return; }
+  if (ms.sel.type === type) {
+    ms.sel.btn.classList.remove('selected');
+    btn.classList.add('selected');
+    ms.sel = { type, id, btn };
+    return;
+  }
+
+  const wordId = type === 'word' ? id : ms.sel.id;
+  const meaningId = type === 'meaning' ? id : ms.sel.id;
+  const wordBtn = type === 'word' ? btn : ms.sel.btn;
+  const meanBtn = type === 'meaning' ? btn : ms.sel.btn;
+
+  if (wordId === meaningId) {
+    wordBtn.classList.remove('selected'); wordBtn.classList.add('matched'); wordBtn.disabled = true;
+    meanBtn.classList.remove('selected'); meanBtn.classList.add('matched'); meanBtn.disabled = true;
+    ms.matched.add('w_'+wordId); ms.matched.add('m_'+wordId);
+    ms.done++;
+    markLearned(wordId);
+    if (ms.done === ms.words.length) {
+      document.getElementById('matchMsg').innerHTML = `<div class="feedback ok">🎉 Xuất sắc! Bạn đã ghép đúng tất cả ${ms.done} cặp! 
+        <button class="btn-primary" style="margin-left:12px" onclick="switchTab('match')">Chơi lại</button></div>`;
+    }
+  } else {
+    wordBtn.classList.add('err'); meanBtn.classList.add('err');
+    setTimeout(() => { wordBtn.classList.remove('err','selected'); meanBtn.classList.remove('err','selected'); }, 700);
+  }
+  ms.sel = null;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.onload = () => {
+  state.quiz.shuffled = shuffle(DAYS[0].words);
+  state.fill.shuffled = shuffle(DAYS[0].words);
+  renderSidebar();
+  renderMain();
+  document.getElementById('totalProg').textContent = totalLearned() + ' / 1000 từ';
+};
+
+// expose globals
+window.selectDay = selectDay;
+window.switchTab = switchTab;
+window.flipFC = flipFC;
+window.nextFC = nextFC;
+window.prevFC = prevFC;
+window.rateFC = rateFC;
+window.answerQuiz = answerQuiz;
+window.nextQuiz = nextQuiz;
+window.checkFill = checkFill;
+window.hintFill = hintFill;
+window.nextFill = nextFill;
+window.selectMatch = selectMatch;
+window.markLearned = markLearned;
+</script>
+</body>
+</html>
