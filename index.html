@@ -5,1488 +5,1335 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Thắng Tâm Học TOEIC</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --purple:#534AB7;--purple-light:#EEEDFE;--purple-dark:#26215C;
-    --teal:#0F6E56;--teal-light:#E1F5EE;
-    --red-light:#FCEBEB;--red:#A32D2D;
-    --green-light:#EAF3DE;--green:#3B6D11;
-    --amber:#BA7517;--amber-light:#FAEEDA;
-    --gray:#888;--gray-light:#F5F5F3;--gray-border:#E0DDD5;
-    --text:#1a1a1a;--text-muted:#666;
-    --bg:#FAFAF8;--card:#fff;
-    --radius:10px;--radius-lg:14px;
-  }
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
-  header{background:var(--purple-dark);color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
-  header h1{font-size:18px;font-weight:600}
-  .total-prog{font-size:12px;background:rgba(255,255,255,0.15);padding:4px 12px;border-radius:20px}
-  .layout{display:flex;min-height:calc(100vh - 56px)}
-  .sidebar{width:220px;min-width:220px;background:var(--card);border-right:1px solid var(--gray-border);padding:16px 0;overflow-y:auto;max-height:calc(100vh - 56px);position:sticky;top:56px}
-  .main{flex:1;padding:24px;max-width:900px}
-  .sidebar-title{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;padding:0 16px 8px}
-  .day-item{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;transition:background 0.15s;border-left:3px solid transparent}
-  .day-item:hover{background:var(--gray-light)}
-  .day-item.active{background:var(--purple-light);border-left-color:var(--purple);color:var(--purple-dark)}
-  .day-item .day-num{font-weight:600;font-size:13px;min-width:52px}
-  .day-item .day-topic{font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .day-item.active .day-topic{color:var(--purple)}
-  .topic-header{background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:20px}
-  .topic-header h2{font-size:20px;font-weight:600;color:var(--purple-dark);margin-bottom:6px}
-  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500}
-  .badge-purple{background:var(--purple-light);color:var(--purple-dark)}
-  .badge-teal{background:var(--teal-light);color:var(--teal)}
-  .progress-bar{height:6px;background:var(--gray-light);border-radius:3px;overflow:hidden;margin-top:10px}
-  .progress-fill{height:100%;background:var(--purple);border-radius:3px;transition:width 0.4s}
-  .progress-label{font-size:12px;color:var(--text-muted);margin-bottom:4px;display:flex;justify-content:space-between}
-  .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--gray-border)}
-  .tab{padding:9px 16px;cursor:pointer;font-size:14px;color:var(--text-muted);border-bottom:2px solid transparent;margin-bottom:-1px;border-radius:var(--radius) var(--radius) 0 0;transition:all 0.15s;white-space:nowrap}
-  .tab:hover{background:var(--gray-light)}
-  .tab.active{color:var(--purple);border-bottom-color:var(--purple);background:var(--purple-light);font-weight:500}
-
-  /* WORD CARDS (List view) */
-  .word-cards{display:flex;flex-direction:column;gap:12px}
-  .word-card{background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);overflow:hidden}
-  .word-card-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
-  .word-card-header:hover{background:var(--gray-light)}
-  .word-main{display:flex;align-items:center;gap:10px;flex:1;flex-wrap:wrap}
-  .word-en{font-size:18px;font-weight:700;color:var(--purple-dark)}
-  .word-ph{font-size:13px;color:var(--text-muted)}
-  .word-type{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--purple-light);color:var(--purple-dark);font-weight:500}
-  .word-vi{font-size:14px;color:var(--teal);font-weight:500;margin-left:auto}
-  .btn-audio{background:none;border:1px solid var(--gray-border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:16px;transition:all 0.15s;color:var(--purple)}
-  .btn-audio:hover{background:var(--purple-light);border-color:var(--purple)}
-  .btn-audio.playing{background:var(--purple-light);border-color:var(--purple);animation:pulse 0.6s infinite alternate}
-  @keyframes pulse{from{opacity:1}to{opacity:0.5}}
-  .btn-mark{font-size:12px;padding:5px 12px;border:1px solid var(--gray-border);border-radius:20px;background:var(--card);cursor:pointer;white-space:nowrap;transition:all 0.15s;font-family:inherit}
-  .btn-mark.marked{background:var(--green-light);border-color:var(--green);color:var(--green)}
-  .word-expand{padding:0 16px 14px;border-top:1px solid var(--gray-border)}
-  .expand-toggle{font-size:13px;color:var(--text-muted)}
-
-  /* EXAMPLES SECTION */
-  .examples-wrap{margin-top:12px}
-  .examples-title{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
-  .example-item{background:var(--gray-light);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px}
-  .example-en{font-size:14px;color:var(--text);line-height:1.5;margin-bottom:3px}
-  .example-en .highlight{color:var(--purple);font-weight:600;text-decoration:underline;text-decoration-color:rgba(83,74,183,0.3)}
-  .example-vi{font-size:13px;color:var(--text-muted);font-style:italic}
-
-  /* USAGE SECTION */
-  .usage-wrap{margin-top:10px}
-  .usage-title{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
-  .usage-tags{display:flex;flex-wrap:wrap;gap:6px}
-  .usage-tag{font-size:12px;padding:3px 10px;border-radius:20px;background:var(--amber-light);color:var(--amber);border:1px solid rgba(186,117,23,0.2)}
-
-  /* FLASHCARD */
-  .fc-container{display:flex;flex-direction:column;align-items:center;gap:16px}
-  .flashcard{width:100%;max-width:540px;min-height:220px;background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);padding:32px;text-align:center;cursor:pointer;transition:box-shadow 0.2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;user-select:none}
-  .flashcard:hover{box-shadow:0 4px 16px rgba(83,74,183,0.12)}
-  .fc-word{font-size:32px;font-weight:700;color:var(--purple-dark)}
-  .fc-ph{font-size:14px;color:var(--text-muted)}
-  .fc-type{font-size:12px;padding:3px 10px;border-radius:20px;background:var(--purple-light);color:var(--purple-dark)}
-  .fc-hint{font-size:13px;color:var(--text-muted);margin-top:6px}
-  .fc-meaning{font-size:24px;font-weight:600;color:var(--teal)}
-  .fc-example{font-size:13px;color:var(--text-muted);font-style:italic;margin-top:6px;line-height:1.5;max-width:400px}
-  .fc-audio-btn{padding:6px 16px;border:1px solid var(--purple);border-radius:var(--radius);background:var(--purple-light);cursor:pointer;font-size:13px;color:var(--purple);font-family:inherit}
-  .fc-rating{display:flex;gap:10px;margin-top:8px}
-  .fc-rating button{padding:7px 20px;border:none;border-radius:var(--radius);cursor:pointer;font-size:13px;font-family:inherit;font-weight:500}
-  .btn-know{background:var(--green-light);color:var(--green)}
-  .btn-dontknow{background:var(--red-light);color:var(--red)}
-  .fc-nav{display:flex;align-items:center;gap:16px}
-  .fc-nav button{padding:9px 22px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;font-family:inherit}
-  .fc-nav button:hover{background:var(--gray-light)}
-  .fc-counter{font-size:14px;color:var(--text-muted);min-width:60px;text-align:center}
-
-  /* QUIZ */
-  .quiz-wrap{max-width:580px}
-  .score-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-  .score-chip{padding:5px 14px;border-radius:20px;font-size:13px;font-weight:500}
-  .score-chip.correct{background:var(--green-light);color:var(--green)}
-  .score-chip.wrong{background:var(--red-light);color:var(--red)}
-  .score-chip.total{background:var(--purple-light);color:var(--purple-dark)}
-  .quiz-q{background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:14px;font-size:16px;font-weight:500;line-height:1.5}
-  .quiz-context{font-size:13px;color:var(--text-muted);font-style:italic;margin-top:6px;font-weight:400}
-  .quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-  .opt{padding:12px 14px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;text-align:left;font-family:inherit;line-height:1.4;transition:all 0.15s}
-  .opt:hover:not(:disabled){background:var(--gray-light)}
-  .opt.correct{background:var(--green-light);border-color:var(--green);color:var(--green);font-weight:500}
-  .opt.wrong{background:var(--red-light);border-color:var(--red);color:var(--red)}
-  .feedback{padding:12px 14px;border-radius:var(--radius);font-size:14px;margin-bottom:12px}
-  .feedback.ok{background:var(--green-light);color:var(--green)}
-  .feedback.fail{background:var(--red-light);color:var(--red)}
-  .btn-primary{padding:10px 24px;background:var(--purple);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-size:14px;font-family:inherit;font-weight:500}
-  .btn-primary:hover{background:var(--purple-dark)}
-
-  /* FILL */
-  .fill-wrap{max-width:560px}
-  .fill-input{width:100%;padding:11px 16px;border:1px solid var(--gray-border);border-radius:var(--radius);font-size:16px;font-family:inherit;background:var(--card);color:var(--text);margin-bottom:10px}
-  .fill-input:focus{outline:none;border-color:var(--purple)}
-  .fill-actions{display:flex;gap:8px;margin-bottom:12px}
-
-  /* MATCH */
-  .match-info{font-size:13px;color:var(--text-muted);margin-bottom:12px}
-  .match-btn{padding:11px 12px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;font-family:inherit;text-align:center;line-height:1.3;transition:all 0.15s}
-  .match-btn:hover:not([disabled]){background:var(--gray-light)}
-  .match-btn.selected{background:var(--purple-light);border-color:var(--purple);color:var(--purple-dark);font-weight:500}
-  .match-btn.matched{background:var(--green-light);border-color:var(--green);color:var(--green);cursor:default}
-  .match-btn.err{background:var(--red-light);border-color:var(--red)}
-
-  @media(max-width:640px){
-    .sidebar{display:none}
-    .main{padding:16px}
-    .quiz-opts{grid-template-columns:1fr}
-    .word-vi{margin-left:0;width:100%}
-  }
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#534AB7;--purple-light:#EEEDFE;--purple-dark:#26215C;
+  --teal:#0F6E56;--teal-light:#E1F5EE;
+  --red-light:#FCEBEB;--red:#A32D2D;
+  --green-light:#EAF3DE;--green:#3B6D11;
+  --amber:#BA7517;--amber-light:#FAEEDA;
+  --gray:#888;--gray-light:#F5F5F3;--gray-border:#E0DDD5;
+  --text:#1a1a1a;--text-muted:#666;--bg:#FAFAF8;--card:#fff;
+  --radius:10px;--radius-lg:14px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
+header{background:var(--purple-dark);color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+header h1{font-size:17px;font-weight:600}
+.total-prog{font-size:12px;background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px}
+.layout{display:flex;min-height:calc(100vh - 56px)}
+.sidebar{width:210px;min-width:210px;background:var(--card);border-right:1px solid var(--gray-border);padding:12px 0;overflow-y:auto;max-height:calc(100vh - 56px);position:sticky;top:56px}
+.main{flex:1;padding:24px;max-width:900px}
+.sidebar-title{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;padding:0 14px 6px}
+.day-item{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;transition:background .15s;border-left:3px solid transparent}
+.day-item:hover{background:var(--gray-light)}
+.day-item.active{background:var(--purple-light);border-left-color:var(--purple)}
+.day-item .dn{font-weight:600;font-size:12px;min-width:48px;color:var(--text)}
+.day-item .dt{font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day-item.active .dn,.day-item.active .dt{color:var(--purple-dark)}
+.topic-header{background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);padding:18px 22px;margin-bottom:18px}
+.topic-header h2{font-size:19px;font-weight:600;color:var(--purple-dark);margin-bottom:6px}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;margin-right:6px}
+.badge-purple{background:var(--purple-light);color:var(--purple-dark)}
+.badge-teal{background:var(--teal-light);color:var(--teal)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+.progress-bar{height:6px;background:var(--gray-light);border-radius:3px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;background:var(--purple);border-radius:3px;transition:width .4s}
+.progress-label{font-size:12px;color:var(--text-muted);margin:8px 0 4px;display:flex;justify-content:space-between}
+.tabs{display:flex;gap:4px;margin-bottom:18px;border-bottom:1px solid var(--gray-border);flex-wrap:wrap}
+.tab{padding:8px 14px;cursor:pointer;font-size:13px;color:var(--text-muted);border-bottom:2px solid transparent;margin-bottom:-1px;border-radius:var(--radius) var(--radius) 0 0;transition:all .15s;white-space:nowrap}
+.tab:hover{background:var(--gray-light)}
+.tab.active{color:var(--purple);border-bottom-color:var(--purple);background:var(--purple-light);font-weight:500}
+.word-cards{display:flex;flex-direction:column;gap:10px}
+.word-card{background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);overflow:hidden}
+.wch{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;flex-wrap:wrap}
+.wch:hover{background:var(--gray-light)}
+.wc-stt{font-size:11px;font-weight:700;color:var(--text-muted);min-width:28px}
+.wc-en{font-size:17px;font-weight:700;color:var(--purple-dark);min-width:150px}
+.wc-ph{font-size:12px;color:var(--text-muted);flex:1}
+.wc-tp{font-size:11px;padding:2px 7px;border-radius:12px;background:var(--purple-light);color:var(--purple-dark)}
+.wc-vi{font-size:13px;color:var(--teal);font-weight:500;margin-left:auto}
+.btn-audio{background:none;border:1px solid var(--gray-border);border-radius:8px;padding:4px 9px;cursor:pointer;font-size:15px;color:var(--purple);transition:all .15s}
+.btn-audio:hover{background:var(--purple-light)}
+.btn-mark{font-size:12px;padding:4px 11px;border:1px solid var(--gray-border);border-radius:20px;background:var(--card);cursor:pointer;white-space:nowrap;transition:all .15s;font-family:inherit}
+.btn-mark.marked{background:var(--green-light);border-color:var(--green);color:var(--green)}
+.wce{padding:0 16px 14px;border-top:1px solid var(--gray-border)}
+.ex-title{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin:10px 0 7px}
+.ex-item{background:var(--gray-light);border-radius:var(--radius);padding:9px 13px;margin-bottom:7px}
+.ex-en{font-size:14px;line-height:1.5}
+.ex-en .hl{color:var(--purple);font-weight:600}
+.ex-vi{font-size:12px;color:var(--text-muted);font-style:italic;margin-top:2px}
+.tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.utag{font-size:11px;padding:2px 9px;border-radius:20px;background:var(--amber-light);color:var(--amber);border:1px solid rgba(186,117,23,.2)}
+.noun-info{background:var(--teal-light);border-radius:var(--radius);padding:9px 13px;margin-top:8px;font-size:13px;color:var(--teal)}
+.fc-box{display:flex;flex-direction:column;align-items:center;gap:14px}
+.flashcard{width:100%;max-width:520px;min-height:210px;background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);padding:30px 28px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;user-select:none;transition:box-shadow .2s}
+.flashcard:hover{box-shadow:0 4px 16px rgba(83,74,183,.12)}
+.fc-word{font-size:30px;font-weight:700;color:var(--purple-dark)}
+.fc-ph{font-size:14px;color:var(--text-muted)}
+.fc-tp{font-size:12px;padding:2px 10px;border-radius:20px;background:var(--purple-light);color:var(--purple-dark)}
+.fc-hint{font-size:13px;color:var(--text-muted)}
+.fc-mean{font-size:22px;font-weight:600;color:var(--teal)}
+.fc-ex{font-size:13px;color:var(--text-muted);font-style:italic;max-width:380px;line-height:1.5;margin-top:4px}
+.fc-abtn{padding:5px 14px;border:1px solid var(--purple);border-radius:var(--radius);background:var(--purple-light);cursor:pointer;font-size:13px;color:var(--purple);font-family:inherit}
+.fc-rat{display:flex;gap:10px;margin-top:6px}
+.fc-rat button{padding:6px 18px;border:none;border-radius:var(--radius);cursor:pointer;font-size:13px;font-family:inherit;font-weight:500}
+.btn-know{background:var(--green-light);color:var(--green)}
+.btn-no{background:var(--red-light);color:var(--red)}
+.fc-nav{display:flex;align-items:center;gap:14px}
+.fc-nav button{padding:8px 20px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;font-family:inherit}
+.fc-nav button:hover{background:var(--gray-light)}
+.fc-cnt{font-size:14px;color:var(--text-muted);min-width:55px;text-align:center}
+.qwrap{max-width:600px}
+.score-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.sc{padding:4px 13px;border-radius:20px;font-size:13px;font-weight:500}
+.sc.ok{background:var(--green-light);color:var(--green)}
+.sc.err{background:var(--red-light);color:var(--red)}
+.sc.tot{background:var(--purple-light);color:var(--purple-dark)}
+.quiz-q{background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:14px;font-size:15px;font-weight:500;line-height:1.6}
+.qctx{font-size:13px;color:var(--text-muted);font-style:italic;margin-top:5px;font-weight:400}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.opt{padding:11px 13px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;text-align:left;font-family:inherit;line-height:1.4;transition:all .15s}
+.opt:hover:not(:disabled){background:var(--gray-light)}
+.opt.correct{background:var(--green-light);border-color:var(--green);color:var(--green);font-weight:500}
+.opt.wrong{background:var(--red-light);border-color:var(--red);color:var(--red)}
+.fb{padding:11px 14px;border-radius:var(--radius);font-size:14px;margin-bottom:12px;line-height:1.5}
+.fb.ok{background:var(--green-light);color:var(--green)}
+.fb.fail{background:var(--red-light);color:var(--red)}
+.btn-p{padding:9px 22px;background:var(--purple);border:none;border-radius:var(--radius);color:#fff;cursor:pointer;font-size:14px;font-family:inherit;font-weight:500}
+.btn-p:hover{background:var(--purple-dark)}
+.fill-input{width:100%;padding:10px 14px;border:1px solid var(--gray-border);border-radius:var(--radius);font-size:16px;font-family:inherit;background:var(--card);color:var(--text);margin-bottom:9px}
+.fill-input:focus{outline:none;border-color:var(--purple)}
+.fill-actions{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.match-btn{padding:10px 12px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:13px;font-family:inherit;text-align:center;line-height:1.3;transition:all .15s}
+.match-btn:hover:not([disabled]){background:var(--gray-light)}
+.match-btn.selected{background:var(--purple-light);border-color:var(--purple);color:var(--purple-dark);font-weight:500}
+.match-btn.matched{background:var(--green-light);border-color:var(--green);color:var(--green);cursor:default}
+.match-btn.err{background:var(--red-light);border-color:var(--red)}
+.gram-section{background:var(--card);border:1px solid var(--gray-border);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:16px}
+.gram-title{font-size:16px;font-weight:600;color:var(--purple-dark);margin-bottom:6px}
+.gram-desc{font-size:13px;color:var(--text-muted);margin-bottom:14px;line-height:1.6}
+.gram-rule{background:var(--purple-light);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;font-size:13px;line-height:1.6}
+.gram-eg{background:var(--gray-light);border-radius:var(--radius);padding:9px 13px;margin-bottom:8px;font-size:13px}
+.gram-eg .en{color:var(--text);line-height:1.5}
+.gram-eg .en .hl{color:var(--purple);font-weight:600;text-decoration:underline;text-decoration-color:rgba(83,74,183,.4)}
+.gram-eg .vi{color:var(--text-muted);font-style:italic;font-size:12px;margin-top:2px}
+.gram-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.gram-tab{padding:6px 14px;border:1px solid var(--gray-border);border-radius:20px;cursor:pointer;font-size:13px;color:var(--text-muted);background:var(--card);font-family:inherit;transition:all .15s}
+.gram-tab.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.gram-tab:hover:not(.active){background:var(--gray-light)}
+.noun-ex-q{font-size:15px;font-weight:500;margin-bottom:12px;line-height:1.6;background:var(--gray-light);padding:12px 16px;border-radius:var(--radius)}
+.noun-opts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.noun-opt{padding:9px 18px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;font-family:inherit;transition:all .15s}
+.noun-opt:hover:not(:disabled){background:var(--gray-light)}
+.noun-opt.correct{background:var(--green-light);border-color:var(--green);color:var(--green);font-weight:500}
+.noun-opt.wrong{background:var(--red-light);border-color:var(--red);color:var(--red)}
+.explain-box{background:var(--amber-light);border-radius:var(--radius);padding:10px 14px;font-size:13px;color:#7a5000;margin-bottom:12px;line-height:1.6;display:none}
+.explain-box.show{display:block}
+.sent-parts{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.sent-part{padding:6px 12px;border-radius:var(--radius);font-size:14px;border:2px solid var(--gray-border);cursor:pointer;transition:all .2s;background:var(--card)}
+.sent-part:hover{background:var(--gray-light)}
+.sent-part.correct-pos{background:var(--green-light);border-color:var(--green);color:var(--green);font-weight:600}
+.sent-part.wrong-pos{background:var(--red-light);border-color:var(--red);color:var(--red)}
+@media(max-width:640px){.sidebar{display:none}.main{padding:14px}.opts{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <header>
   <h1>🎓 Thắng Tâm Học TOEIC</h1>
-  <span class="total-prog" id="totalProg">0 / 1000 từ</span>
+  <span class="total-prog" id="totalProg">0 / 100 từ</span>
 </header>
-
 <div class="layout">
   <aside class="sidebar" id="sidebar"></aside>
   <main class="main" id="mainContent"></main>
 </div>
-
 <script>
-// ============================================================
-// AUDIO — dùng Web Speech API (built-in trình duyệt, miễn phí)
-// ============================================================
-function speak(word) {
-  if (!window.speechSynthesis) return;
+function speak(w){
+  if(!window.speechSynthesis)return;
   window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(word);
-  u.lang = 'en-US';
-  u.rate = 0.85;
-  u.pitch = 1;
-  // ưu tiên giọng nữ Mỹ nếu có
-  const voices = window.speechSynthesis.getVoices();
-  const en = voices.find(v => v.lang === 'en-US' && v.name.includes('Female'))
-           || voices.find(v => v.lang === 'en-US')
-           || voices.find(v => v.lang.startsWith('en'));
-  if (en) u.voice = en;
+  const u=new SpeechSynthesisUtterance(w);
+  u.lang='en-US';u.rate=0.82;
+  const vs=window.speechSynthesis.getVoices();
+  const v=vs.find(x=>x.lang==='en-US')||vs.find(x=>x.lang.startsWith('en'));
+  if(v)u.voice=v;
   window.speechSynthesis.speak(u);
 }
 
-// ============================================================
-// DATA — 1000 từ / 67 ngày, mỗi từ có examples + usageTags
-// ============================================================
-const DAYS = [
-{topic:"Công việc & Nghề nghiệp", words:[
-  {w:"ability",tp:"n",ph:"/əˈbɪl.ə.ti/",m:"năng lực, khả năng",
-   ex:[{e:"She has the <b>ability</b> to solve complex problems quickly.",v:"Cô ấy có khả năng giải quyết các vấn đề phức tạp một cách nhanh chóng."},
-       {e:"His <b>ability</b> to lead the team impressed the director.",v:"Khả năng dẫn dắt nhóm của anh ấy đã gây ấn tượng với giám đốc."}],
-   tags:["HR","Interview","Performance review"]},
-  {w:"accomplish",tp:"v",ph:"/əˈkɑːm.plɪʃ/",m:"hoàn thành, thực hiện",
-   ex:[{e:"We need to <b>accomplish</b> this project before the deadline.",v:"Chúng ta cần hoàn thành dự án này trước hạn chót."}],
-   tags:["Project management","Performance"]},
-  {w:"career",tp:"n",ph:"/kəˈrɪr/",m:"sự nghiệp",
-   ex:[{e:"She decided to change her <b>career</b> and move into marketing.",v:"Cô ấy quyết định thay đổi sự nghiệp và chuyển sang marketing."},
-       {e:"A strong resume is essential for <b>career</b> advancement.",v:"Hồ sơ tốt rất cần thiết để thăng tiến trong sự nghiệp."}],
-   tags:["HR","Job application","Networking"]},
-  {w:"competent",tp:"adj",ph:"/ˈkɑːm.pə.tənt/",m:"có khả năng, đủ trình độ",
-   ex:[{e:"We are looking for a <b>competent</b> engineer to join our team.",v:"Chúng tôi đang tìm kiếm một kỹ sư có năng lực để tham gia nhóm."}],
-   tags:["Hiring","Performance review"]},
-  {w:"employer",tp:"n",ph:"/ɪmˈplɔɪ.ər/",m:"người sử dụng lao động",
-   ex:[{e:"The <b>employer</b> offered a competitive salary package.",v:"Người sử dụng lao động đề nghị một gói lương cạnh tranh."},
-       {e:"Always research your potential <b>employer</b> before an interview.",v:"Hãy luôn nghiên cứu về nhà tuyển dụng tiềm năng trước khi phỏng vấn."}],
-   tags:["HR","Job application"]},
-  {w:"employment",tp:"n",ph:"/ɪmˈplɔɪ.mənt/",m:"việc làm",
-   ex:[{e:"Full <b>employment</b> is one of the goals of economic policy.",v:"Toàn dụng lao động là một trong những mục tiêu của chính sách kinh tế."}],
-   tags:["Economics","HR","Policy"]},
-  {w:"hire",tp:"v",ph:"/haɪr/",m:"thuê, mướn",
-   ex:[{e:"The company plans to <b>hire</b> 50 new employees next quarter.",v:"Công ty dự định thuê 50 nhân viên mới vào quý tới."}],
-   tags:["Recruitment","HR"]},
-  {w:"intern",tp:"n",ph:"/ɪnˈtɜːrn/",m:"thực tập sinh",
-   ex:[{e:"The <b>intern</b> assisted the marketing team with the campaign.",v:"Thực tập sinh đã hỗ trợ nhóm marketing với chiến dịch."}],
-   tags:["HR","Training"]},
-  {w:"occupation",tp:"n",ph:"/ˌɒk.jʊˈpeɪ.ʃən/",m:"nghề nghiệp",
-   ex:[{e:"Please state your <b>occupation</b> on the application form.",v:"Vui lòng ghi nghề nghiệp của bạn trên đơn đăng ký."}],
-   tags:["Forms","Job application"]},
-  {w:"personnel",tp:"n",ph:"/ˌpɜːr.sənˈel/",m:"nhân viên",
-   ex:[{e:"The <b>personnel</b> department handles all employee records.",v:"Phòng nhân sự quản lý tất cả hồ sơ nhân viên."}],
-   tags:["HR","Administration"]},
-  {w:"profession",tp:"n",ph:"/prəˈfeʃ.ən/",m:"nghề nghiệp",
-   ex:[{e:"Teaching is a highly respected <b>profession</b> in many countries.",v:"Nghề dạy học được tôn trọng cao ở nhiều quốc gia."}],
-   tags:["Career","Social"]},
-  {w:"qualify",tp:"v",ph:"/ˈkwɒl.ɪ.faɪ/",m:"đủ điều kiện, tư cách",
-   ex:[{e:"Do you <b>qualify</b> for the senior management position?",v:"Bạn có đủ điều kiện cho vị trí quản lý cấp cao không?"}],
-   tags:["Job application","Requirements"]},
-  {w:"recruit",tp:"v",ph:"/rɪˈkruːt/",m:"tuyển dụng",
-   ex:[{e:"We are actively <b>recruiting</b> talented software engineers.",v:"Chúng tôi đang tích cực tuyển dụng các kỹ sư phần mềm tài năng."}],
-   tags:["HR","Hiring"]},
-  {w:"salary",tp:"n",ph:"/ˈsæl.ər.i/",m:"tiền lương",
-   ex:[{e:"Her <b>salary</b> was increased by 15% after the annual review.",v:"Lương của cô ấy đã tăng 15% sau kỳ đánh giá hàng năm."},
-       {e:"The job offers a competitive <b>salary</b> and benefits.",v:"Công việc này cung cấp mức lương và phúc lợi cạnh tranh."}],
-   tags:["Compensation","HR","Negotiation"]},
-  {w:"staff",tp:"n",ph:"/stæf/",m:"nhân viên",
-   ex:[{e:"All <b>staff</b> members must attend the safety training.",v:"Tất cả nhân viên phải tham dự khóa đào tạo an toàn."}],
-   tags:["HR","Management"]}
+// ═══════════════════════════════════════════════════
+// DATA — đúng thứ tự STT 1-100, chia 10 ngày × 10 từ
+// ═══════════════════════════════════════════════════
+const DAYS=[
+// ── NGÀY 1: STT 1–10 ──────────────────────────────
+{topic:"Ngày 1 · STT 1–10", words:[
+  {stt:1,w:"abide by",tp:"v",ph:"/əˈbaɪd baɪ/",m:"tuân theo, chấp hành",
+   noun:null,
+   ex:[{e:"All participants must <b>abide by</b> the rules of the contract.",v:"Tất cả người tham gia phải tuân theo các quy tắc của hợp đồng."},
+       {e:"Employees must <b>abide by</b> the company's dress code.",v:"Nhân viên phải tuân theo quy định trang phục của công ty."}],
+   tags:["Legal","Contract","HR"]},
+
+  {stt:2,w:"agreement",tp:"n",ph:"/əˈɡriːmənt/",m:"thỏa thuận, hợp đồng",
+   noun:{singular:"agreement",plural:"agreements",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>agreement</b> was signed. (chủ ngữ)","They reached an <b>agreement</b>. (tân ngữ)","We talked about the <b>agreement</b>. (sau giới từ)"]},
+   ex:[{e:"After weeks of negotiation, they finally reached an <b>agreement</b>.",v:"Sau nhiều tuần đàm phán, họ cuối cùng đã đạt được thỏa thuận."},
+       {e:"Both sides signed the <b>agreement</b> this morning.",v:"Cả hai bên đã ký thỏa thuận sáng nay."}],
+   tags:["Legal","Business","Contract"]},
+
+  {stt:3,w:"assurance",tp:"n",ph:"/əˈʃʊərəns/",m:"sự đảm bảo, cam kết",
+   noun:{singular:"assurance",plural:"assurances",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["His <b>assurance</b> helped the team. (chủ ngữ)","He gave us his <b>assurance</b>. (tân ngữ)"]},
+   ex:[{e:"The manager gave us his <b>assurance</b> that the project would be finished on time.",v:"Người quản lý cam kết với chúng tôi rằng dự án sẽ hoàn thành đúng hạn."},
+       {e:"I need an <b>assurance</b> that my data is safe.",v:"Tôi cần sự đảm bảo rằng dữ liệu của tôi an toàn."}],
+   tags:["Business","Trust","Communication"]},
+
+  {stt:4,w:"cancellation",tp:"n",ph:"/ˌkænsəˈleɪʃn/",m:"sự hủy bỏ",
+   noun:{singular:"cancellation",plural:"cancellations",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>cancellation</b> surprised everyone. (chủ ngữ)","We received a <b>cancellation</b>. (tân ngữ)","Due to the <b>cancellation</b>... (sau giới từ)"]},
+   ex:[{e:"The <b>cancellation</b> of the meeting was due to the bad weather.",v:"Việc hủy cuộc họp là do thời tiết xấu."},
+       {e:"Please inform us of any <b>cancellation</b> 24 hours in advance.",v:"Vui lòng thông báo về bất kỳ sự hủy nào trước 24 giờ."}],
+   tags:["Travel","Events","Service"]},
+
+  {stt:5,w:"determine",tp:"v",ph:"/dɪˈtɜːrmɪn/",m:"xác định, quyết định",
+   noun:null,
+   ex:[{e:"We need to <b>determine</b> the cause of the technical failure.",v:"Chúng ta cần xác định nguyên nhân của sự cố kỹ thuật."},
+       {e:"The manager will <b>determine</b> the best plan for the team.",v:"Người quản lý sẽ xác định kế hoạch tốt nhất cho nhóm."}],
+   tags:["Management","Analysis"]},
+
+  {stt:6,w:"engage",tp:"v",ph:"/ɪnˈɡeɪdʒ/",m:"thuê; thu hút; tham gia",
+   noun:null,
+   ex:[{e:"He <b>engaged</b> a lawyer to help him with the legal documents.",v:"Anh ấy đã thuê một luật sư giúp làm các tài liệu pháp lý."},
+       {e:"The company wants to <b>engage</b> more young customers.",v:"Công ty muốn thu hút thêm nhiều khách hàng trẻ."}],
+   tags:["Legal","HR","Marketing"]},
+
+  {stt:7,w:"establish",tp:"v",ph:"/ɪˈstæblɪʃ/",m:"thành lập, thiết lập",
+   noun:null,
+   ex:[{e:"The company was <b>established</b> in 1995.",v:"Công ty được thành lập vào năm 1995."},
+       {e:"We need to <b>establish</b> clear rules for the office.",v:"Chúng ta cần thiết lập các quy tắc rõ ràng cho văn phòng."}],
+   tags:["Business","Legal"]},
+
+  {stt:8,w:"obligate",tp:"v",ph:"/ˈɒblɪɡeɪt/",m:"bắt buộc, ràng buộc",
+   noun:null,
+   ex:[{e:"The contract <b>obligates</b> the company to pay all taxes.",v:"Hợp đồng ràng buộc công ty phải trả tất cả các loại thuế."},
+       {e:"You are not <b>obligated</b> to answer that question.",v:"Bạn không bị bắt buộc phải trả lời câu hỏi đó."}],
+   tags:["Legal","Contract","HR"]},
+
+  {stt:9,w:"party",tp:"n",ph:"/ˈpɑːrti/",m:"bên (trong hợp đồng); bữa tiệc",
+   noun:{singular:"party",plural:"parties",rule:"Đuôi -y sau phụ âm → đổi thành -ies",countable:true,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["Both <b>parties</b> must agree. (chủ ngữ)","We contacted the other <b>party</b>. (tân ngữ)"]},
+   ex:[{e:"Both <b>parties</b> must sign the contract before it becomes valid.",v:"Cả hai bên phải ký hợp đồng trước khi nó có hiệu lực."},
+       {e:"One <b>party</b> broke the agreement and had to pay a fine.",v:"Một bên đã vi phạm thỏa thuận và phải nộp phạt."}],
+   tags:["Legal","Contract"]},
+
+  {stt:10,w:"provision",tp:"n",ph:"/prəˈvɪʒn/",m:"điều khoản; sự cung cấp",
+   noun:{singular:"provision",plural:"provisions",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>provisions</b> are strict. (chủ ngữ số nhiều)","Read each <b>provision</b>. (tân ngữ)","Under this <b>provision</b>... (sau giới từ)"]},
+   ex:[{e:"The <b>provisions</b> of the contract are very strict.",v:"Các điều khoản của hợp đồng rất nghiêm ngặt."},
+       {e:"One <b>provision</b> says you must give 30 days' notice.",v:"Một điều khoản quy định bạn phải thông báo trước 30 ngày."}],
+   tags:["Legal","Contract"]}
 ]},
-{topic:"Tài chính & Ngân hàng", words:[
-  {w:"accounting",tp:"n",ph:"/əˈkaʊn.tɪŋ/",m:"kế toán, thanh toán",
-   ex:[{e:"She majored in <b>accounting</b> and now works for a Big Four firm.",v:"Cô ấy học chuyên ngành kế toán và hiện làm việc cho công ty Big Four."}],
-   tags:["Finance","Education","Career"]},
-  {w:"audit",tp:"n/v",ph:"/ˈɔː.dɪt/",m:"kiểm toán",
-   ex:[{e:"The external firm will <b>audit</b> our financial statements this month.",v:"Công ty bên ngoài sẽ kiểm toán báo cáo tài chính của chúng tôi tháng này."}],
-   tags:["Finance","Compliance","Accounting"]},
-  {w:"balance",tp:"n",ph:"/ˈbæl.əns/",m:"sự cân bằng, số dư",
-   ex:[{e:"Please check your account <b>balance</b> before making a transfer.",v:"Vui lòng kiểm tra số dư tài khoản trước khi chuyển khoản."},
-       {e:"The company must maintain a healthy cash <b>balance</b>.",v:"Công ty phải duy trì số dư tiền mặt lành mạnh."}],
-   tags:["Banking","Finance","Accounting"]},
-  {w:"bankrupt",tp:"adj",ph:"/ˈbæŋk.rʌpt/",m:"phá sản",
-   ex:[{e:"The company went <b>bankrupt</b> after losing its major contracts.",v:"Công ty phá sản sau khi mất các hợp đồng lớn."}],
-   tags:["Finance","Legal","Business"]},
-  {w:"budget",tp:"n",ph:"/ˈbʌdʒ.ɪt/",m:"ngân sách",
-   ex:[{e:"The marketing team exceeded its <b>budget</b> by 20% this quarter.",v:"Nhóm marketing đã vượt ngân sách 20% trong quý này."},
-       {e:"We need to <b>budget</b> carefully for the new product launch.",v:"Chúng ta cần lập ngân sách cẩn thận cho việc ra mắt sản phẩm mới."}],
-   tags:["Finance","Planning","Management"]},
-  {w:"capital",tp:"n",ph:"/ˈkæp.ɪ.tl/",m:"nguồn vốn",
-   ex:[{e:"The startup raised $2 million in <b>capital</b> from investors.",v:"Công ty khởi nghiệp đã huy động 2 triệu đô vốn từ các nhà đầu tư."}],
-   tags:["Investment","Startup","Finance"]},
-  {w:"currency",tp:"n",ph:"/ˈkɜːr.ən.si/",m:"tiền tệ",
-   ex:[{e:"The <b>currency</b> exchange rate affects international trade significantly.",v:"Tỷ giá tiền tệ ảnh hưởng đáng kể đến thương mại quốc tế."}],
-   tags:["Finance","International","Banking"]},
-  {w:"debt",tp:"n",ph:"/det/",m:"khoản nợ",
-   ex:[{e:"The government is working to reduce national <b>debt</b>.",v:"Chính phủ đang nỗ lực giảm nợ quốc gia."},
-       {e:"She paid off her student <b>debt</b> within five years.",v:"Cô ấy đã trả hết nợ sinh viên trong vòng năm năm."}],
-   tags:["Finance","Banking","Economics"]},
-  {w:"deduct",tp:"v",ph:"/dɪˈdʌkt/",m:"khấu trừ, trừ đi",
-   ex:[{e:"Tax will be <b>deducted</b> directly from your monthly salary.",v:"Thuế sẽ được khấu trừ trực tiếp từ lương hàng tháng của bạn."}],
-   tags:["Tax","Payroll","Finance"]},
-  {w:"dividend",tp:"n",ph:"/ˈdɪv.ɪ.dend/",m:"cổ tức",
-   ex:[{e:"The company declared a quarterly <b>dividend</b> of $0.50 per share.",v:"Công ty công bố cổ tức hàng quý là 0,50 đô mỗi cổ phiếu."}],
-   tags:["Investment","Stock market","Finance"]},
-  {w:"expenditure",tp:"n",ph:"/ɪkˈspen.dɪ.tʃər/",m:"chi phí, phí tổn",
-   ex:[{e:"Capital <b>expenditure</b> increased by 30% due to new equipment purchases.",v:"Chi phí vốn tăng 30% do mua sắm thiết bị mới."}],
-   tags:["Finance","Accounting","Budgeting"]},
-  {w:"inflation",tp:"n",ph:"/ɪnˈfleɪ.ʃən/",m:"lạm phát",
-   ex:[{e:"High <b>inflation</b> has reduced consumers' purchasing power.",v:"Lạm phát cao đã làm giảm sức mua của người tiêu dùng."}],
-   tags:["Economics","Finance","Banking"]},
-  {w:"invest",tp:"v",ph:"/ɪnˈvest/",m:"đầu tư",
-   ex:[{e:"They plan to <b>invest</b> heavily in renewable energy projects.",v:"Họ dự định đầu tư mạnh vào các dự án năng lượng tái tạo."}],
-   tags:["Finance","Business","Investment"]},
-  {w:"loan",tp:"n",ph:"/loʊn/",m:"sự vay nợ",
-   ex:[{e:"She applied for a bank <b>loan</b> to start her business.",v:"Cô ấy đã xin vay vốn ngân hàng để khởi nghiệp."},
-       {e:"The interest rate on the <b>loan</b> is 5% per annum.",v:"Lãi suất khoản vay là 5% mỗi năm."}],
-   tags:["Banking","Finance","Business"]},
-  {w:"profit",tp:"n",ph:"/ˈprɒf.ɪt/",m:"lợi nhuận",
-   ex:[{e:"The company reported a record <b>profit</b> of $10 million this year.",v:"Công ty báo cáo lợi nhuận kỷ lục 10 triệu đô năm nay."}],
-   tags:["Finance","Business","Accounting"]}
+
+// ── NGÀY 2: STT 11–20 ─────────────────────────────
+{topic:"Ngày 2 · STT 11–20", words:[
+  {stt:11,w:"resolve",tp:"v",ph:"/rɪˈzɒlv/",m:"giải quyết",
+   noun:null,
+   ex:[{e:"The manager is trying to <b>resolve</b> the dispute between the employees.",v:"Người quản lý đang cố gắng giải quyết tranh chấp giữa các nhân viên."},
+       {e:"We must <b>resolve</b> this problem before the client arrives.",v:"Chúng ta phải giải quyết vấn đề này trước khi khách hàng đến."}],
+   tags:["Management","HR","Customer service"]},
+
+  {stt:12,w:"specific",tp:"adj",ph:"/spəˈsɪfɪk/",m:"cụ thể, đặc biệt",
+   noun:null,
+   ex:[{e:"Please give me <b>specific</b> instructions on how to use this machine.",v:"Vui lòng cho tôi hướng dẫn cụ thể về cách sử dụng máy này."},
+       {e:"We need a <b>specific</b> answer, not a general one.",v:"Chúng tôi cần một câu trả lời cụ thể, không phải câu trả lời chung."}],
+   tags:["Communication","Management"]},
+
+  {stt:13,w:"attract",tp:"v",ph:"/əˈtrækt/",m:"thu hút",
+   noun:null,
+   ex:[{e:"The new marketing campaign is designed to <b>attract</b> more customers.",v:"Chiến dịch tiếp thị mới được thiết kế để thu hút nhiều khách hàng hơn."},
+       {e:"Lower prices will <b>attract</b> more buyers.",v:"Giá thấp hơn sẽ thu hút nhiều người mua hơn."}],
+   tags:["Marketing","Sales"]},
+
+  {stt:14,w:"compare",tp:"v",ph:"/kəmˈpeər/",m:"so sánh",
+   noun:null,
+   ex:[{e:"You should <b>compare</b> the prices of different brands before buying.",v:"Bạn nên so sánh giá của các thương hiệu khác nhau trước khi mua."},
+       {e:"<b>Compare</b> the two offers and choose the better one.",v:"So sánh hai đề nghị và chọn cái tốt hơn."}],
+   tags:["Research","Retail","Decision-making"]},
+
+  {stt:15,w:"competition",tp:"n",ph:"/ˌkɒmpəˈtɪʃn/",m:"sự cạnh tranh; cuộc thi",
+   noun:{singular:"competition",plural:"competitions",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>competition</b> is very strong. (chủ ngữ)","We face a lot of <b>competition</b>. (tân ngữ)","In this <b>competition</b>... (sau giới từ)"]},
+   ex:[{e:"There is a lot of <b>competition</b> in the smartphone market.",v:"Có rất nhiều sự cạnh tranh trong thị trường điện thoại thông minh."},
+       {e:"Our company won the sales <b>competition</b> this year.",v:"Công ty chúng tôi đã thắng cuộc thi doanh số năm nay."}],
+   tags:["Business","Market","Strategy"]},
+
+  {stt:16,w:"consume",tp:"v",ph:"/kənˈsjuːm/",m:"tiêu thụ, sử dụng",
+   noun:null,
+   ex:[{e:"This car <b>consumes</b> a lot of fuel.",v:"Chiếc xe này tiêu thụ nhiều nhiên liệu."},
+       {e:"People <b>consume</b> more coffee in winter.",v:"Mọi người tiêu thụ nhiều cà phê hơn vào mùa đông."}],
+   tags:["Economics","Consumer"]},
+
+  {stt:17,w:"convince",tp:"v",ph:"/kənˈvɪns/",m:"thuyết phục",
+   noun:null,
+   ex:[{e:"I tried to <b>convince</b> him to join our team.",v:"Tôi đã cố gắng thuyết phục anh ấy tham gia nhóm của chúng tôi."},
+       {e:"The salesperson <b>convinced</b> me to buy the product.",v:"Nhân viên bán hàng đã thuyết phục tôi mua sản phẩm."}],
+   tags:["Sales","Communication","Negotiation"]},
+
+  {stt:18,w:"inspiration",tp:"n",ph:"/ˌɪnspəˈreɪʃn/",m:"nguồn cảm hứng",
+   noun:{singular:"inspiration",plural:null,rule:"Thường không đếm được (uncountable)",countable:false,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["<b>Inspiration</b> is important. (chủ ngữ - không đếm)","He is my <b>inspiration</b>. (tân ngữ)"]},
+   ex:[{e:"His success is a great <b>inspiration</b> to all of us.",v:"Sự thành công của anh ấy là nguồn cảm hứng lớn cho tất cả chúng ta."},
+       {e:"She found <b>inspiration</b> from the books she read.",v:"Cô ấy tìm thấy nguồn cảm hứng từ những cuốn sách cô đọc."}],
+   tags:["Motivation","HR"]},
+
+  {stt:19,w:"market",tp:"n",ph:"/ˈmɑːrkɪt/",m:"thị trường; chợ",
+   noun:{singular:"market",plural:"markets",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>market</b> is growing. (chủ ngữ)","We entered a new <b>market</b>. (tân ngữ)","In the <b>market</b>... (sau giới từ)"]},
+   ex:[{e:"We need to analyze the <b>market</b> before launching a new product.",v:"Chúng ta cần phân tích thị trường trước khi tung sản phẩm mới ra."},
+       {e:"The Asian <b>market</b> is growing very fast.",v:"Thị trường châu Á đang tăng trưởng rất nhanh."}],
+   tags:["Business","Economics","Marketing"]},
+
+  {stt:20,w:"persuasion",tp:"n",ph:"/pəˈsweɪʒn/",m:"sự thuyết phục",
+   noun:{singular:"persuasion",plural:null,rule:"Không đếm được (uncountable)",countable:false,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["<b>Persuasion</b> is a key skill. (chủ ngữ)","He used <b>persuasion</b>. (tân ngữ)"]},
+   ex:[{e:"It took a lot of <b>persuasion</b> to get her to agree.",v:"Cần rất nhiều sự thuyết phục mới khiến cô ấy đồng ý."},
+       {e:"Good salespeople have the skill of <b>persuasion</b>.",v:"Nhân viên bán hàng giỏi có kỹ năng thuyết phục."}],
+   tags:["Sales","Communication","Skills"]}
 ]},
-{topic:"Quản lý & Tổ chức", words:[
-  {w:"administration",tp:"n",ph:"/ədˌmɪn.ɪˈstreɪ.ʃən/",m:"sự quản lý, quản trị",
-   ex:[{e:"The <b>administration</b> team manages all office operations.",v:"Nhóm quản trị điều hành tất cả hoạt động văn phòng."}],
-   tags:["Management","HR","Operations"]},
-  {w:"agenda",tp:"n",ph:"/əˈdʒen.də/",m:"chương trình nghị sự",
-   ex:[{e:"Please review the meeting <b>agenda</b> before tomorrow's conference.",v:"Vui lòng xem qua chương trình cuộc họp trước hội nghị ngày mai."}],
-   tags:["Meetings","Communication","Planning"]},
-  {w:"assign",tp:"v",ph:"/əˈsaɪn/",m:"phân công, chia việc",
-   ex:[{e:"The manager <b>assigned</b> each team member a specific task.",v:"Người quản lý đã phân công nhiệm vụ cụ thể cho từng thành viên nhóm."}],
-   tags:["Management","Project","HR"]},
-  {w:"committee",tp:"n",ph:"/kəˈmɪt.i/",m:"ủy ban",
-   ex:[{e:"The <b>committee</b> will review all budget proposals next week.",v:"Ủy ban sẽ xem xét tất cả đề xuất ngân sách vào tuần tới."}],
-   tags:["Organization","Governance","Management"]},
-  {w:"department",tp:"n",ph:"/dɪˈpɑːrt.mənt/",m:"khoa, bộ phận",
-   ex:[{e:"The IT <b>department</b> is upgrading all computer systems.",v:"Phòng IT đang nâng cấp tất cả các hệ thống máy tính."}],
-   tags:["Organization","Business","HR"]},
-  {w:"director",tp:"n",ph:"/dɪˈrek.tər/",m:"giám đốc",
-   ex:[{e:"The <b>director</b> approved the new marketing strategy.",v:"Giám đốc đã phê duyệt chiến lược marketing mới."}],
-   tags:["Leadership","Management","Corporate"]},
-  {w:"executive",tp:"n",ph:"/ɪɡˈzek.jʊ.tɪv/",m:"lãnh đạo điều hành",
-   ex:[{e:"The senior <b>executives</b> will meet to discuss the merger.",v:"Các lãnh đạo cấp cao sẽ gặp nhau để thảo luận về việc sáp nhập."}],
-   tags:["Leadership","Corporate","C-suite"]},
-  {w:"headquarters",tp:"n",ph:"/ˈhedˌkwɔːr.tərz/",m:"trụ sở, bộ chỉ huy",
-   ex:[{e:"The company's <b>headquarters</b> is located in New York City.",v:"Trụ sở của công ty đặt tại thành phố New York."}],
-   tags:["Corporate","Location","Business"]},
-  {w:"manage",tp:"v",ph:"/ˈmæn.ɪdʒ/",m:"quản lý",
-   ex:[{e:"She was promoted to <b>manage</b> the entire sales division.",v:"Cô ấy được thăng chức để quản lý toàn bộ bộ phận kinh doanh."}],
-   tags:["Leadership","HR","Operations"]},
-  {w:"mandatory",tp:"adj",ph:"/ˈmæn.də.tɔːr.i/",m:"bắt buộc",
-   ex:[{e:"Attendance at the safety briefing is <b>mandatory</b> for all staff.",v:"Việc tham dự buổi thuyết trình an toàn là bắt buộc với tất cả nhân viên."}],
-   tags:["Compliance","HR","Policy"]},
-  {w:"organize",tp:"v",ph:"/ˈɔːr.ɡə.naɪz/",m:"tổ chức, sắp xếp",
-   ex:[{e:"Can you <b>organize</b> the files by date and department?",v:"Bạn có thể sắp xếp các tệp theo ngày và phòng ban không?"}],
-   tags:["Administration","Planning","Efficiency"]},
-  {w:"policy",tp:"n",ph:"/ˈpɒl.ɪ.si/",m:"chính sách",
-   ex:[{e:"The company has a strict no-smoking <b>policy</b> on all premises.",v:"Công ty có chính sách nghiêm cấm hút thuốc trong tất cả cơ sở."}],
-   tags:["HR","Compliance","Management"]},
-  {w:"responsibility",tp:"n",ph:"/rɪˌspɒn.səˈbɪl.ɪ.ti/",m:"trách nhiệm",
-   ex:[{e:"It is your <b>responsibility</b> to submit the report on time.",v:"Đó là trách nhiệm của bạn để nộp báo cáo đúng hạn."}],
-   tags:["Management","HR","Professional"]},
-  {w:"supervise",tp:"v",ph:"/ˈsuː.pər.vaɪz/",m:"giám sát",
-   ex:[{e:"He was asked to <b>supervise</b> the new interns during their first month.",v:"Anh ấy được yêu cầu giám sát các thực tập sinh mới trong tháng đầu."}],
-   tags:["Management","HR","Leadership"]},
-  {w:"authority",tp:"n",ph:"/əˈθɔːr.ɪ.ti/",m:"quyền thế, nhà chức trách",
-   ex:[{e:"Only senior managers have the <b>authority</b> to approve expenses.",v:"Chỉ các quản lý cấp cao mới có thẩm quyền phê duyệt chi phí."}],
-   tags:["Management","Legal","Governance"]}
+
+// ── NGÀY 3: STT 21–30 ─────────────────────────────
+{topic:"Ngày 3 · STT 21–30", words:[
+  {stt:21,w:"productive",tp:"adj",ph:"/prəˈdʌktɪv/",m:"năng suất, hiệu quả",
+   noun:null,
+   ex:[{e:"The morning meeting was very <b>productive</b>.",v:"Cuộc họp buổi sáng rất hiệu quả."},
+       {e:"Working from home can be very <b>productive</b>.",v:"Làm việc tại nhà có thể rất hiệu quả."}],
+   tags:["HR","Management","Work"]},
+
+  {stt:22,w:"satisfaction",tp:"n",ph:"/ˌsætɪsˈfækʃn/",m:"sự hài lòng",
+   noun:{singular:"satisfaction",plural:null,rule:"Không đếm được (uncountable)",countable:false,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["<b>Satisfaction</b> is our main goal. (chủ ngữ)","We measure customer <b>satisfaction</b>. (tân ngữ)","For your <b>satisfaction</b>... (sau giới từ)"]},
+   ex:[{e:"Customer <b>satisfaction</b> is our top priority.",v:"Sự hài lòng của khách hàng là ưu tiên hàng đầu của chúng tôi."},
+       {e:"The survey measures employee <b>satisfaction</b>.",v:"Cuộc khảo sát đo lường sự hài lòng của nhân viên."}],
+   tags:["Customer service","Quality","HR"]},
+
+  {stt:23,w:"currently",tp:"adv",ph:"/ˈkɜːrəntli/",m:"hiện tại, hiện nay",
+   noun:null,
+   ex:[{e:"We are <b>currently</b> looking for a new office manager.",v:"Chúng tôi hiện đang tìm kiếm quản lý văn phòng mới."},
+       {e:"The office is <b>currently</b> closed for renovation.",v:"Văn phòng hiện đang đóng cửa để cải tạo."}],
+   tags:["Communication","General"]},
+
+  {stt:24,w:"fad",tp:"n",ph:"/fæd/",m:"mốt nhất thời, xu hướng ngắn ngủi",
+   noun:{singular:"fad",plural:"fads",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["It was just a <b>fad</b>. (chủ ngữ)","Don't follow every <b>fad</b>. (tân ngữ)"]},
+   ex:[{e:"The use of that app was just a <b>fad</b> that lasted a few months.",v:"Việc sử dụng ứng dụng đó chỉ là mốt nhất thời kéo dài vài tháng."},
+       {e:"Not every new technology is a <b>fad</b> — some are here to stay.",v:"Không phải mọi công nghệ mới đều là mốt nhất thời."}],
+   tags:["Marketing","Consumer","Social media"]},
+
+  {stt:25,w:"characteristic",tp:"n",ph:"/ˌkærəktəˈrɪstɪk/",m:"đặc điểm, tính chất",
+   noun:{singular:"characteristic",plural:"characteristics",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["These <b>characteristics</b> make it special. (chủ ngữ)","Quality is a key <b>characteristic</b>. (tân ngữ)"]},
+   ex:[{e:"High quality is a <b>characteristic</b> of this brand.",v:"Chất lượng cao là một đặc điểm của thương hiệu này."},
+       {e:"List the main <b>characteristics</b> of a good leader.",v:"Liệt kê các đặc điểm chính của một nhà lãnh đạo giỏi."}],
+   tags:["Business","HR","Quality"]},
+
+  {stt:26,w:"consequence",tp:"n",ph:"/ˈkɒnsɪkwəns/",m:"hậu quả, kết quả",
+   noun:{singular:"consequence",plural:"consequences",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>consequences</b> were serious. (chủ ngữ)","Face the <b>consequences</b>. (tân ngữ)","As a <b>consequence</b>... (thành ngữ sau giới từ)"]},
+   ex:[{e:"The low sales are a <b>consequence</b> of the poor marketing strategy.",v:"Doanh số thấp là hậu quả của chiến lược marketing kém."},
+       {e:"Think about the <b>consequences</b> before making a decision.",v:"Hãy suy nghĩ về hậu quả trước khi đưa ra quyết định."}],
+   tags:["Management","Decision-making"]},
+
+  {stt:27,w:"cover",tp:"v",ph:"/ˈkʌvər/",m:"bao gồm; che đậy",
+   noun:null,
+   ex:[{e:"The insurance policy <b>covers</b> all medical expenses.",v:"Chính sách bảo hiểm bao gồm tất cả chi phí y tế."},
+       {e:"This course <b>covers</b> the basics of English grammar.",v:"Khóa học này bao gồm các kiến thức cơ bản về ngữ pháp tiếng Anh."}],
+   tags:["Insurance","Education","General"]},
+
+  {stt:28,w:"expiration",tp:"n",ph:"/ˌekspɪˈreɪʃn/",m:"sự hết hạn",
+   noun:{singular:"expiration",plural:null,rule:"Thường dùng trong cụm 'expiration date', không đếm được",countable:false,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["Check the <b>expiration</b> date. (tân ngữ)","The <b>expiration</b> is next month. (chủ ngữ)"]},
+   ex:[{e:"Please check the <b>expiration</b> date on the milk carton.",v:"Vui lòng kiểm tra ngày hết hạn trên hộp sữa."},
+       {e:"Your contract is near its <b>expiration</b> date.",v:"Hợp đồng của bạn gần đến ngày hết hạn."}],
+   tags:["Legal","Food","Administration"]},
+
+  {stt:29,w:"frequently",tp:"adv",ph:"/ˈfriːkwəntli/",m:"thường xuyên",
+   noun:null,
+   ex:[{e:"Our team meets <b>frequently</b> to discuss project progress.",v:"Nhóm của chúng tôi thường xuyên gặp nhau để thảo luận tiến độ dự án."},
+       {e:"She <b>frequently</b> travels to different countries for work.",v:"Cô ấy thường xuyên đi đến các quốc gia khác nhau vì công việc."}],
+   tags:["Communication","Work"]},
+
+  {stt:30,w:"imply",tp:"v",ph:"/ɪmˈplaɪ/",m:"ngụ ý, ám chỉ",
+   noun:null,
+   ex:[{e:"His silence seemed to <b>imply</b> agreement.",v:"Sự im lặng của anh ấy có vẻ ngụ ý đồng ý."},
+       {e:"The report <b>implies</b> that the project may be delayed.",v:"Báo cáo ngụ ý rằng dự án có thể bị trễ."}],
+   tags:["Communication","Writing"]}
 ]},
-{topic:"Bán hàng & Marketing", words:[
-  {w:"advertise",tp:"v",ph:"/ˈæd.vər.taɪz/",m:"quảng cáo",
-   ex:[{e:"We will <b>advertise</b> the new product on social media platforms.",v:"Chúng tôi sẽ quảng cáo sản phẩm mới trên các nền tảng mạng xã hội."}],
-   tags:["Marketing","Media","Promotion"]},
-  {w:"affordable",tp:"adj",ph:"/əˈfɔːr.də.bl/",m:"vừa túi tiền",
-   ex:[{e:"The store offers high-quality products at <b>affordable</b> prices.",v:"Cửa hàng cung cấp sản phẩm chất lượng cao với giá cả phải chăng."}],
-   tags:["Retail","Pricing","Consumer"]},
-  {w:"brand",tp:"n",ph:"/brænd/",m:"nhãn hàng, thương hiệu",
-   ex:[{e:"Building a strong <b>brand</b> identity takes years of consistent effort.",v:"Xây dựng nhận diện thương hiệu mạnh cần nhiều năm nỗ lực nhất quán."},
-       {e:"This <b>brand</b> is well-known for its innovative design.",v:"Thương hiệu này nổi tiếng với thiết kế sáng tạo."}],
-   tags:["Marketing","Business","Strategy"]},
-  {w:"campaign",tp:"n",ph:"/kæmˈpeɪn/",m:"chiến dịch",
-   ex:[{e:"The advertising <b>campaign</b> increased sales by 40%.",v:"Chiến dịch quảng cáo đã tăng doanh số lên 40%."}],
-   tags:["Marketing","Advertising","Strategy"]},
-  {w:"competitive",tp:"adj",ph:"/kəmˈpet.ɪ.tɪv/",m:"có tính cạnh tranh",
-   ex:[{e:"We offer <b>competitive</b> pricing to attract more customers.",v:"Chúng tôi cung cấp giá cạnh tranh để thu hút nhiều khách hàng hơn."}],
-   tags:["Business","Pricing","Strategy"]},
-  {w:"consumer",tp:"n",ph:"/kənˈsuː.mər/",m:"người tiêu dùng",
-   ex:[{e:"<b>Consumer</b> demand for eco-friendly products is growing rapidly.",v:"Nhu cầu của người tiêu dùng về sản phẩm thân thiện với môi trường đang tăng nhanh."}],
-   tags:["Marketing","Economics","Retail"]},
-  {w:"customer",tp:"n",ph:"/ˈkʌs.tə.mər/",m:"khách hàng",
-   ex:[{e:"<b>Customer</b> satisfaction is our top priority.",v:"Sự hài lòng của khách hàng là ưu tiên hàng đầu của chúng tôi."},
-       {e:"We have over 10,000 loyal <b>customers</b> worldwide.",v:"Chúng tôi có hơn 10.000 khách hàng trung thành trên toàn thế giới."}],
-   tags:["Sales","Service","CRM"]},
-  {w:"discount",tp:"n",ph:"/ˈdɪs.kaʊnt/",m:"sự giảm giá",
-   ex:[{e:"Members receive a 20% <b>discount</b> on all purchases.",v:"Thành viên nhận được giảm giá 20% cho tất cả giao dịch mua."}],
-   tags:["Retail","Pricing","Promotion"]},
-  {w:"feedback",tp:"n",ph:"/ˈfiːd.bæk/",m:"phản hồi",
-   ex:[{e:"Customer <b>feedback</b> helps us improve our products and services.",v:"Phản hồi từ khách hàng giúp chúng tôi cải thiện sản phẩm và dịch vụ."}],
-   tags:["Customer service","Quality","Management"]},
-  {w:"launch",tp:"v",ph:"/lɔːntʃ/",m:"ra mắt, khởi chạy",
-   ex:[{e:"Apple will <b>launch</b> its new product line next spring.",v:"Apple sẽ ra mắt dòng sản phẩm mới vào mùa xuân tới."}],
-   tags:["Marketing","Product","Strategy"]},
-  {w:"marketing",tp:"n",ph:"/ˈmɑːr.kɪ.tɪŋ/",m:"tiếp thị",
-   ex:[{e:"Digital <b>marketing</b> has transformed how businesses reach customers.",v:"Marketing kỹ thuật số đã thay đổi cách doanh nghiệp tiếp cận khách hàng."}],
-   tags:["Business","Advertising","Strategy"]},
-  {w:"merchandise",tp:"n",ph:"/ˈmɜːr.tʃən.daɪz/",m:"hàng hóa",
-   ex:[{e:"The store displays its <b>merchandise</b> attractively to boost sales.",v:"Cửa hàng trưng bày hàng hóa hấp dẫn để thúc đẩy doanh số."}],
-   tags:["Retail","Sales","Inventory"]},
-  {w:"promotion",tp:"n",ph:"/prəˈmoʊ.ʃən/",m:"khuyến mãi, thăng chức",
-   ex:[{e:"The end-of-year <b>promotion</b> brought in record sales.",v:"Chương trình khuyến mãi cuối năm mang lại doanh số kỷ lục."},
-       {e:"She earned a <b>promotion</b> to senior manager after two years.",v:"Cô ấy được thăng chức lên quản lý cấp cao sau hai năm."}],
-   tags:["Marketing","HR","Retail"]},
-  {w:"retail",tp:"n",ph:"/ˈriː.teɪl/",m:"bán lẻ",
-   ex:[{e:"Online <b>retail</b> sales have surpassed traditional store sales.",v:"Doanh số bán lẻ trực tuyến đã vượt qua doanh số cửa hàng truyền thống."}],
-   tags:["Commerce","Sales","Business"]},
-  {w:"wholesale",tp:"n",ph:"/ˈhoʊl.seɪl/",m:"bán sỉ",
-   ex:[{e:"They buy goods at <b>wholesale</b> prices and sell them at retail.",v:"Họ mua hàng với giá sỉ và bán lại với giá lẻ."}],
-   tags:["Commerce","Supply chain","Pricing"]}
-]},
-{topic:"Du lịch & Vận tải", words:[
-  {w:"airline",tp:"n",ph:"/ˈer.laɪn/",m:"công ty hàng không",
-   ex:[{e:"The <b>airline</b> announced new routes to Southeast Asia.",v:"Hãng hàng không thông báo các tuyến đường mới đến Đông Nam Á."}],
-   tags:["Travel","Aviation","Transport"]},
-  {w:"aisle",tp:"n",ph:"/aɪl/",m:"lối đi giữa các dãy ghế",
-   ex:[{e:"Could I have an <b>aisle</b> seat? I prefer to stretch my legs.",v:"Tôi có thể ngồi ghế lối đi không? Tôi muốn duỗi chân."}],
-   tags:["Travel","Aviation","Hotel"]},
-  {w:"baggage claim",tp:"n",ph:"/ˈbæɡ.ɪdʒ kleɪm/",m:"chỗ nhận hành lý",
-   ex:[{e:"Please proceed to <b>baggage claim</b> area 3 to collect your luggage.",v:"Vui lòng đến khu vực nhận hành lý số 3 để lấy hành lý."}],
-   tags:["Airport","Travel","Aviation"]},
-  {w:"cancel",tp:"v",ph:"/ˈkæn.sl/",m:"hủy bỏ",
-   ex:[{e:"The flight was <b>cancelled</b> due to severe weather conditions.",v:"Chuyến bay đã bị hủy do điều kiện thời tiết xấu."}],
-   tags:["Travel","Booking","Service"]},
-  {w:"check in",tp:"v",ph:"/tʃek ɪn/",m:"làm thủ tục nhận phòng/vé",
-   ex:[{e:"Passengers must <b>check in</b> at least two hours before departure.",v:"Hành khách phải làm thủ tục ít nhất hai tiếng trước khi khởi hành."}],
-   tags:["Airport","Hotel","Travel"]},
-  {w:"destination",tp:"n",ph:"/ˌdes.tɪˈneɪ.ʃən/",m:"điểm đến",
-   ex:[{e:"Paris is one of the most popular tourist <b>destinations</b> in the world.",v:"Paris là một trong những điểm đến du lịch phổ biến nhất thế giới."}],
-   tags:["Travel","Tourism","Geography"]},
-  {w:"fare",tp:"n",ph:"/fer/",m:"tiền vé, tiền xe",
-   ex:[{e:"The bus <b>fare</b> has increased by 10% this year.",v:"Tiền vé xe buýt đã tăng 10% năm nay."}],
-   tags:["Transport","Travel","Pricing"]},
-  {w:"flight",tp:"n",ph:"/flaɪt/",m:"chuyến bay",
-   ex:[{e:"Our <b>flight</b> to London departs at 8:30 AM from Terminal 2.",v:"Chuyến bay đến London của chúng tôi khởi hành lúc 8:30 SA từ Nhà ga 2."}],
-   tags:["Aviation","Travel","Transport"]},
-  {w:"itinerary",tp:"n",ph:"/aɪˈtɪn.ər.er.i/",m:"lịch trình hành trình",
-   ex:[{e:"Please send me the travel <b>itinerary</b> for the business trip.",v:"Vui lòng gửi cho tôi lịch trình chuyến công tác."}],
-   tags:["Travel","Planning","Business travel"]},
-  {w:"luggage",tp:"n",ph:"/ˈlʌɡ.ɪdʒ/",m:"hành lý",
-   ex:[{e:"Each passenger is allowed one piece of carry-on <b>luggage</b>.",v:"Mỗi hành khách được phép mang một kiện hành lý xách tay."}],
-   tags:["Travel","Airport","Aviation"]},
-  {w:"reservation",tp:"n",ph:"/ˌrez.ərˈveɪ.ʃən/",m:"sự đặt trước",
-   ex:[{e:"I'd like to make a <b>reservation</b> for two nights, please.",v:"Tôi muốn đặt phòng cho hai đêm, làm ơn."}],
-   tags:["Hotel","Restaurant","Booking"]},
-  {w:"route",tp:"n",ph:"/raʊt/",m:"tuyến đường, lộ trình",
-   ex:[{e:"The scenic <b>route</b> takes longer but offers beautiful views.",v:"Lộ trình phong cảnh mất nhiều thời gian hơn nhưng có cảnh đẹp."}],
-   tags:["Transport","Navigation","Travel"]},
-  {w:"runway",tp:"n",ph:"/ˈrʌn.weɪ/",m:"đường băng",
-   ex:[{e:"The plane waited on the <b>runway</b> for 30 minutes before takeoff.",v:"Máy bay đợi trên đường băng 30 phút trước khi cất cánh."}],
-   tags:["Aviation","Airport"]},
-  {w:"sightseeing",tp:"n",ph:"/ˈsaɪtˌsiː.ɪŋ/",m:"tham quan",
-   ex:[{e:"We spent the afternoon <b>sightseeing</b> in the old town.",v:"Chúng tôi dành buổi chiều tham quan khu phố cổ."}],
-   tags:["Tourism","Travel","Leisure"]},
-  {w:"tourism",tp:"n",ph:"/ˈtʊr.ɪ.zəm/",m:"du lịch",
-   ex:[{e:"<b>Tourism</b> accounts for 15% of the country's GDP.",v:"Du lịch chiếm 15% GDP của đất nước."}],
-   tags:["Economy","Travel","Industry"]}
-]},
-{topic:"Văn phòng & Thiết bị", words:[
-  {w:"appliance",tp:"n",ph:"/əˈplaɪ.əns/",m:"thiết bị, dụng cụ",
-   ex:[{e:"All office <b>appliances</b> must be switched off at the end of the day.",v:"Tất cả thiết bị văn phòng phải được tắt vào cuối ngày."}],
-   tags:["Office","Equipment","Energy"]},
-  {w:"binder",tp:"n",ph:"/ˈbaɪn.dər/",m:"bìa ôm tài liệu",
-   ex:[{e:"Please organize these reports in a <b>binder</b> for the client meeting.",v:"Vui lòng sắp xếp các báo cáo này vào bìa để chuẩn bị cho cuộc họp khách hàng."}],
-   tags:["Office","Stationery","Organization"]},
-  {w:"briefcase",tp:"n",ph:"/ˈbriːf.keɪs/",m:"cặp tài liệu",
-   ex:[{e:"He carried all the contract documents in his leather <b>briefcase</b>.",v:"Anh ấy đựng tất cả tài liệu hợp đồng trong chiếc cặp da."}],
-   tags:["Office","Business","Professional"]},
-  {w:"document",tp:"n",ph:"/ˈdɒk.jʊ.mənt/",m:"tài liệu, văn kiện",
-   ex:[{e:"Please sign and return the <b>document</b> by Friday.",v:"Vui lòng ký và trả lại tài liệu trước thứ Sáu."}],
-   tags:["Administration","Legal","Office"]},
-  {w:"folder",tp:"n",ph:"/ˈfoʊl.dər/",m:"bìa cứng, xấp tài liệu",
-   ex:[{e:"All client files should be stored in a labeled <b>folder</b>.",v:"Tất cả hồ sơ khách hàng phải được lưu trữ trong một bìa có nhãn."}],
-   tags:["Office","Organization","Filing"]},
-  {w:"install",tp:"v",ph:"/ɪnˈstɔːl/",m:"cài đặt",
-   ex:[{e:"IT will <b>install</b> the new software on all computers tomorrow.",v:"Bộ phận IT sẽ cài đặt phần mềm mới trên tất cả máy tính vào ngày mai."}],
-   tags:["IT","Software","Technology"]},
-  {w:"laptop",tp:"n",ph:"/ˈlæp.tɒp/",m:"máy tính xách tay",
-   ex:[{e:"All employees are issued a company <b>laptop</b> on their first day.",v:"Tất cả nhân viên được cấp máy tính xách tay của công ty vào ngày đầu tiên."}],
-   tags:["IT","Equipment","Office"]},
-  {w:"software",tp:"n",ph:"/ˈsɒft.weər/",m:"phần mềm",
-   ex:[{e:"We use project management <b>software</b> to track all tasks.",v:"Chúng tôi sử dụng phần mềm quản lý dự án để theo dõi tất cả nhiệm vụ."}],
-   tags:["IT","Technology","Business"]},
-  {w:"stapler",tp:"n",ph:"/ˈsteɪ.plər/",m:"máy bấm kim",
-   ex:[{e:"Could you pass me the <b>stapler</b>? I need to bind these pages.",v:"Bạn có thể đưa cho tôi máy bấm kim không? Tôi cần đóng những trang này lại."}],
-   tags:["Office","Stationery"]},
-  {w:"stationery",tp:"n",ph:"/ˈsteɪ.ʃən.er.i/",m:"đồ dùng văn phòng",
-   ex:[{e:"We need to reorder <b>stationery</b> — we're running low on pens and paper.",v:"Chúng tôi cần đặt lại văn phòng phẩm — bút và giấy đang cạn dần."}],
-   tags:["Office","Supplies","Administration"]},
-  {w:"switchboard",tp:"n",ph:"/ˈswɪtʃ.bɔːrd/",m:"tổng đài",
-   ex:[{e:"Please call the <b>switchboard</b> and ask to be connected to HR.",v:"Vui lòng gọi đến tổng đài và yêu cầu kết nối đến bộ phận nhân sự."}],
-   tags:["Communication","Office","Telephone"]},
-  {w:"update",tp:"v",ph:"/ʌpˈdeɪt/",m:"cập nhật",
-   ex:[{e:"Please <b>update</b> the spreadsheet with the latest sales figures.",v:"Vui lòng cập nhật bảng tính với số liệu doanh số mới nhất."}],
-   tags:["IT","Administration","Communication"]},
-  {w:"website",tp:"n",ph:"/ˈweb.saɪt/",m:"trang web",
-   ex:[{e:"Visit our <b>website</b> for more information about our services.",v:"Truy cập trang web của chúng tôi để biết thêm thông tin về dịch vụ."}],
-   tags:["IT","Marketing","Communication"]},
-  {w:"printer",tp:"n",ph:"/ˈprɪn.tər/",m:"máy in",
-   ex:[{e:"The office <b>printer</b> is out of paper — please refill it.",v:"Máy in văn phòng hết giấy — vui lòng nạp thêm giấy."}],
-   tags:["Office","Equipment"]},
-  {w:"device",tp:"n",ph:"/dɪˈvaɪs/",m:"thiết bị, máy móc",
-   ex:[{e:"All personal <b>devices</b> must be registered with the IT department.",v:"Tất cả thiết bị cá nhân phải đăng ký với bộ phận IT."}],
-   tags:["IT","Security","Office"]}
-]},
-{topic:"Hợp đồng & Pháp lý",words:[
-  {w:"agreement",tp:"n",ph:"/əˈɡriː.mənt/",m:"hợp đồng, giao kèo",
-   ex:[{e:"Both parties signed the <b>agreement</b> after lengthy negotiations.",v:"Cả hai bên đã ký hợp đồng sau các cuộc đàm phán dài."}],
-   tags:["Legal","Contract","Business"]},
-  {w:"authorize",tp:"v",ph:"/ˈɔː.θər.aɪz/",m:"ủy quyền, cấp quyền",
-   ex:[{e:"Only the CEO is <b>authorized</b> to sign contracts over $100,000.",v:"Chỉ CEO mới được ủy quyền ký hợp đồng trên 100.000 đô."}],
-   tags:["Legal","Management","Finance"]},
-  {w:"certificate",tp:"n",ph:"/sərˈtɪf.ɪ.kɪt/",m:"giấy chứng nhận",
-   ex:[{e:"You must present a valid <b>certificate</b> of incorporation.",v:"Bạn phải xuất trình giấy chứng nhận thành lập hợp lệ."}],
-   tags:["Legal","Compliance","HR"]},
-  {w:"comply",tp:"v",ph:"/kəmˈplaɪ/",m:"tuân theo",
-   ex:[{e:"All suppliers must <b>comply</b> with our quality standards.",v:"Tất cả nhà cung cấp phải tuân theo tiêu chuẩn chất lượng của chúng tôi."}],
-   tags:["Legal","Compliance","Supply chain"]},
-  {w:"dispute",tp:"n",ph:"/dɪˈspjuːt/",m:"tranh chấp",
-   ex:[{e:"The labor <b>dispute</b> was resolved through mediation.",v:"Tranh chấp lao động được giải quyết thông qua hòa giải."}],
-   tags:["Legal","HR","Negotiation"]},
-  {w:"insurance",tp:"n",ph:"/ɪnˈʃʊər.əns/",m:"bảo hiểm",
-   ex:[{e:"Health <b>insurance</b> is included in the employee benefits package.",v:"Bảo hiểm y tế được bao gồm trong gói phúc lợi nhân viên."}],
-   tags:["HR","Finance","Benefits"]},
-  {w:"lease",tp:"n",ph:"/liːs/",m:"hợp đồng thuê",
-   ex:[{e:"The office <b>lease</b> expires at the end of next year.",v:"Hợp đồng thuê văn phòng hết hạn vào cuối năm tới."}],
-   tags:["Real estate","Legal","Business"]},
-  {w:"liability",tp:"n",ph:"/ˌlaɪ.əˈbɪl.ɪ.ti/",m:"trách nhiệm pháp lý",
-   ex:[{e:"The company accepts no <b>liability</b> for lost or damaged goods.",v:"Công ty không chịu trách nhiệm pháp lý đối với hàng hóa bị mất hoặc hư hỏng."}],
-   tags:["Legal","Insurance","Business"]},
-  {w:"license",tp:"n",ph:"/ˈlaɪ.səns/",m:"bản quyền, giấy phép",
-   ex:[{e:"You need a valid business <b>license</b> to operate in this city.",v:"Bạn cần có giấy phép kinh doanh hợp lệ để hoạt động tại thành phố này."}],
-   tags:["Legal","Compliance","Business"]},
-  {w:"obligation",tp:"n",ph:"/ˌɒb.lɪˈɡeɪ.ʃən/",m:"nghĩa vụ, bổn phận",
-   ex:[{e:"You have a legal <b>obligation</b> to report any workplace accidents.",v:"Bạn có nghĩa vụ pháp lý phải báo cáo bất kỳ tai nạn lao động nào."}],
-   tags:["Legal","HR","Compliance"]},
-  {w:"permit",tp:"v",ph:"/pərˈmɪt/",m:"cho phép",
-   ex:[{e:"The regulations do not <b>permit</b> the use of personal devices.",v:"Các quy định không cho phép sử dụng thiết bị cá nhân."}],
-   tags:["Legal","Compliance","Policy"]},
-  {w:"warranty",tp:"n",ph:"/ˈwɒr.ən.ti/",m:"sự bảo đảm, bảo hành",
-   ex:[{e:"The product comes with a two-year manufacturer's <b>warranty</b>.",v:"Sản phẩm đi kèm với bảo hành nhà sản xuất hai năm."}],
-   tags:["Legal","Consumer","Sales"]},
-  {w:"regulation",tp:"n",ph:"/ˌreɡ.jʊˈleɪ.ʃən/",m:"quy định",
-   ex:[{e:"The new data privacy <b>regulation</b> affects all businesses in the EU.",v:"Quy định bảo mật dữ liệu mới ảnh hưởng đến tất cả doanh nghiệp ở EU."}],
-   tags:["Legal","Compliance","Government"]},
-  {w:"clause",tp:"n",ph:"/klɔːz/",m:"điều khoản",
-   ex:[{e:"Please read the termination <b>clause</b> carefully before signing.",v:"Vui lòng đọc kỹ điều khoản chấm dứt trước khi ký."}],
-   tags:["Legal","Contract","Business"]},
-  {w:"contract",tp:"n",ph:"/ˈkɒn.trækt/",m:"hợp đồng",
-   ex:[{e:"The <b>contract</b> was signed by both parties last Monday.",v:"Hợp đồng đã được cả hai bên ký vào thứ Hai tuần trước."}],
-   tags:["Legal","Business","HR"]}
-]},
-{topic:"Giao tiếp & Cuộc họp",words:[
-  {w:"apologize",tp:"v",ph:"/əˈpɒl.ə.dʒaɪz/",m:"xin lỗi",
-   ex:[{e:"I <b>apologize</b> for the delay in responding to your email.",v:"Tôi xin lỗi vì đã chậm trả lời email của bạn."}],
-   tags:["Communication","Professional","Email"]},
-  {w:"briefing",tp:"n",ph:"/ˈbriː.fɪŋ/",m:"sự chỉ dẫn, hướng dẫn",
-   ex:[{e:"There will be a <b>briefing</b> on the new safety procedures at 9 AM.",v:"Sẽ có buổi hướng dẫn về quy trình an toàn mới lúc 9 giờ sáng."}],
-   tags:["Meeting","Communication","Management"]},
-  {w:"conclude",tp:"v",ph:"/kənˈkluːd/",m:"kết luận, kết thúc",
-   ex:[{e:"To <b>conclude</b>, I'd like to thank everyone for their contributions.",v:"Để kết luận, tôi muốn cảm ơn tất cả mọi người vì những đóng góp của họ."}],
-   tags:["Meeting","Presentation","Communication"]},
-  {w:"confirm",tp:"v",ph:"/kənˈfɜːrm/",m:"xác nhận",
-   ex:[{e:"Please <b>confirm</b> your attendance by replying to this email.",v:"Vui lòng xác nhận sự tham dự của bạn bằng cách trả lời email này."}],
-   tags:["Communication","Email","Planning"]},
-  {w:"discuss",tp:"v",ph:"/dɪˈskʌs/",m:"thảo luận",
-   ex:[{e:"Let's <b>discuss</b> the budget proposal in today's meeting.",v:"Hãy thảo luận về đề xuất ngân sách trong cuộc họp hôm nay."}],
-   tags:["Meeting","Communication","Management"]},
-  {w:"emphasize",tp:"v",ph:"/ˈem.fə.saɪz/",m:"nhấn mạnh",
-   ex:[{e:"I want to <b>emphasize</b> the importance of meeting the deadline.",v:"Tôi muốn nhấn mạnh tầm quan trọng của việc đáp ứng thời hạn."}],
-   tags:["Communication","Presentation","Leadership"]},
-  {w:"meeting",tp:"n",ph:"/ˈmiː.tɪŋ/",m:"cuộc họp",
-   ex:[{e:"The board <b>meeting</b> has been rescheduled to next Tuesday.",v:"Cuộc họp hội đồng đã được đổi lịch sang thứ Ba tuần tới."}],
-   tags:["Business","Communication","Management"]},
-  {w:"memorandum",tp:"n",ph:"/ˌmem.əˈræn.dəm/",m:"bản ghi nhớ",
-   ex:[{e:"A <b>memorandum</b> was sent to all staff about the policy change.",v:"Một bản ghi nhớ đã được gửi cho toàn bộ nhân viên về thay đổi chính sách."}],
-   tags:["Communication","Administration","Legal"]},
-  {w:"mention",tp:"v",ph:"/ˈmen.ʃən/",m:"đề cập",
-   ex:[{e:"Did you <b>mention</b> the price increase to the client?",v:"Bạn đã đề cập đến việc tăng giá với khách hàng chưa?"}],
-   tags:["Communication","Sales","Meeting"]},
-  {w:"negotiate",tp:"v",ph:"/nɪˈɡoʊ.ʃi.eɪt/",m:"đàm phán, thương lượng",
-   ex:[{e:"We were able to <b>negotiate</b> a better deal with the supplier.",v:"Chúng tôi đã có thể đàm phán một thỏa thuận tốt hơn với nhà cung cấp."}],
-   tags:["Business","Sales","Contract"]},
-  {w:"present",tp:"v",ph:"/prɪˈzent/",m:"trình bày",
-   ex:[{e:"She will <b>present</b> the quarterly results to the board tomorrow.",v:"Cô ấy sẽ trình bày kết quả quý cho hội đồng vào ngày mai."}],
-   tags:["Meeting","Communication","Leadership"]},
-  {w:"propose",tp:"v",ph:"/prəˈpoʊz/",m:"đề xuất",
-   ex:[{e:"I'd like to <b>propose</b> a new approach to the project.",v:"Tôi muốn đề xuất một cách tiếp cận mới cho dự án."}],
-   tags:["Meeting","Business","Communication"]},
-  {w:"seminar",tp:"n",ph:"/ˈsem.ɪ.nɑːr/",m:"hội nghị chuyên đề",
-   ex:[{e:"She attended a <b>seminar</b> on digital marketing strategies.",v:"Cô ấy đã tham dự một hội thảo về chiến lược tiếp thị kỹ thuật số."}],
-   tags:["Education","Business","Training"]},
-  {w:"suggest",tp:"v",ph:"/səˈdʒest/",m:"đề xuất, gợi ý",
-   ex:[{e:"I <b>suggest</b> we postpone the launch until the bugs are fixed.",v:"Tôi đề xuất chúng ta hoãn ra mắt cho đến khi các lỗi được sửa."}],
-   tags:["Communication","Meeting","Problem-solving"]},
-  {w:"agenda",tp:"n",ph:"/əˈdʒen.də/",m:"chương trình nghị sự",
-   ex:[{e:"The first item on the <b>agenda</b> is the quarterly sales review.",v:"Mục đầu tiên trong chương trình nghị sự là đánh giá doanh số hàng quý."}],
-   tags:["Meeting","Planning","Communication"]}
-]},
-{topic:"Sản xuất & Kho bãi",words:[
-  {w:"assemble",tp:"v",ph:"/əˈsem.bl/",m:"lắp ráp, thu thập",
-   ex:[{e:"Workers <b>assemble</b> the parts on the production line.",v:"Công nhân lắp ráp các bộ phận trên dây chuyền sản xuất."}],
-   tags:["Manufacturing","Production","Engineering"]},
-  {w:"consignment",tp:"n",ph:"/kənˈsaɪn.mənt/",m:"hoạt động gửi hàng để bán",
-   ex:[{e:"The <b>consignment</b> of goods arrived at the warehouse yesterday.",v:"Lô hàng ký gửi đã đến kho hàng ngày hôm qua."}],
-   tags:["Logistics","Supply chain","Retail"]},
-  {w:"deliver",tp:"v",ph:"/dɪˈlɪv.ər/",m:"giao hàng, phân phối",
-   ex:[{e:"We guarantee to <b>deliver</b> your order within 3 business days.",v:"Chúng tôi đảm bảo giao đơn hàng của bạn trong vòng 3 ngày làm việc."}],
-   tags:["Logistics","Sales","Supply chain"]},
-  {w:"distribute",tp:"v",ph:"/dɪˈstrɪb.juːt/",m:"phân phát, phân bổ",
-   ex:[{e:"The company <b>distributes</b> its products to over 50 countries.",v:"Công ty phân phối sản phẩm đến hơn 50 quốc gia."}],
-   tags:["Supply chain","Logistics","International"]},
-  {w:"factory",tp:"n",ph:"/ˈfæk.tər.i/",m:"nhà máy, xí nghiệp",
-   ex:[{e:"The new <b>factory</b> will create 500 jobs in the region.",v:"Nhà máy mới sẽ tạo ra 500 việc làm trong khu vực."}],
-   tags:["Manufacturing","Employment","Industry"]},
-  {w:"inventory",tp:"n",ph:"/ˈɪn.vən.tɔːr.i/",m:"kiểm kê, bản kiểm kê",
-   ex:[{e:"We conduct a full <b>inventory</b> check at the end of each month.",v:"Chúng tôi tiến hành kiểm kê đầy đủ vào cuối mỗi tháng."}],
-   tags:["Warehouse","Retail","Accounting"]},
-  {w:"manufacture",tp:"v",ph:"/ˌmæn.jʊˈfæk.tʃər/",m:"sản xuất, chế tạo",
-   ex:[{e:"This company <b>manufactures</b> electronic components for global brands.",v:"Công ty này sản xuất linh kiện điện tử cho các thương hiệu toàn cầu."}],
-   tags:["Production","Industry","Business"]},
-  {w:"packaging",tp:"n",ph:"/ˈpæk.ɪ.dʒɪŋ/",m:"đóng gói",
-   ex:[{e:"Sustainable <b>packaging</b> reduces environmental impact significantly.",v:"Bao bì bền vững giảm đáng kể tác động môi trường."}],
-   tags:["Production","Environment","Retail"]},
-  {w:"shipment",tp:"n",ph:"/ˈʃɪp.mənt/",m:"việc gửi hàng",
-   ex:[{e:"The <b>shipment</b> is expected to arrive at the port on Friday.",v:"Lô hàng dự kiến sẽ đến cảng vào thứ Sáu."}],
-   tags:["Logistics","Import/Export","Supply chain"]},
-  {w:"shipping",tp:"n",ph:"/ˈʃɪp.ɪŋ/",m:"vận chuyển hàng",
-   ex:[{e:"Free <b>shipping</b> is available on orders over $50.",v:"Miễn phí vận chuyển cho đơn hàng trên 50 đô."}],
-   tags:["E-commerce","Logistics","Sales"]},
-  {w:"stock",tp:"n",ph:"/stɒk/",m:"kho hàng, kho dự trữ",
-   ex:[{e:"We are currently out of <b>stock</b> on that item.",v:"Chúng tôi hiện đang hết hàng mặt hàng đó."}],
-   tags:["Retail","Warehouse","Inventory"]},
-  {w:"supplier",tp:"n",ph:"/səˈplaɪ.ər/",m:"nhà cung cấp",
-   ex:[{e:"We are looking for a reliable <b>supplier</b> of raw materials.",v:"Chúng tôi đang tìm kiếm nhà cung cấp nguyên liệu thô đáng tin cậy."}],
-   tags:["Supply chain","Procurement","Business"]},
-  {w:"supply",tp:"v",ph:"/səˈplaɪ/",m:"cung cấp",
-   ex:[{e:"This factory <b>supplies</b> components to several car manufacturers.",v:"Nhà máy này cung cấp linh kiện cho một số nhà sản xuất ô tô."}],
-   tags:["Supply chain","Business","Manufacturing"]},
-  {w:"warehouse",tp:"n",ph:"/ˈwer.haʊs/",m:"kho hàng",
-   ex:[{e:"The goods are stored in a <b>warehouse</b> near the port.",v:"Hàng hóa được lưu trữ trong kho gần cảng."}],
-   tags:["Logistics","Inventory","Real estate"]},
-  {w:"transit",tp:"n",ph:"/ˈtræn.zɪt/",m:"vận chuyển",
-   ex:[{e:"The goods were damaged while in <b>transit</b>.",v:"Hàng hóa bị hư hỏng trong quá trình vận chuyển."}],
-   tags:["Logistics","Import/Export","Insurance"]}
-]},
-{topic:"Tuyển dụng & Đào tạo",words:[
-  {w:"applicant",tp:"n",ph:"/ˈæp.lɪ.kənt/",m:"người ứng tuyển",
-   ex:[{e:"We received over 200 <b>applicants</b> for the position.",v:"Chúng tôi nhận được hơn 200 người ứng tuyển cho vị trí này."}],
-   tags:["HR","Recruitment","Interview"]},
-  {w:"application",tp:"n",ph:"/ˌæp.lɪˈkeɪ.ʃən/",m:"đơn ứng tuyển, ứng dụng",
-   ex:[{e:"Please submit your <b>application</b> before the closing date.",v:"Vui lòng nộp đơn ứng tuyển trước ngày đóng hồ sơ."}],
-   tags:["HR","Recruitment","Forms"]},
-  {w:"appoint",tp:"v",ph:"/əˈpɔɪnt/",m:"bổ nhiệm, chỉ định",
-   ex:[{e:"The board <b>appointed</b> Ms. Chen as the new CFO.",v:"Hội đồng đã bổ nhiệm bà Chen làm CFO mới."}],
-   tags:["HR","Management","Leadership"]},
-  {w:"candidate",tp:"n",ph:"/ˈkæn.dɪ.dɪt/",m:"ứng cử viên",
-   ex:[{e:"The shortlisted <b>candidates</b> will be invited for a second interview.",v:"Các ứng viên vào vòng chung kết sẽ được mời phỏng vấn lần hai."}],
-   tags:["HR","Recruitment","Interview"]},
-  {w:"cover letter",tp:"n",ph:"/ˈkʌv.ər ˌlet.ər/",m:"thư xin việc",
-   ex:[{e:"Your <b>cover letter</b> should highlight your key achievements.",v:"Thư xin việc của bạn nên nêu bật những thành tích chính."}],
-   tags:["HR","Job application","Writing"]},
-  {w:"credentials",tp:"n",ph:"/krɪˈden.ʃəlz/",m:"giấy ủy nhiệm, chứng chỉ",
-   ex:[{e:"Please provide your academic <b>credentials</b> during the interview.",v:"Vui lòng cung cấp bằng cấp học thuật của bạn trong buổi phỏng vấn."}],
-   tags:["HR","Education","Job application"]},
-  {w:"internship",tp:"n",ph:"/ˈɪn.tɜːrn.ʃɪp/",m:"kỳ thực tập",
-   ex:[{e:"She completed a six-month <b>internship</b> at a leading law firm.",v:"Cô ấy đã hoàn thành kỳ thực tập sáu tháng tại một công ty luật hàng đầu."}],
-   tags:["HR","Education","Career"]},
-  {w:"interview",tp:"n/v",ph:"/ˈɪn.tər.vjuː/",m:"phỏng vấn",
-   ex:[{e:"He was nervous before his job <b>interview</b> but performed well.",v:"Anh ấy lo lắng trước buổi phỏng vấn việc làm nhưng đã thể hiện tốt."}],
-   tags:["HR","Recruitment","Career"]},
-  {w:"probationary",tp:"adj",ph:"/prəˈbeɪ.ʃən.er.i/",m:"đang trong thời gian thử việc",
-   ex:[{e:"New employees must complete a <b>probationary</b> period of three months.",v:"Nhân viên mới phải hoàn thành thời gian thử việc ba tháng."}],
-   tags:["HR","Employment","Contract"]},
-  {w:"qualification",tp:"n",ph:"/ˌkwɒl.ɪ.fɪˈkeɪ.ʃən/",m:"năng lực, phẩm chất",
-   ex:[{e:"What <b>qualifications</b> are required for this position?",v:"Những phẩm chất nào được yêu cầu cho vị trí này?"}],
-   tags:["HR","Education","Job application"]},
-  {w:"qualified",tp:"adj",ph:"/ˈkwɒl.ɪ.faɪd/",m:"đủ điều kiện, có bằng cấp",
-   ex:[{e:"We are looking for a <b>qualified</b> accountant with five years of experience.",v:"Chúng tôi đang tìm kiếm kế toán có bằng cấp với năm năm kinh nghiệm."}],
-   tags:["HR","Recruitment","Requirements"]},
-  {w:"recruitment",tp:"n",ph:"/rɪˈkruːt.mənt/",m:"sự tuyển dụng",
-   ex:[{e:"The <b>recruitment</b> process takes approximately four weeks.",v:"Quy trình tuyển dụng mất khoảng bốn tuần."}],
-   tags:["HR","Management","Planning"]},
-  {w:"resume",tp:"n",ph:"/ˈrez.jʊ.meɪ/",m:"hồ sơ xin việc",
-   ex:[{e:"Update your <b>resume</b> to include your most recent experience.",v:"Cập nhật hồ sơ của bạn để bao gồm kinh nghiệm gần đây nhất."}],
-   tags:["HR","Job application","Career"]},
-  {w:"training",tp:"n",ph:"/ˈtreɪ.nɪŋ/",m:"đào tạo, huấn luyện",
-   ex:[{e:"All new hires must complete a two-week <b>training</b> program.",v:"Tất cả nhân viên mới phải hoàn thành chương trình đào tạo hai tuần."}],
-   tags:["HR","Education","Management"]},
-  {w:"vacancy",tp:"n",ph:"/ˈveɪ.kən.si/",m:"vị trí bỏ trống",
-   ex:[{e:"There is a <b>vacancy</b> for a senior project manager in our team.",v:"Có một vị trí trống cho quản lý dự án cấp cao trong nhóm của chúng tôi."}],
-   tags:["HR","Recruitment","Job posting"]}
-]},
-// Days 11-20 follow same structure
-{topic:"Khách hàng & Dịch vụ",words:[
-  {w:"accommodate",tp:"v",ph:"/əˈkɒm.ə.deɪt/",m:"dàn xếp, hỗ trợ",
-   ex:[{e:"We will do our best to <b>accommodate</b> your special requests.",v:"Chúng tôi sẽ cố gắng hết sức để đáp ứng các yêu cầu đặc biệt của bạn."}],
-   tags:["Service","Hospitality","Customer"]},
-  {w:"assistance",tp:"n",ph:"/əˈsɪs.təns/",m:"sự giúp đỡ, hỗ trợ",
-   ex:[{e:"Please contact us if you need any further <b>assistance</b>.",v:"Vui lòng liên hệ với chúng tôi nếu bạn cần thêm sự hỗ trợ."}],
-   tags:["Service","Customer","Support"]},
-  {w:"client",tp:"n",ph:"/ˈklaɪ.ənt/",m:"khách hàng",
-   ex:[{e:"We have a long-standing relationship with this <b>client</b>.",v:"Chúng tôi có mối quan hệ lâu dài với khách hàng này."}],
-   tags:["Business","Sales","Legal"]},
-  {w:"complaint",tp:"n",ph:"/kəmˈpleɪnt/",m:"lời phàn nàn",
-   ex:[{e:"We take every customer <b>complaint</b> very seriously.",v:"Chúng tôi tiếp nhận mọi khiếu nại của khách hàng rất nghiêm túc."}],
-   tags:["Customer service","Quality","Management"]},
-  {w:"courtesy",tp:"n",ph:"/ˈkɜːr.tə.si/",m:"sự lịch sự",
-   ex:[{e:"Staff should always treat customers with <b>courtesy</b> and respect.",v:"Nhân viên phải luôn đối xử với khách hàng bằng sự lịch sự và tôn trọng."}],
-   tags:["Service","Professionalism","HR"]},
-  {w:"inquire",tp:"v",ph:"/ɪnˈkwaɪər/",m:"hỏi thăm, thắc mắc",
-   ex:[{e:"I'm calling to <b>inquire</b> about the status of my order.",v:"Tôi gọi để hỏi về tình trạng đơn hàng của mình."}],
-   tags:["Communication","Customer","Service"]},
-  {w:"inquiry",tp:"n",ph:"/ˈɪŋ.kwɪr.i/",m:"sự điều tra, thắc mắc",
-   ex:[{e:"We will respond to your <b>inquiry</b> within 24 hours.",v:"Chúng tôi sẽ phản hồi yêu cầu của bạn trong vòng 24 giờ."}],
-   tags:["Customer","Service","Communication"]},
-  {w:"refund",tp:"n/v",ph:"/ˈriː.fʌnd/",m:"trả lại tiền",
-   ex:[{e:"You are entitled to a full <b>refund</b> if you are not satisfied.",v:"Bạn có quyền được hoàn tiền đầy đủ nếu không hài lòng."}],
-   tags:["Consumer","Legal","Retail"]},
-  {w:"replace",tp:"v",ph:"/rɪˈpleɪs/",m:"thay thế",
-   ex:[{e:"We will <b>replace</b> any defective products free of charge.",v:"Chúng tôi sẽ thay thế bất kỳ sản phẩm lỗi nào miễn phí."}],
-   tags:["Service","Consumer","Quality"]},
-  {w:"resolve",tp:"v",ph:"/rɪˈzɒlv/",m:"giải quyết, quyết tâm",
-   ex:[{e:"Our goal is to <b>resolve</b> all complaints within 48 hours.",v:"Mục tiêu của chúng tôi là giải quyết tất cả khiếu nại trong 48 giờ."}],
-   tags:["Customer service","Management","Quality"]},
-  {w:"respond",tp:"v",ph:"/rɪˈspɒnd/",m:"hưởng ứng, trả lời",
-   ex:[{e:"Please <b>respond</b> to the client's email as soon as possible.",v:"Vui lòng trả lời email của khách hàng càng sớm càng tốt."}],
-   tags:["Communication","Customer","Email"]},
-  {w:"satisfaction",tp:"n",ph:"/ˌsæt.ɪsˈfæk.ʃən/",m:"sự hài lòng",
-   ex:[{e:"Customer <b>satisfaction</b> surveys show a 92% approval rating.",v:"Khảo sát sự hài lòng của khách hàng cho thấy tỷ lệ chấp thuận 92%."}],
-   tags:["Quality","Customer","KPI"]},
-  {w:"satisfy",tp:"v",ph:"/ˈsæt.ɪs.faɪ/",m:"làm hài lòng",
-   ex:[{e:"We strive to <b>satisfy</b> every customer's needs and expectations.",v:"Chúng tôi cố gắng đáp ứng nhu cầu và kỳ vọng của mọi khách hàng."}],
-   tags:["Customer","Quality","Service"]},
-  {w:"service",tp:"n",ph:"/ˈsɜːr.vɪs/",m:"dịch vụ",
-   ex:[{e:"The hotel is known for its excellent customer <b>service</b>.",v:"Khách sạn nổi tiếng với dịch vụ khách hàng xuất sắc."}],
-   tags:["Business","Hospitality","Customer"]},
-  {w:"support",tp:"v",ph:"/səˈpɔːrt/",m:"hỗ trợ",
-   ex:[{e:"Our 24/7 customer <b>support</b> team is always ready to help.",v:"Nhóm hỗ trợ khách hàng 24/7 của chúng tôi luôn sẵn sàng giúp đỡ."}],
-   tags:["Service","IT","Customer"]}
-]},
-{topic:"Nhà hàng & Ẩm thực",words:[
-  {w:"appetizer",tp:"n",ph:"/ˈæp.ə.taɪ.zər/",m:"món khai vị",
-   ex:[{e:"We ordered shrimp cocktail as an <b>appetizer</b>.",v:"Chúng tôi đặt cocktail tôm làm món khai vị."}],
-   tags:["Restaurant","Food","Hospitality"]},
-  {w:"beverage",tp:"n",ph:"/ˈbev.ər.ɪdʒ/",m:"đồ uống",
-   ex:[{e:"All <b>beverages</b> are included in the conference package.",v:"Tất cả đồ uống đều được bao gồm trong gói hội nghị."}],
-   tags:["Restaurant","Events","Hospitality"]},
-  {w:"cafeteria",tp:"n",ph:"/ˌkæf.əˈtɪr.i.ə/",m:"quán ăn tự phục vụ",
-   ex:[{e:"The company <b>cafeteria</b> offers a variety of healthy meal options.",v:"Căn tin công ty cung cấp nhiều tùy chọn bữa ăn lành mạnh."}],
-   tags:["Office","Food","HR"]},
-  {w:"chef",tp:"n",ph:"/ʃef/",m:"đầu bếp",
-   ex:[{e:"The head <b>chef</b> created a special menu for the gala dinner.",v:"Bếp trưởng đã tạo ra một thực đơn đặc biệt cho bữa tối gala."}],
-   tags:["Restaurant","Hospitality","Food"]},
-  {w:"dessert",tp:"n",ph:"/dɪˈzɜːrt/",m:"món tráng miệng",
-   ex:[{e:"Would you like to see the <b>dessert</b> menu?",v:"Bạn có muốn xem thực đơn món tráng miệng không?"}],
-   tags:["Restaurant","Food","Hospitality"]},
-  {w:"dish",tp:"n",ph:"/dɪʃ/",m:"món ăn",
-   ex:[{e:"The signature <b>dish</b> at this restaurant is the grilled salmon.",v:"Món đặc trưng tại nhà hàng này là cá hồi nướng."}],
-   tags:["Restaurant","Food","Hospitality"]},
-  {w:"entrée",tp:"n",ph:"/ˈɒn.treɪ/",m:"món chính",
-   ex:[{e:"I'll have the grilled chicken as my <b>entrée</b>, please.",v:"Tôi sẽ dùng gà nướng làm món chính, làm ơn."}],
-   tags:["Restaurant","Food"]},
-  {w:"grill",tp:"v",ph:"/ɡrɪl/",m:"nướng",
-   ex:[{e:"The steak is <b>grilled</b> to perfection at this steakhouse.",v:"Bít tết được nướng hoàn hảo tại nhà hàng bít tết này."}],
-   tags:["Food","Cooking","Restaurant"]},
-  {w:"menu",tp:"n",ph:"/ˈmen.juː/",m:"thực đơn",
-   ex:[{e:"The seasonal <b>menu</b> changes every three months.",v:"Thực đơn theo mùa thay đổi ba tháng một lần."}],
-   tags:["Restaurant","Food","Business"]},
-  {w:"napkin",tp:"n",ph:"/ˈnæp.kɪn/",m:"khăn ăn",
-   ex:[{e:"Please fold the <b>napkins</b> neatly before placing them on the table.",v:"Vui lòng gấp khăn ăn gọn gàng trước khi đặt lên bàn."}],
-   tags:["Restaurant","Hospitality","Events"]},
-  {w:"recipe",tp:"n",ph:"/ˈres.ɪ.pi/",m:"công thức nấu ăn",
-   ex:[{e:"The chef shared his secret <b>recipe</b> for the bestselling pasta.",v:"Đầu bếp đã chia sẻ công thức bí mật của anh ấy cho món pasta bán chạy nhất."}],
-   tags:["Food","Cooking","Business"]},
-  {w:"reservation",tp:"n",ph:"/ˌrez.ərˈveɪ.ʃən/",m:"đặt bàn, đặt trước",
-   ex:[{e:"I'd like to make a <b>reservation</b> for four people at 7 PM.",v:"Tôi muốn đặt bàn cho bốn người lúc 7 giờ tối."}],
-   tags:["Restaurant","Hotel","Travel"]},
-  {w:"starter",tp:"n",ph:"/ˈstɑːr.tər/",m:"món khai vị",
-   ex:[{e:"For the <b>starter</b>, I recommend the tomato soup.",v:"Cho món khai vị, tôi khuyên dùng súp cà chua."}],
-   tags:["Restaurant","Food"]},
-  {w:"tip",tp:"n",ph:"/tɪp/",m:"tiền boa, tiền tip",
-   ex:[{e:"It is customary to leave a <b>tip</b> of 15% at restaurants in the US.",v:"Thông thường để lại tiền boa 15% tại các nhà hàng ở Mỹ."}],
-   tags:["Restaurant","Hospitality","Travel"]},
-  {w:"towel",tp:"n",ph:"/ˈtaʊ.əl/",m:"khăn lau",
-   ex:[{e:"Fresh <b>towels</b> are provided in all rooms.",v:"Khăn sạch được cung cấp trong tất cả các phòng."}],
-   tags:["Hotel","Hospitality","Housekeeping"]}
-]},
-{topic:"Bất động sản",words:[
-  {w:"accommodation",tp:"n",ph:"/əˌkɒm.əˈdeɪ.ʃən/",m:"chỗ ở, nơi ở",
-   ex:[{e:"The company provides temporary <b>accommodation</b> for new employees.",v:"Công ty cung cấp chỗ ở tạm thời cho nhân viên mới."}],
-   tags:["HR","Real estate","Travel"]},
-  {w:"deposit",tp:"n",ph:"/dɪˈpɒz.ɪt/",m:"tiền đặt cọc",
-   ex:[{e:"A <b>deposit</b> of two months' rent is required before moving in.",v:"Cần đặt cọc hai tháng tiền thuê trước khi dọn vào."}],
-   tags:["Real estate","Legal","Finance"]},
-  {w:"facility",tp:"n",ph:"/fəˈsɪl.ɪ.ti/",m:"cơ sở vật chất",
-   ex:[{e:"The office building has excellent <b>facilities</b> including a gym.",v:"Tòa nhà văn phòng có cơ sở vật chất tuyệt vời bao gồm phòng tập thể dục."}],
-   tags:["Real estate","HR","Business"]},
-  {w:"harbor",tp:"n",ph:"/ˈhɑːr.bər/",m:"bến cảng",
-   ex:[{e:"The warehouse is conveniently located near the <b>harbor</b>.",v:"Kho hàng được đặt tiện lợi gần bến cảng."}],
-   tags:["Logistics","Geography","Transport"]},
-  {w:"landlord",tp:"n",ph:"/ˈlænd.lɔːrd/",m:"chủ nhà cho thuê",
-   ex:[{e:"The <b>landlord</b> agreed to reduce the rent by 10%.",v:"Chủ nhà đã đồng ý giảm tiền thuê 10%."}],
-   tags:["Real estate","Legal","Finance"]},
-  {w:"lobby",tp:"n",ph:"/ˈlɒb.i/",m:"hành lang, sảnh",
-   ex:[{e:"Guests can check in at the reception desk in the <b>lobby</b>.",v:"Khách có thể làm thủ tục nhận phòng tại quầy lễ tân ở sảnh."}],
-   tags:["Hotel","Real estate","Hospitality"]},
-  {w:"mortgage",tp:"n",ph:"/ˈmɔːr.ɡɪdʒ/",m:"thế chấp",
-   ex:[{e:"They applied for a 30-year <b>mortgage</b> to buy their first home.",v:"Họ đăng ký thế chấp 30 năm để mua ngôi nhà đầu tiên."}],
-   tags:["Finance","Real estate","Banking"]},
-  {w:"premises",tp:"n",ph:"/ˈprem.ɪ.sɪz/",m:"cơ sở, tòa nhà",
-   ex:[{e:"No smoking is allowed anywhere on the <b>premises</b>.",v:"Không được phép hút thuốc ở bất kỳ đâu trong cơ sở."}],
-   tags:["Real estate","Legal","Business"]},
-  {w:"property",tp:"n",ph:"/ˈprɒp.ər.ti/",m:"tài sản, bất động sản",
-   ex:[{e:"Commercial <b>property</b> prices have risen sharply this year.",v:"Giá bất động sản thương mại đã tăng mạnh trong năm nay."}],
-   tags:["Real estate","Finance","Legal"]},
-  {w:"renovation",tp:"n",ph:"/ˌren.əˈveɪ.ʃən/",m:"sự cải tạo, nâng cấp",
-   ex:[{e:"The office is currently closed for major <b>renovation</b> work.",v:"Văn phòng hiện đang đóng cửa để tiến hành công việc cải tạo lớn."}],
-   tags:["Real estate","Construction","Business"]},
-  {w:"rent",tp:"n",ph:"/rent/",m:"tiền thuê",
-   ex:[{e:"The monthly <b>rent</b> for the office space is $3,000.",v:"Tiền thuê văn phòng hàng tháng là 3.000 đô."}],
-   tags:["Real estate","Finance","Business"]},
-  {w:"spacious",tp:"adj",ph:"/ˈspeɪ.ʃəs/",m:"rộng rãi",
-   ex:[{e:"The new office is very <b>spacious</b> with room for 50 employees.",v:"Văn phòng mới rất rộng rãi với chỗ cho 50 nhân viên."}],
-   tags:["Real estate","Description","HR"]},
-  {w:"tenant",tp:"n",ph:"/ˈten.ənt/",m:"người thuê nhà",
-   ex:[{e:"The <b>tenant</b> must give 30 days' notice before leaving.",v:"Người thuê nhà phải thông báo trước 30 ngày trước khi rời đi."}],
-   tags:["Real estate","Legal","Finance"]},
-  {w:"utility bill",tp:"n",ph:"/juːˈtɪl.ɪ.ti bɪl/",m:"hóa đơn điện nước",
-   ex:[{e:"<b>Utility bills</b> are not included in the monthly rent.",v:"Hóa đơn điện nước không được bao gồm trong tiền thuê hàng tháng."}],
-   tags:["Real estate","Finance","Household"]},
-  {w:"vacant",tp:"adj",ph:"/ˈveɪ.kənt/",m:"bỏ trống",
-   ex:[{e:"The office on the third floor has been <b>vacant</b> for six months.",v:"Văn phòng ở tầng ba đã bỏ trống trong sáu tháng."}],
-   tags:["Real estate","HR","Business"]}
-]},
-{topic:"Sức khỏe & Y tế",words:[
-  {w:"diagnose",tp:"v",ph:"/ˌdaɪ.əɡˈnoʊz/",m:"chẩn đoán",
-   ex:[{e:"The doctor <b>diagnosed</b> him with high blood pressure.",v:"Bác sĩ đã chẩn đoán anh ấy bị huyết áp cao."}],
-   tags:["Medical","Health","HR"]},
-  {w:"emergency",tp:"n",ph:"/ɪˈmɜːr.dʒən.si/",m:"trường hợp khẩn cấp",
-   ex:[{e:"In case of a medical <b>emergency</b>, call 911 immediately.",v:"Trong trường hợp khẩn cấp y tế, hãy gọi 911 ngay lập tức."}],
-   tags:["Medical","Safety","HR"]},
-  {w:"examine",tp:"v",ph:"/ɪɡˈzæm.ɪn/",m:"kiểm tra, khám",
-   ex:[{e:"The doctor will <b>examine</b> the patient at 9 AM.",v:"Bác sĩ sẽ khám bệnh nhân lúc 9 giờ sáng."}],
-   tags:["Medical","Health"]},
-  {w:"medical",tp:"adj",ph:"/ˈmed.ɪ.kəl/",m:"thuộc y học",
-   ex:[{e:"All employees must have a <b>medical</b> check-up once a year.",v:"Tất cả nhân viên phải khám sức khỏe định kỳ mỗi năm một lần."}],
-   tags:["Health","HR","Insurance"]},
-  {w:"medication",tp:"n",ph:"/ˌmed.ɪˈkeɪ.ʃən/",m:"thuốc, sự dùng thuốc",
-   ex:[{e:"Take this <b>medication</b> twice a day after meals.",v:"Uống thuốc này hai lần mỗi ngày sau bữa ăn."}],
-   tags:["Medical","Health","Pharmacy"]},
-  {w:"medicine",tp:"n",ph:"/ˈmed.ɪ.sɪn/",m:"y học, thuốc",
-   ex:[{e:"Advances in <b>medicine</b> have greatly increased life expectancy.",v:"Sự tiến bộ trong y học đã tăng đáng kể tuổi thọ."}],
-   tags:["Medical","Science","Health"]},
-  {w:"prescription",tp:"n",ph:"/prɪˈskrɪp.ʃən/",m:"đơn thuốc",
-   ex:[{e:"You will need a doctor's <b>prescription</b> to purchase this medication.",v:"Bạn sẽ cần đơn thuốc của bác sĩ để mua thuốc này."}],
-   tags:["Medical","Pharmacy","Health"]},
-  {w:"prevention",tp:"n",ph:"/prɪˈven.ʃən/",m:"sự ngăn ngừa",
-   ex:[{e:"<b>Prevention</b> is better than cure — get vaccinated annually.",v:"Phòng bệnh hơn chữa bệnh — tiêm vắc xin hàng năm."}],
-   tags:["Health","Policy","Medical"]},
-  {w:"recovery",tp:"n",ph:"/rɪˈkʌv.ər.i/",m:"sự hồi phục",
-   ex:[{e:"The patient is expected to make a full <b>recovery</b> within a month.",v:"Bệnh nhân dự kiến sẽ phục hồi hoàn toàn trong vòng một tháng."}],
-   tags:["Medical","Health","HR"]},
-  {w:"symptom",tp:"n",ph:"/ˈsɪmp.təm/",m:"triệu chứng",
-   ex:[{e:"If you experience any <b>symptoms</b>, please inform your doctor.",v:"Nếu bạn gặp bất kỳ triệu chứng nào, hãy thông báo cho bác sĩ."}],
-   tags:["Medical","Health"]},
-  {w:"treatment",tp:"n",ph:"/ˈtriːt.mənt/",m:"sự điều trị",
-   ex:[{e:"The new <b>treatment</b> has shown promising results in clinical trials.",v:"Phương pháp điều trị mới đã cho thấy kết quả đầy hứa hẹn trong thử nghiệm lâm sàng."}],
-   tags:["Medical","Health","Research"]},
-  {w:"vaccination",tp:"n",ph:"/ˌvæk.sɪˈneɪ.ʃən/",m:"tiêm chủng",
-   ex:[{e:"Annual flu <b>vaccination</b> is recommended for all employees.",v:"Tiêm chủng cúm hàng năm được khuyến nghị cho tất cả nhân viên."}],
-   tags:["Health","HR","Prevention"]},
-  {w:"welfare",tp:"n",ph:"/ˈwel.fer/",m:"phúc lợi",
-   ex:[{e:"The company invests in employee <b>welfare</b> programs.",v:"Công ty đầu tư vào các chương trình phúc lợi nhân viên."}],
-   tags:["HR","Benefits","Social"]},
-  {w:"insurance",tp:"n",ph:"/ɪnˈʃʊər.əns/",m:"bảo hiểm y tế",
-   ex:[{e:"Health <b>insurance</b> covers most of the treatment costs.",v:"Bảo hiểm y tế chi trả hầu hết chi phí điều trị."}],
-   tags:["Finance","HR","Health"]},
-  {w:"clinic",tp:"n",ph:"/ˈklɪn.ɪk/",m:"phòng khám",
-   ex:[{e:"There is a company <b>clinic</b> on the second floor of the office.",v:"Có một phòng khám của công ty ở tầng hai của văn phòng."}],
-   tags:["Health","HR","Facility"]}
-]},
-{topic:"Công nghệ & Phần mềm",words:[
-  {w:"access",tp:"n/v",ph:"/ˈæk.ses/",m:"quyền truy cập; truy cập",
-   ex:[{e:"Only authorized staff can <b>access</b> the confidential database.",v:"Chỉ nhân viên được ủy quyền mới có thể truy cập cơ sở dữ liệu bảo mật."}],
-   tags:["IT","Security","Administration"]},
-  {w:"browser",tp:"n",ph:"/ˈbraʊ.zər/",m:"trình duyệt",
-   ex:[{e:"Please clear your <b>browser</b> cache and try again.",v:"Vui lòng xóa bộ nhớ cache trình duyệt và thử lại."}],
-   tags:["IT","Technology","Support"]},
-  {w:"compatible",tp:"adj",ph:"/kəmˈpæt.ɪ.bl/",m:"tương thích, phù hợp",
-   ex:[{e:"This software is not <b>compatible</b> with older operating systems.",v:"Phần mềm này không tương thích với các hệ điều hành cũ hơn."}],
-   tags:["IT","Technology","Support"]},
-  {w:"connect",tp:"v",ph:"/kəˈnekt/",m:"kết nối",
-   ex:[{e:"Please <b>connect</b> your laptop to the company's secure Wi-Fi.",v:"Vui lòng kết nối máy tính xách tay của bạn với Wi-Fi bảo mật của công ty."}],
-   tags:["IT","Network","Office"]},
-  {w:"database",tp:"n",ph:"/ˈdeɪ.tə.beɪs/",m:"cơ sở dữ liệu",
-   ex:[{e:"All customer information is stored in our secure <b>database</b>.",v:"Tất cả thông tin khách hàng được lưu trữ trong cơ sở dữ liệu bảo mật của chúng tôi."}],
-   tags:["IT","Security","CRM"]},
-  {w:"developer",tp:"n",ph:"/dɪˈvel.ə.pər/",m:"lập trình viên",
-   ex:[{e:"We are hiring senior <b>developers</b> with experience in Python.",v:"Chúng tôi đang tuyển các lập trình viên cấp cao có kinh nghiệm về Python."}],
-   tags:["IT","HR","Technology"]},
-  {w:"download",tp:"v",ph:"/ˈdaʊn.loʊd/",m:"tải xuống",
-   ex:[{e:"Please <b>download</b> the latest version of the application.",v:"Vui lòng tải xuống phiên bản mới nhất của ứng dụng."}],
-   tags:["IT","Software","Technology"]},
-  {w:"engineering",tp:"n",ph:"/ˌen.dʒɪˈnɪr.ɪŋ/",m:"kỹ thuật",
-   ex:[{e:"The <b>engineering</b> team is working on a new product prototype.",v:"Nhóm kỹ thuật đang làm việc trên một nguyên mẫu sản phẩm mới."}],
-   tags:["Technology","Manufacturing","Career"]},
-  {w:"log on",tp:"v",ph:"/lɒɡ ɒn/",m:"đăng nhập hệ thống",
-   ex:[{e:"Please <b>log on</b> to the system using your employee ID.",v:"Vui lòng đăng nhập hệ thống bằng ID nhân viên của bạn."}],
-   tags:["IT","Security","Office"]},
-  {w:"network",tp:"n",ph:"/ˈnet.wɜːrk/",m:"mạng lưới",
-   ex:[{e:"Our company has a global <b>network</b> of over 200 partners.",v:"Công ty chúng tôi có mạng lưới toàn cầu gồm hơn 200 đối tác."}],
-   tags:["IT","Business","Communication"]},
-  {w:"software",tp:"n",ph:"/ˈsɒft.weər/",m:"phần mềm",
-   ex:[{e:"The new accounting <b>software</b> has reduced processing time by 50%.",v:"Phần mềm kế toán mới đã giảm thời gian xử lý xuống 50%."}],
-   tags:["IT","Technology","Business"]},
-  {w:"system",tp:"n",ph:"/ˈsɪs.təm/",m:"hệ thống",
-   ex:[{e:"The payroll <b>system</b> is being upgraded over the weekend.",v:"Hệ thống bảng lương đang được nâng cấp trong cuối tuần."}],
-   tags:["IT","Administration","Business"]},
-  {w:"upgrade",tp:"v",ph:"/ʌpˈɡreɪd/",m:"nâng cấp",
-   ex:[{e:"IT will <b>upgrade</b> all workstations to the latest operating system.",v:"IT sẽ nâng cấp tất cả máy trạm lên hệ điều hành mới nhất."}],
-   tags:["IT","Technology","Office"]},
-  {w:"virus",tp:"n",ph:"/ˈvaɪ.rəs/",m:"virus",
-   ex:[{e:"A <b>virus</b> infected several computers in the accounting department.",v:"Một virus đã lây nhiễm vào một số máy tính trong bộ phận kế toán."}],
-   tags:["IT","Security","Risk"]},
-  {w:"wireless",tp:"adj",ph:"/ˈwaɪər.ləs/",m:"không dây",
-   ex:[{e:"The conference room is equipped with <b>wireless</b> presentation tools.",v:"Phòng hội thảo được trang bị các công cụ trình bày không dây."}],
-   tags:["IT","Technology","Office"]}
-]},
-{topic:"Kinh doanh & Phát triển",words:[
-  {w:"achieve",tp:"v",ph:"/əˈtʃiːv/",m:"đạt được, giành được",
-   ex:[{e:"We <b>achieved</b> all our sales targets for the third quarter.",v:"Chúng tôi đã đạt được tất cả mục tiêu doanh số trong quý ba."}],
-   tags:["Business","Performance","Management"]},
-  {w:"acquire",tp:"v",ph:"/əˈkwaɪər/",m:"thu nạp được, giành được",
-   ex:[{e:"The company plans to <b>acquire</b> a smaller competitor next year.",v:"Công ty dự định mua lại một đối thủ nhỏ hơn vào năm tới."}],
-   tags:["Business","Finance","M&A"]},
-  {w:"advance",tp:"n/v",ph:"/ədˈvæns/",m:"sự tiến lên; tiến lên",
-   ex:[{e:"Technology continues to <b>advance</b> at an unprecedented pace.",v:"Công nghệ tiếp tục phát triển với tốc độ chưa từng có."}],
-   tags:["Technology","Business","Career"]},
-  {w:"advantage",tp:"n",ph:"/ədˈvæn.tɪdʒ/",m:"lợi thế",
-   ex:[{e:"Our main competitive <b>advantage</b> is our customer service.",v:"Lợi thế cạnh tranh chính của chúng tôi là dịch vụ khách hàng."}],
-   tags:["Business","Strategy","Marketing"]},
-  {w:"corporation",tp:"n",ph:"/ˌkɔːr.pəˈreɪ.ʃən/",m:"tập đoàn, công ty",
-   ex:[{e:"The multinational <b>corporation</b> operates in over 60 countries.",v:"Tập đoàn đa quốc gia hoạt động tại hơn 60 quốc gia."}],
-   tags:["Business","Legal","International"]},
-  {w:"develop",tp:"v",ph:"/dɪˈvel.əp/",m:"phát triển",
-   ex:[{e:"We need to <b>develop</b> a new strategy for the Asian market.",v:"Chúng ta cần phát triển một chiến lược mới cho thị trường châu Á."}],
-   tags:["Business","Strategy","Management"]},
-  {w:"enterprise",tp:"n",ph:"/ˈen.tər.praɪz/",m:"doanh nghiệp",
-   ex:[{e:"Small and medium <b>enterprises</b> are the backbone of the economy.",v:"Các doanh nghiệp vừa và nhỏ là xương sống của nền kinh tế."}],
-   tags:["Business","Economics","Government"]},
-  {w:"expand",tp:"v",ph:"/ɪkˈspænd/",m:"mở rộng",
-   ex:[{e:"The company plans to <b>expand</b> its operations to Europe.",v:"Công ty dự định mở rộng hoạt động sang châu Âu."}],
-   tags:["Business","Strategy","International"]},
-  {w:"growth",tp:"n",ph:"/ɡroʊθ/",m:"sự tăng trưởng",
-   ex:[{e:"The company reported 25% revenue <b>growth</b> year-on-year.",v:"Công ty báo cáo tăng trưởng doanh thu 25% so với cùng kỳ năm ngoái."}],
-   tags:["Finance","Business","Economics"]},
-  {w:"merger",tp:"n",ph:"/ˈmɜːr.dʒər/",m:"sự sáp nhập",
-   ex:[{e:"The <b>merger</b> created the largest bank in the country.",v:"Việc sáp nhập đã tạo ra ngân hàng lớn nhất trong cả nước."}],
-   tags:["Finance","Business","Legal"]},
-  {w:"objective",tp:"n",ph:"/əbˈdʒek.tɪv/",m:"mục tiêu",
-   ex:[{e:"Our main <b>objective</b> is to increase market share by 10%.",v:"Mục tiêu chính của chúng tôi là tăng thị phần thêm 10%."}],
-   tags:["Management","Strategy","Planning"]},
-  {w:"opportunity",tp:"n",ph:"/ˌɒp.ərˈtjuː.nɪ.ti/",m:"cơ hội",
-   ex:[{e:"This partnership presents a great <b>opportunity</b> for growth.",v:"Sự hợp tác này mang đến cơ hội tuyệt vời để phát triển."}],
-   tags:["Business","Strategy","Career"]},
-  {w:"strategy",tp:"n",ph:"/ˈstræt.ə.dʒi/",m:"chiến lược",
-   ex:[{e:"The board approved a new five-year <b>strategy</b> for the company.",v:"Hội đồng đã phê duyệt chiến lược năm năm mới cho công ty."}],
-   tags:["Management","Business","Planning"]},
-  {w:"takeover",tp:"n",ph:"/ˈteɪk.oʊ.vər/",m:"tiếp quản",
-   ex:[{e:"The hostile <b>takeover</b> attempt was rejected by shareholders.",v:"Nỗ lực tiếp quản thù địch đã bị các cổ đông từ chối."}],
-   tags:["Finance","Legal","Business"]},
-  {w:"venture",tp:"n",ph:"/ˈven.tʃər/",m:"liên doanh",
-   ex:[{e:"The two companies formed a joint <b>venture</b> to develop the technology.",v:"Hai công ty thành lập liên doanh để phát triển công nghệ."}],
-   tags:["Business","Finance","International"]}
-]},
-{topic:"Đánh giá & Phân tích",words:[
-  {w:"accurate",tp:"adj",ph:"/ˈæk.jʊ.rɪt/",m:"đúng đắn, chính xác",
-   ex:[{e:"Please ensure all financial data is <b>accurate</b> before submitting.",v:"Vui lòng đảm bảo tất cả dữ liệu tài chính chính xác trước khi gửi."}],
-   tags:["Finance","Quality","Administration"]},
-  {w:"analysis",tp:"n",ph:"/əˈnæl.ɪ.sɪs/",m:"sự phân tích",
-   ex:[{e:"A thorough market <b>analysis</b> is essential before launching.",v:"Phân tích thị trường kỹ lưỡng là cần thiết trước khi ra mắt."}],
-   tags:["Business","Finance","Research"]},
-  {w:"analyze",tp:"v",ph:"/ˈæn.ə.laɪz/",m:"phân tích",
-   ex:[{e:"We need to <b>analyze</b> the customer data to identify trends.",v:"Chúng ta cần phân tích dữ liệu khách hàng để xác định xu hướng."}],
-   tags:["Research","Business","IT"]},
-  {w:"assess",tp:"v",ph:"/əˈses/",m:"đánh giá, định giá",
-   ex:[{e:"Managers will <b>assess</b> employee performance at year end.",v:"Các quản lý sẽ đánh giá hiệu suất nhân viên vào cuối năm."}],
-   tags:["HR","Management","Quality"]},
-  {w:"compare",tp:"v",ph:"/kəmˈper/",m:"so sánh",
-   ex:[{e:"Let's <b>compare</b> the costs of the two suppliers before deciding.",v:"Hãy so sánh chi phí của hai nhà cung cấp trước khi quyết định."}],
-   tags:["Procurement","Finance","Research"]},
-  {w:"criterion",tp:"n",ph:"/kraɪˈtɪr.i.ən/",m:"tiêu chí đánh giá",
-   ex:[{e:"The main <b>criterion</b> for selection is relevant experience.",v:"Tiêu chí chính để lựa chọn là kinh nghiệm liên quan."}],
-   tags:["HR","Management","Quality"]},
-  {w:"evaluate",tp:"v",ph:"/ɪˈvæl.jʊ.eɪt/",m:"ước lượng, đánh giá",
-   ex:[{e:"We will <b>evaluate</b> each proposal based on cost and quality.",v:"Chúng tôi sẽ đánh giá từng đề xuất dựa trên chi phí và chất lượng."}],
-   tags:["Management","Procurement","HR"]},
-  {w:"evidence",tp:"n",ph:"/ˈev.ɪ.dəns/",m:"bằng chứng",
-   ex:[{e:"There is strong <b>evidence</b> that the new strategy is working.",v:"Có bằng chứng rõ ràng cho thấy chiến lược mới đang hoạt động."}],
-   tags:["Legal","Research","Management"]},
-  {w:"examine",tp:"v",ph:"/ɪɡˈzæm.ɪn/",m:"khảo sát, kiểm tra",
-   ex:[{e:"The auditor will <b>examine</b> all financial records next week.",v:"Kiểm toán viên sẽ kiểm tra tất cả hồ sơ tài chính vào tuần tới."}],
-   tags:["Finance","Legal","Quality"]},
-  {w:"forecast",tp:"n/v",ph:"/ˈfɔːr.kæst/",m:"dự đoán, tiên đoán",
-   ex:[{e:"The sales <b>forecast</b> for next quarter is very optimistic.",v:"Dự báo doanh số cho quý tới rất lạc quan."}],
-   tags:["Finance","Planning","Management"]},
-  {w:"identify",tp:"v",ph:"/aɪˈden.tɪ.faɪ/",m:"nhận diện, nhận biết",
-   ex:[{e:"We need to <b>identify</b> the root cause of the production delays.",v:"Chúng ta cần xác định nguyên nhân gốc rễ của sự chậm trễ sản xuất."}],
-   tags:["Management","Quality","Research"]},
-  {w:"indicate",tp:"v",ph:"/ˈɪn.dɪ.keɪt/",m:"chỉ ra, biểu thị",
-   ex:[{e:"The data <b>indicates</b> a 20% increase in online sales.",v:"Dữ liệu cho thấy mức tăng 20% trong doanh số bán hàng trực tuyến."}],
-   tags:["Research","Finance","Management"]},
-  {w:"investigate",tp:"v",ph:"/ɪnˈves.tɪ.ɡeɪt/",m:"điều tra",
-   ex:[{e:"HR will <b>investigate</b> the workplace misconduct complaint.",v:"HR sẽ điều tra khiếu nại về hành vi không phù hợp tại nơi làm việc."}],
-   tags:["HR","Legal","Management"]},
-  {w:"rational",tp:"adj",ph:"/ˈræʃ.ən.əl/",m:"có lý trí, hợp lý",
-   ex:[{e:"We need to make a <b>rational</b> decision based on the data.",v:"Chúng ta cần đưa ra quyết định hợp lý dựa trên dữ liệu."}],
-   tags:["Management","Finance","Strategy"]},
-  {w:"review",tp:"v",ph:"/rɪˈvjuː/",m:"xem xét lại, đánh giá",
-   ex:[{e:"Please <b>review</b> the contract carefully before signing.",v:"Vui lòng xem xét kỹ hợp đồng trước khi ký."}],
-   tags:["Legal","Management","HR"]}
-]},
-{topic:"Thương mại quốc tế",words:[
-  {w:"abroad",tp:"adv",ph:"/əˈbrɔːd/",m:"ở nước ngoài",
-   ex:[{e:"She was sent <b>abroad</b> to open a new regional office.",v:"Cô ấy được cử ra nước ngoài để mở văn phòng khu vực mới."}],
-   tags:["International","Travel","HR"]},
-  {w:"agricultural",tp:"adj",ph:"/ˌæɡ.rɪˈkʌl.tʃər.əl/",m:"thuộc nông nghiệp",
-   ex:[{e:"<b>Agricultural</b> exports account for 30% of the country's income.",v:"Xuất khẩu nông nghiệp chiếm 30% thu nhập của đất nước."}],
-   tags:["Trade","Economics","Government"]},
-  {w:"export",tp:"n/v",ph:"/ˈek.spɔːrt/",m:"xuất khẩu",
-   ex:[{e:"Vietnam <b>exports</b> a large amount of electronics each year.",v:"Việt Nam xuất khẩu một lượng lớn điện tử mỗi năm."}],
-   tags:["Trade","International","Economics"]},
-  {w:"foreign",tp:"adj",ph:"/ˈfɒr.ɪn/",m:"nước ngoài",
-   ex:[{e:"The company is seeking <b>foreign</b> investment to fund expansion.",v:"Công ty đang tìm kiếm đầu tư nước ngoài để tài trợ cho việc mở rộng."}],
-   tags:["International","Finance","Government"]},
-  {w:"global",tp:"adj",ph:"/ˈɡloʊ.bəl/",m:"toàn cầu",
-   ex:[{e:"The company has a <b>global</b> presence in more than 80 markets.",v:"Công ty có sự hiện diện toàn cầu ở hơn 80 thị trường."}],
-   tags:["International","Business","Marketing"]},
-  {w:"import",tp:"n/v",ph:"/ˈɪm.pɔːrt/",m:"nhập khẩu",
-   ex:[{e:"The country <b>imports</b> most of its fuel from the Middle East.",v:"Đất nước nhập khẩu phần lớn nhiên liệu từ Trung Đông."}],
-   tags:["Trade","International","Economics"]},
-  {w:"international",tp:"adj",ph:"/ˌɪn.tərˈnæʃ.ən.əl/",m:"quốc tế",
-   ex:[{e:"We are expanding into new <b>international</b> markets this year.",v:"Chúng tôi đang mở rộng sang các thị trường quốc tế mới trong năm nay."}],
-   tags:["Business","Trade","Travel"]},
-  {w:"livestock",tp:"n",ph:"/ˈlaɪv.stɒk/",m:"vật nuôi, thú nuôi",
-   ex:[{e:"The farm raises <b>livestock</b> for export to neighboring countries.",v:"Trang trại nuôi gia súc để xuất khẩu sang các nước láng giềng."}],
-   tags:["Agriculture","Trade","Economics"]},
-  {w:"quota",tp:"n",ph:"/ˈkwoʊ.tə/",m:"hạn ngạch",
-   ex:[{e:"The government imposed import <b>quotas</b> on steel products.",v:"Chính phủ áp đặt hạn ngạch nhập khẩu đối với các sản phẩm thép."}],
-   tags:["Trade","Government","Economics"]},
-  {w:"raw",tp:"adj",ph:"/rɔː/",m:"thô, nguyên liệu",
-   ex:[{e:"We import <b>raw</b> materials and manufacture finished goods locally.",v:"Chúng tôi nhập khẩu nguyên liệu thô và sản xuất hàng thành phẩm tại địa phương."}],
-   tags:["Manufacturing","Trade","Economics"]},
-  {w:"tariff",tp:"n",ph:"/ˈtær.ɪf/",m:"thuế quan",
-   ex:[{e:"High <b>tariffs</b> on imported goods protect domestic industries.",v:"Thuế quan cao đối với hàng nhập khẩu bảo vệ các ngành công nghiệp trong nước."}],
-   tags:["Trade","Government","Economics"]},
-  {w:"trade",tp:"n",ph:"/treɪd/",m:"thương mại, trao đổi",
-   ex:[{e:"Free <b>trade</b> agreements benefit both importing and exporting nations.",v:"Các hiệp định thương mại tự do mang lại lợi ích cho cả quốc gia nhập khẩu và xuất khẩu."}],
-   tags:["International","Economics","Government"]},
-  {w:"transfer",tp:"v",ph:"/ˈtræns.fɜːr/",m:"chuyển, chuyển khoản",
-   ex:[{e:"Please <b>transfer</b> the funds to our account by end of day.",v:"Vui lòng chuyển tiền vào tài khoản của chúng tôi trước cuối ngày."}],
-   tags:["Finance","Banking","International"]},
-  {w:"transportation",tp:"n",ph:"/ˌtræn.spɔːrˈteɪ.ʃən/",m:"vận chuyển",
-   ex:[{e:"<b>Transportation</b> costs have increased due to rising fuel prices.",v:"Chi phí vận chuyển đã tăng do giá nhiên liệu tăng."}],
-   tags:["Logistics","Trade","Economics"]},
-  {w:"zone",tp:"n",ph:"/zoʊn/",m:"vùng, khu vực",
-   ex:[{e:"The factory is located in a special economic <b>zone</b>.",v:"Nhà máy được đặt trong một khu kinh tế đặc biệt."}],
-   tags:["Government","Real estate","Trade"]}
-]},
-{topic:"Kỹ năng & Phẩm chất",words:[
-  {w:"ambitious",tp:"adj",ph:"/æmˈbɪʃ.əs/",m:"có tham vọng",
-   ex:[{e:"She is highly <b>ambitious</b> and aims to become CEO within five years.",v:"Cô ấy rất tham vọng và đặt mục tiêu trở thành CEO trong vòng năm năm."}],
-   tags:["HR","Career","Personality"]},
-  {w:"cautious",tp:"adj",ph:"/ˈkɔː.ʃəs/",m:"thận trọng, cẩn thận",
-   ex:[{e:"Investors are <b>cautious</b> about the volatile market conditions.",v:"Các nhà đầu tư thận trọng trước điều kiện thị trường biến động."}],
-   tags:["Finance","Personality","Management"]},
-  {w:"consistent",tp:"adj",ph:"/kənˈsɪs.tənt/",m:"nhất quán, kiên định",
-   ex:[{e:"We need to deliver <b>consistent</b> quality across all our products.",v:"Chúng ta cần cung cấp chất lượng nhất quán trên tất cả sản phẩm."}],
-   tags:["Quality","Management","HR"]},
-  {w:"creative",tp:"adj",ph:"/kriˈeɪ.tɪv/",m:"sáng tạo",
-   ex:[{e:"The marketing team needs <b>creative</b> thinkers to develop new campaigns.",v:"Nhóm marketing cần những người tư duy sáng tạo để phát triển các chiến dịch mới."}],
-   tags:["HR","Marketing","Design"]},
-  {w:"dedicated",tp:"adj",ph:"/ˈded.ɪ.keɪ.tɪd/",m:"tận tâm, cống hiến",
-   ex:[{e:"We are looking for a <b>dedicated</b> team player with strong skills.",v:"Chúng tôi đang tìm kiếm người chơi nhóm tận tâm với kỹ năng mạnh mẽ."}],
-   tags:["HR","Recruitment","Personality"]},
-  {w:"diligent",tp:"adj",ph:"/ˈdɪl.ɪ.dʒənt/",m:"chăm chỉ, cần cù",
-   ex:[{e:"He is a <b>diligent</b> worker who always meets deadlines.",v:"Anh ấy là người làm việc chăm chỉ, luôn đáp ứng thời hạn."}],
-   tags:["HR","Personality","Performance"]},
-  {w:"efficient",tp:"adj",ph:"/ɪˈfɪʃ.ənt/",m:"năng suất cao, hiệu suất tốt",
-   ex:[{e:"An <b>efficient</b> workflow reduces costs and improves output.",v:"Quy trình làm việc hiệu quả giảm chi phí và cải thiện đầu ra."}],
-   tags:["Management","HR","Operations"]},
-  {w:"enthusiastic",tp:"adj",ph:"/ɪnˌθjuː.ziˈæs.tɪk/",m:"nhiệt tình, hứng khởi",
-   ex:[{e:"She was <b>enthusiastic</b> about the new project from day one.",v:"Cô ấy nhiệt tình về dự án mới ngay từ ngày đầu tiên."}],
-   tags:["HR","Personality","Recruitment"]},
-  {w:"flexible",tp:"adj",ph:"/ˈflek.sɪ.bl/",m:"linh hoạt",
-   ex:[{e:"We offer <b>flexible</b> working hours to support work-life balance.",v:"Chúng tôi cung cấp giờ làm việc linh hoạt để hỗ trợ cân bằng công việc-cuộc sống."}],
-   tags:["HR","Policy","Recruitment"]},
-  {w:"frank",tp:"adj",ph:"/fræŋk/",m:"ngay thẳng, bộc trực",
-   ex:[{e:"I'd like to have a <b>frank</b> discussion about your performance.",v:"Tôi muốn có một cuộc thảo luận thẳng thắn về hiệu suất của bạn."}],
-   tags:["Communication","HR","Management"]},
-  {w:"imaginative",tp:"adj",ph:"/ɪˈmædʒ.ɪ.nə.tɪv/",m:"giàu tưởng tượng, sáng tạo",
-   ex:[{e:"The team came up with an <b>imaginative</b> solution to the problem.",v:"Nhóm đã đưa ra giải pháp sáng tạo cho vấn đề."}],
-   tags:["Personality","Innovation","HR"]},
-  {w:"knowledgeable",tp:"adj",ph:"/ˈnɒl.ɪ.dʒə.bl/",m:"thông thạo, am hiểu",
-   ex:[{e:"We need a <b>knowledgeable</b> advisor for our tax planning.",v:"Chúng tôi cần một cố vấn am hiểu cho việc lập kế hoạch thuế."}],
-   tags:["HR","Finance","Consulting"]},
-  {w:"optimistic",tp:"adj",ph:"/ˌɒp.tɪˈmɪs.tɪk/",m:"lạc quan",
-   ex:[{e:"Despite the challenges, the CEO remained <b>optimistic</b> about growth.",v:"Bất chấp những thách thức, CEO vẫn lạc quan về sự tăng trưởng."}],
-   tags:["Management","Personality","Leadership"]},
-  {w:"reliable",tp:"adj",ph:"/rɪˈlaɪ.ə.bl/",m:"đáng tin cậy",
-   ex:[{e:"We need a <b>reliable</b> supplier who can meet tight deadlines.",v:"Chúng tôi cần nhà cung cấp đáng tin cậy có thể đáp ứng thời hạn chặt chẽ."}],
-   tags:["Supply chain","HR","Business"]},
-  {w:"systematic",tp:"adj",ph:"/ˌsɪs.təˈmæt.ɪk/",m:"có hệ thống",
-   ex:[{e:"A <b>systematic</b> approach to quality control improves outcomes.",v:"Cách tiếp cận có hệ thống đối với kiểm soát chất lượng cải thiện kết quả."}],
-   tags:["Management","Quality","Operations"]}
-]},
-{topic:"Tài liệu & Thư từ",words:[
-  {w:"attachment",tp:"n",ph:"/əˈtætʃ.mənt/",m:"phần kèm thêm",
-   ex:[{e:"Please find the report in the <b>attachment</b> of this email.",v:"Vui lòng tìm báo cáo trong phần đính kèm của email này."}],
-   tags:["Email","Communication","Administration"]},
-  {w:"bulletin",tp:"n",ph:"/ˈbʊl.ɪ.tɪn/",m:"bảng thông báo, tập san",
-   ex:[{e:"Check the weekly <b>bulletin</b> for company announcements.",v:"Kiểm tra bản tin hàng tuần để biết các thông báo của công ty."}],
-   tags:["Communication","HR","Administration"]},
-  {w:"correspondence",tp:"n",ph:"/ˌkɒr.ɪˈspɒn.dəns/",m:"sự trao đổi thư từ",
-   ex:[{e:"All business <b>correspondence</b> should be kept on file.",v:"Tất cả thư từ kinh doanh phải được lưu giữ trong hồ sơ."}],
-   tags:["Communication","Legal","Administration"]},
-  {w:"cover letter",tp:"n",ph:"/ˈkʌv.ər ˌlet.ər/",m:"thư trình bày nguyện vọng",
-   ex:[{e:"A well-written <b>cover letter</b> can set you apart from other applicants.",v:"Thư xin việc viết tốt có thể giúp bạn nổi bật so với những ứng viên khác."}],
-   tags:["HR","Job application","Writing"]},
-  {w:"draft",tp:"n/v",ph:"/drɑːft/",m:"bản thảo; soạn thảo",
-   ex:[{e:"Please send me the first <b>draft</b> of the report by Friday.",v:"Vui lòng gửi cho tôi bản thảo đầu tiên của báo cáo trước thứ Sáu."}],
-   tags:["Writing","Administration","Communication"]},
-  {w:"enclose",tp:"v",ph:"/ɪnˈkloʊz/",m:"gửi kèm",
-   ex:[{e:"I am <b>enclosing</b> a copy of my CV with this letter.",v:"Tôi đính kèm một bản CV cùng với thư này."}],
-   tags:["Email","Communication","Job application"]},
-  {w:"express",tp:"v",ph:"/ɪkˈspres/",m:"trình bày, diễn đạt",
-   ex:[{e:"She used the report to <b>express</b> her concerns about the budget.",v:"Cô ấy đã dùng báo cáo để trình bày mối lo ngại về ngân sách."}],
-   tags:["Communication","Writing","Presentation"]},
-  {w:"file",tp:"n",ph:"/faɪl/",m:"hồ sơ, túi đựng tài liệu",
-   ex:[{e:"Please keep all client <b>files</b> organized in the cabinet.",v:"Vui lòng giữ tất cả hồ sơ khách hàng được sắp xếp gọn gàng trong tủ."}],
-   tags:["Administration","Legal","Office"]},
-  {w:"invoice",tp:"n",ph:"/ˈɪn.vɔɪs/",m:"hóa đơn",
-   ex:[{e:"The <b>invoice</b> must be paid within 30 days of receipt.",v:"Hóa đơn phải được thanh toán trong vòng 30 ngày kể từ khi nhận."}],
-   tags:["Finance","Accounting","Legal"]},
-  {w:"notify",tp:"v",ph:"/ˈnoʊ.tɪ.faɪ/",m:"thông báo",
-   ex:[{e:"Please <b>notify</b> all team members of the schedule change.",v:"Vui lòng thông báo cho tất cả thành viên nhóm về sự thay đổi lịch trình."}],
+
+// ── NGÀY 4: STT 31–40 ─────────────────────────────
+{topic:"Ngày 4 · STT 31–40", words:[
+  {stt:31,w:"promise",tp:"n/v",ph:"/ˈprɒmɪs/",m:"lời hứa; hứa hẹn",
+   noun:{singular:"promise",plural:"promises",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["A <b>promise</b> is important. (chủ ngữ)","Keep your <b>promise</b>. (tân ngữ - thành ngữ)"]},
+   ex:[{e:"The company failed to keep its <b>promise</b> to increase salaries.",v:"Công ty không giữ lời hứa tăng lương."},
+       {e:"Always keep your <b>promises</b> to clients.",v:"Luôn giữ lời hứa với khách hàng."}],
+   tags:["Business","Communication","Ethics"]},
+
+  {stt:32,w:"reputation",tp:"n",ph:"/ˌrepjuˈteɪʃn/",m:"uy tín, danh tiếng",
+   noun:{singular:"reputation",plural:"reputations",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["Our <b>reputation</b> is valuable. (chủ ngữ)","Build a good <b>reputation</b>. (tân ngữ)","Known for its <b>reputation</b>. (sau giới từ)"]},
+   ex:[{e:"The company has a good <b>reputation</b> for high-quality products.",v:"Công ty có uy tín tốt về các sản phẩm chất lượng cao."},
+       {e:"One mistake can damage your <b>reputation</b> quickly.",v:"Một sai lầm có thể nhanh chóng làm hỏng uy tín của bạn."}],
+   tags:["Business","HR","Marketing"]},
+
+  {stt:33,w:"require",tp:"v",ph:"/rɪˈkwaɪər/",m:"yêu cầu, cần có",
+   noun:null,
+   ex:[{e:"This job <b>requires</b> a lot of hard work and dedication.",v:"Công việc này đòi hỏi rất nhiều nỗ lực và sự cống hiến."},
+       {e:"You <b>require</b> a visa to visit this country.",v:"Bạn cần có visa để thăm quốc gia này."}],
+   tags:["HR","Legal","General"]},
+
+  {stt:34,w:"variety",tp:"n",ph:"/vəˈraɪəti/",m:"sự đa dạng; nhiều loại",
+   noun:{singular:"variety",plural:"varieties",rule:"Đuôi -y sau phụ âm → đổi thành -ies",countable:true,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["A wide <b>variety</b> is available. (chủ ngữ)","We offer a <b>variety</b> of products. (tân ngữ)"]},
+   ex:[{e:"There is a wide <b>variety</b> of products to choose from.",v:"Có rất nhiều loại sản phẩm để lựa chọn."},
+       {e:"The menu offers a <b>variety</b> of dishes from around the world.",v:"Thực đơn cung cấp nhiều loại món ăn từ khắp nơi trên thế giới."}],
+   tags:["Retail","Food","General"]},
+
+  {stt:35,w:"address",tp:"v/n",ph:"/əˈdres/",m:"phát biểu, đề cập; địa chỉ",
+   noun:{singular:"address",plural:"addresses",rule:"Đuôi -ss → thêm -es",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["Your <b>address</b> is needed. (chủ ngữ)","Write your <b>address</b> here. (tân ngữ)","At this <b>address</b>... (sau giới từ)"]},
+   ex:[{e:"The CEO will <b>address</b> the employees at the meeting.",v:"Giám đốc điều hành sẽ phát biểu với nhân viên tại cuộc họp."},
+       {e:"Please write your home <b>address</b> on the form.",v:"Vui lòng ghi địa chỉ nhà của bạn vào mẫu."}],
    tags:["Communication","Administration","HR"]},
-  {w:"questionnaire",tp:"n",ph:"/ˌkwes.tʃəˈner/",m:"bảng câu hỏi",
-   ex:[{e:"Please complete the customer satisfaction <b>questionnaire</b>.",v:"Vui lòng hoàn thành bảng câu hỏi về sự hài lòng của khách hàng."}],
-   tags:["Research","Marketing","HR"]},
-  {w:"receipt",tp:"n",ph:"/rɪˈsiːt/",m:"biên lai, hóa đơn",
-   ex:[{e:"Please keep the <b>receipt</b> for reimbursement purposes.",v:"Vui lòng giữ biên lai để hoàn trả chi phí."}],
-   tags:["Finance","Accounting","Travel"]},
-  {w:"report",tp:"n",ph:"/rɪˈpɔːrt/",m:"báo cáo",
-   ex:[{e:"The annual <b>report</b> will be published at the end of this month.",v:"Báo cáo hàng năm sẽ được công bố vào cuối tháng này."}],
-   tags:["Finance","Management","Communication"]},
-  {w:"submit",tp:"v",ph:"/səbˈmɪt/",m:"nộp, gửi đi",
-   ex:[{e:"All expenses must be <b>submitted</b> by the 25th of each month.",v:"Tất cả chi phí phải được nộp trước ngày 25 hàng tháng."}],
-   tags:["Administration","Finance","HR"]},
-  {w:"template",tp:"n",ph:"/ˈtem.plɪt/",m:"mẫu biểu, khuôn mẫu",
-   ex:[{e:"Use the official <b>template</b> for all internal reports.",v:"Sử dụng mẫu chính thức cho tất cả báo cáo nội bộ."}],
-   tags:["Administration","Communication","Office"]}
+
+  {stt:36,w:"avoid",tp:"v",ph:"/əˈvɔɪd/",m:"tránh, tránh né",
+   noun:null,
+   ex:[{e:"We should <b>avoid</b> making the same mistake twice.",v:"Chúng ta nên tránh mắc cùng một lỗi hai lần."},
+       {e:"Try to <b>avoid</b> using your phone during meetings.",v:"Cố gắng tránh dùng điện thoại trong cuộc họp."}],
+   tags:["Management","Communication","Work"]},
+
+  {stt:37,w:"demonstrate",tp:"v",ph:"/ˈdemənstreɪt/",m:"trình bày, thể hiện",
+   noun:null,
+   ex:[{e:"The technician will <b>demonstrate</b> how to use the new software.",v:"Kỹ thuật viên sẽ trình bày cách sử dụng phần mềm mới."},
+       {e:"Please <b>demonstrate</b> your skills during the interview.",v:"Vui lòng thể hiện kỹ năng của bạn trong buổi phỏng vấn."}],
+   tags:["Training","IT","HR"]},
+
+  {stt:38,w:"develop",tp:"v",ph:"/dɪˈveləp/",m:"phát triển",
+   noun:null,
+   ex:[{e:"The company is planning to <b>develop</b> a new line of products.",v:"Công ty đang lên kế hoạch phát triển một dòng sản phẩm mới."},
+       {e:"We want to <b>develop</b> our skills in digital marketing.",v:"Chúng tôi muốn phát triển kỹ năng trong tiếp thị kỹ thuật số."}],
+   tags:["Business","Strategy","HR"]},
+
+  {stt:39,w:"evaluate",tp:"v",ph:"/ɪˈvæljueɪt/",m:"đánh giá",
+   noun:null,
+   ex:[{e:"The manager will <b>evaluate</b> your performance at the end of the year.",v:"Người quản lý sẽ đánh giá hiệu suất của bạn vào cuối năm."},
+       {e:"We need to <b>evaluate</b> all options before deciding.",v:"Chúng ta cần đánh giá tất cả các lựa chọn trước khi quyết định."}],
+   tags:["HR","Management","Quality"]},
+
+  {stt:40,w:"gather",tp:"v",ph:"/ˈɡæðər/",m:"thu thập, tập hợp",
+   noun:null,
+   ex:[{e:"We need to <b>gather</b> more information before making a decision.",v:"Chúng ta cần thu thập thêm thông tin trước khi đưa ra quyết định."},
+       {e:"The team will <b>gather</b> in the meeting room at 9 AM.",v:"Nhóm sẽ tập hợp ở phòng họp lúc 9 giờ sáng."}],
+   tags:["Research","Planning"]}
+]},
+
+// ── NGÀY 5: STT 41–50 ─────────────────────────────
+{topic:"Ngày 5 · STT 41–50", words:[
+  {stt:41,w:"offer",tp:"v/n",ph:"/ˈɒfər/",m:"đề nghị, cung cấp; lời đề nghị",
+   noun:{singular:"offer",plural:"offers",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>offer</b> was very good. (chủ ngữ)","He accepted the <b>offer</b>. (tân ngữ)","We thought about the <b>offer</b>. (sau giới từ)"]},
+   ex:[{e:"The company <b>offered</b> him a high salary and a car.",v:"Công ty đã đề nghị anh ấy mức lương cao và một chiếc xe."},
+       {e:"We received three job <b>offers</b> this week.",v:"Chúng tôi nhận được ba lời mời làm việc tuần này."}],
+   tags:["HR","Sales","Negotiation"]},
+
+  {stt:42,w:"primarily",tp:"adv",ph:"/praɪˈmerəli/",m:"chủ yếu, chính yếu",
+   noun:null,
+   ex:[{e:"The new law is <b>primarily</b> aimed at reducing pollution.",v:"Luật mới chủ yếu nhằm mục đích giảm ô nhiễm."},
+       {e:"This product is <b>primarily</b> designed for young users.",v:"Sản phẩm này chủ yếu được thiết kế cho người dùng trẻ."}],
+   tags:["General","Communication","Writing"]},
+
+  {stt:43,w:"risk",tp:"n",ph:"/rɪsk/",m:"rủi ro, nguy cơ",
+   noun:{singular:"risk",plural:"risks",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>risk</b> is very high. (chủ ngữ)","We took a <b>risk</b>. (tân ngữ)","At <b>risk</b>... (thành ngữ)"]},
+   ex:[{e:"There is a <b>risk</b> of losing money if you invest in that company.",v:"Có nguy cơ mất tiền nếu bạn đầu tư vào công ty đó."},
+       {e:"We must identify all possible <b>risks</b> before starting.",v:"Chúng ta phải xác định tất cả các rủi ro có thể xảy ra trước khi bắt đầu."}],
+   tags:["Finance","Management","Planning"]},
+
+  {stt:44,w:"strategy",tp:"n",ph:"/ˈstrætədʒi/",m:"chiến lược",
+   noun:{singular:"strategy",plural:"strategies",rule:"Đuôi -y sau phụ âm → đổi thành -ies",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["Our <b>strategy</b> is working. (chủ ngữ)","We changed our <b>strategy</b>. (tân ngữ)","Based on this <b>strategy</b>... (sau giới từ)"]},
+   ex:[{e:"The company is developing a new <b>strategy</b> to increase sales.",v:"Công ty đang phát triển chiến lược mới để tăng doanh số."},
+       {e:"Good <b>strategies</b> help businesses grow faster.",v:"Các chiến lược tốt giúp doanh nghiệp phát triển nhanh hơn."}],
+   tags:["Business","Management","Marketing"]},
+
+  {stt:45,w:"strengthen",tp:"v",ph:"/ˈstreŋθn/",m:"củng cố, tăng cường",
+   noun:null,
+   ex:[{e:"The partnership will <b>strengthen</b> our position in the market.",v:"Sự hợp tác sẽ củng cố vị thế của chúng tôi trên thị trường."},
+       {e:"Regular practice will <b>strengthen</b> your English skills.",v:"Luyện tập thường xuyên sẽ tăng cường kỹ năng tiếng Anh của bạn."}],
+   tags:["Business","HR","Training"]},
+
+  {stt:46,w:"substitution",tp:"n",ph:"/ˌsʌbstɪˈtjuːʃn/",m:"sự thay thế",
+   noun:{singular:"substitution",plural:"substitutions",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["The <b>substitution</b> was approved. (chủ ngữ)","We made a <b>substitution</b>. (tân ngữ)"]},
+   ex:[{e:"The <b>substitution</b> of plastic for metal has reduced weight.",v:"Việc thay thế kim loại bằng nhựa đã giảm trọng lượng."},
+       {e:"The coach made three <b>substitutions</b> in the second half.",v:"Huấn luyện viên thực hiện ba lần thay người trong hiệp hai."}],
+   tags:["Manufacturing","General"]},
+
+  {stt:47,w:"accommodate",tp:"v",ph:"/əˈkɒmədeɪt/",m:"chứa đựng; đáp ứng nhu cầu",
+   noun:null,
+   ex:[{e:"The hotel can <b>accommodate</b> up to 500 guests.",v:"Khách sạn có thể chứa tới 500 khách."},
+       {e:"We can <b>accommodate</b> your request for a vegetarian meal.",v:"Chúng tôi có thể đáp ứng yêu cầu ăn chay của bạn."}],
+   tags:["Hotel","Events","Service"]},
+
+  {stt:48,w:"arrangement",tp:"n",ph:"/əˈreɪndʒmənt/",m:"sự sắp xếp, kế hoạch",
+   noun:{singular:"arrangement",plural:"arrangements",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>arrangements</b> are ready. (chủ ngữ)","We made <b>arrangements</b>. (tân ngữ)","Under this <b>arrangement</b>... (sau giới từ)"]},
+   ex:[{e:"We have made <b>arrangements</b> for the meeting.",v:"Chúng tôi đã sắp xếp cho cuộc họp."},
+       {e:"The travel <b>arrangements</b> are confirmed.",v:"Việc sắp xếp du lịch đã được xác nhận."}],
+   tags:["Events","Planning","Travel"]},
+
+  {stt:49,w:"association",tp:"n",ph:"/əˌsoʊsiˈeɪʃn/",m:"hiệp hội, tổ chức",
+   noun:{singular:"association",plural:"associations",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>association</b> helps businesses. (chủ ngữ)","He joined the <b>association</b>. (tân ngữ)","A member of the <b>association</b>. (sau giới từ)"]},
+   ex:[{e:"He is a member of the local business <b>association</b>.",v:"Anh ấy là thành viên của hiệp hội kinh doanh địa phương."},
+       {e:"The <b>association</b> holds a meeting every month.",v:"Hiệp hội tổ chức họp mỗi tháng."}],
+   tags:["Organization","Business","Networking"]},
+
+  {stt:50,w:"attend",tp:"v",ph:"/əˈtend/",m:"tham dự, tham gia",
+   noun:null,
+   ex:[{e:"He will <b>attend</b> the international conference next week.",v:"Anh ấy sẽ tham dự hội nghị quốc tế tuần tới."},
+       {e:"All staff must <b>attend</b> the safety training.",v:"Tất cả nhân viên phải tham dự khóa đào tạo an toàn."}],
+   tags:["Events","HR","Training"]}
+]},
+
+// ── NGÀY 6: STT 51–60 ─────────────────────────────
+{topic:"Ngày 6 · STT 51–60", words:[
+  {stt:51,w:"get in touch with",tp:"phrase",ph:"/ɡet ɪn tʌtʃ wɪð/",m:"liên hệ với",
+   noun:null,
+   ex:[{e:"Please <b>get in touch with</b> me if you have any questions.",v:"Vui lòng liên hệ với tôi nếu bạn có bất kỳ câu hỏi nào."},
+       {e:"I will <b>get in touch with</b> the client tomorrow morning.",v:"Tôi sẽ liên hệ với khách hàng vào sáng mai."}],
+   tags:["Communication","Business","Email"]},
+
+  {stt:52,w:"hold",tp:"v",ph:"/hoʊld/",m:"tổ chức; giữ",
+   noun:null,
+   ex:[{e:"The meeting will be <b>held</b> in the conference room.",v:"Cuộc họp sẽ được tổ chức ở phòng họp."},
+       {e:"The company <b>holds</b> a team event every quarter.",v:"Công ty tổ chức sự kiện nhóm mỗi quý."}],
+   tags:["Events","Management","HR"]},
+
+  {stt:53,w:"location",tp:"n",ph:"/ləʊˈkeɪʃn/",m:"vị trí, địa điểm",
+   noun:{singular:"location",plural:"locations",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>location</b> is perfect. (chủ ngữ)","Choose a good <b>location</b>. (tân ngữ)","At this <b>location</b>... (sau giới từ)"]},
+   ex:[{e:"The office is in a convenient <b>location</b> near the subway.",v:"Văn phòng ở vị trí thuận tiện gần tàu điện ngầm."},
+       {e:"We need to find a good <b>location</b> for the new store.",v:"Chúng ta cần tìm vị trí tốt cho cửa hàng mới."}],
+   tags:["Real estate","Business","Travel"]},
+
+  {stt:54,w:"overcrowded",tp:"adj",ph:"/ˌoʊvərˈkraʊdɪd/",m:"quá đông, quá tải",
+   noun:null,
+   ex:[{e:"The buses are often <b>overcrowded</b> during rush hour.",v:"Xe buýt thường bị quá tải trong giờ cao điểm."},
+       {e:"The conference room was <b>overcrowded</b> with 80 people.",v:"Phòng hội nghị chật kín với 80 người."}],
+   tags:["Transport","Events","Facility"]},
+
+  {stt:55,w:"register",tp:"v",ph:"/ˈredʒɪstər/",m:"đăng ký, ghi danh",
+   noun:null,
+   ex:[{e:"You must <b>register</b> for the conference by Friday.",v:"Bạn phải đăng ký hội nghị trước thứ Sáu."},
+       {e:"Please <b>register</b> your account before using this service.",v:"Vui lòng đăng ký tài khoản trước khi sử dụng dịch vụ này."}],
+   tags:["Events","Administration","IT"]},
+
+  {stt:56,w:"select",tp:"v",ph:"/sɪˈlekt/",m:"chọn lựa, tuyển chọn",
+   noun:null,
+   ex:[{e:"The committee will <b>select</b> the best candidate for the job.",v:"Ủy ban sẽ chọn ứng viên tốt nhất cho công việc."},
+       {e:"Please <b>select</b> your language from the menu.",v:"Vui lòng chọn ngôn ngữ của bạn từ menu."}],
+   tags:["HR","IT","Decision-making"]},
+
+  {stt:57,w:"session",tp:"n",ph:"/ˈseʃn/",m:"buổi, phiên, kỳ họp",
+   noun:{singular:"session",plural:"sessions",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>session</b> starts at 9 AM. (chủ ngữ)","Attend each <b>session</b>. (tân ngữ)","During the <b>session</b>... (sau giới từ)"]},
+   ex:[{e:"The training <b>session</b> will last for 3 hours.",v:"Buổi đào tạo sẽ kéo dài 3 tiếng."},
+       {e:"There are three <b>sessions</b> in the conference.",v:"Có ba phiên trong hội nghị."}],
+   tags:["Events","Training","Education"]},
+
+  {stt:58,w:"take part in",tp:"phrase",ph:"/teɪk pɑːrt ɪn/",m:"tham gia vào",
+   noun:null,
+   ex:[{e:"Many employees <b>took part in</b> the charity event.",v:"Nhiều nhân viên đã tham gia vào sự kiện từ thiện."},
+       {e:"I would like to <b>take part in</b> the training program.",v:"Tôi muốn tham gia chương trình đào tạo."}],
+   tags:["Events","HR","Training"]},
+
+  {stt:59,w:"access",tp:"n/v",ph:"/ˈækses/",m:"truy cập; quyền truy cập",
+   noun:{singular:"access",plural:null,rule:"Không đếm được khi là danh từ (uncountable)",countable:false,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["<b>Access</b> is denied. (chủ ngữ)","You need <b>access</b>. (tân ngữ)","With <b>access</b> to the data... (sau giới từ)"]},
+   ex:[{e:"Only authorized personnel have <b>access</b> to the server room.",v:"Chỉ nhân viên được ủy quyền mới có quyền truy cập phòng máy chủ."},
+       {e:"Please <b>access</b> the system using your password.",v:"Vui lòng truy cập hệ thống bằng mật khẩu của bạn."}],
+   tags:["IT","Security","Administration"]},
+
+  {stt:60,w:"allocate",tp:"v",ph:"/ˈæləkeɪt/",m:"phân bổ, phân chia",
+   noun:null,
+   ex:[{e:"The government has <b>allocated</b> funds for the new project.",v:"Chính phủ đã phân bổ ngân quỹ cho dự án mới."},
+       {e:"We need to <b>allocate</b> more time for testing.",v:"Chúng ta cần phân bổ thêm thời gian cho việc kiểm tra."}],
+   tags:["Finance","Management","Planning"]}
+]},
+
+// ── NGÀY 7: STT 61–70 ─────────────────────────────
+{topic:"Ngày 7 · STT 61–70", words:[
+  {stt:61,w:"compatible",tp:"adj",ph:"/kəmˈpætɪbl/",m:"tương thích",
+   noun:null,
+   ex:[{e:"This software is <b>compatible</b> with all operating systems.",v:"Phần mềm này tương thích với tất cả các hệ điều hành."},
+       {e:"Make sure the new device is <b>compatible</b> with our system.",v:"Đảm bảo thiết bị mới tương thích với hệ thống của chúng ta."}],
+   tags:["IT","Technology","Support"]},
+
+  {stt:62,w:"delete",tp:"v",ph:"/dɪˈliːt/",m:"xóa (dữ liệu)",
+   noun:null,
+   ex:[{e:"I accidentally <b>deleted</b> the important file from my computer.",v:"Tôi vô tình xóa tệp quan trọng khỏi máy tính."},
+       {e:"Please <b>delete</b> all old emails to free up space.",v:"Vui lòng xóa tất cả email cũ để giải phóng dung lượng."}],
+   tags:["IT","Administration"]},
+
+  {stt:63,w:"display",tp:"n/v",ph:"/dɪˈspleɪ/",m:"hiển thị, trưng bày; màn hình",
+   noun:{singular:"display",plural:"displays",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>display</b> shows data. (chủ ngữ)","A wide <b>display</b> of products. (tân ngữ)","On <b>display</b>... (thành ngữ)"]},
+   ex:[{e:"The shop has a wide <b>display</b> of electronic gadgets.",v:"Cửa hàng có màn trưng bày rộng các thiết bị điện tử."},
+       {e:"The data is <b>displayed</b> on the screen in real time.",v:"Dữ liệu được hiển thị trên màn hình theo thời gian thực."}],
+   tags:["Retail","IT","Marketing"]},
+
+  {stt:64,w:"duplicate",tp:"v/n",ph:"/ˈdjuːplɪkeɪt/",m:"sao chép, nhân đôi; bản sao",
+   noun:{singular:"duplicate",plural:"duplicates",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["A <b>duplicate</b> was sent to HR. (chủ ngữ)","Please make a <b>duplicate</b>. (tân ngữ)"]},
+   ex:[{e:"Please <b>duplicate</b> this document for all participants.",v:"Vui lòng sao chép tài liệu này cho tất cả người tham dự."},
+       {e:"Keep a <b>duplicate</b> of all important files.",v:"Giữ bản sao của tất cả các tệp quan trọng."}],
+   tags:["Administration","IT","Legal"]},
+
+  {stt:65,w:"failure",tp:"n",ph:"/ˈfeɪljər/",m:"sự thất bại; sự cố",
+   noun:{singular:"failure",plural:"failures",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>failure</b> caused problems. (chủ ngữ)","We reported the <b>failure</b>. (tân ngữ)","After the <b>failure</b>... (sau giới từ)"]},
+   ex:[{e:"The system <b>failure</b> was caused by a power outage.",v:"Sự cố hệ thống do mất điện gây ra."},
+       {e:"Don't be afraid of <b>failure</b> — learn from it.",v:"Đừng sợ thất bại — hãy học hỏi từ nó."}],
+   tags:["IT","Management","Motivation"]},
+
+  {stt:66,w:"figure out",tp:"phrase",ph:"/ˈfɪɡər aʊt/",m:"tìm ra, hiểu ra",
+   noun:null,
+   ex:[{e:"We need to <b>figure out</b> how to solve this problem.",v:"Chúng ta cần tìm ra cách giải quyết vấn đề này."},
+       {e:"I can't <b>figure out</b> why the program is not working.",v:"Tôi không thể hiểu tại sao chương trình không hoạt động."}],
+   tags:["IT","Problem-solving","General"]},
+
+  {stt:67,w:"ignore",tp:"v",ph:"/ɪɡˈnɔːr/",m:"bỏ qua, không để ý",
+   noun:null,
+   ex:[{e:"You should not <b>ignore</b> the safety warnings.",v:"Bạn không nên bỏ qua các cảnh báo an toàn."},
+       {e:"Do not <b>ignore</b> emails from your manager.",v:"Đừng bỏ qua email từ người quản lý của bạn."}],
+   tags:["Safety","Communication","Work"]},
+
+  {stt:68,w:"search",tp:"v/n",ph:"/sɜːrtʃ/",m:"tìm kiếm",
+   noun:{singular:"search",plural:"searches",rule:"Đuôi -ch → thêm -es",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>search</b> took two hours. (chủ ngữ)","Do a quick <b>search</b>. (tân ngữ)","In your <b>search</b> for... (sau giới từ)"]},
+   ex:[{e:"I <b>searched</b> for the document but couldn't find it.",v:"Tôi đã tìm kiếm tài liệu nhưng không tìm được."},
+       {e:"Run a <b>search</b> for the file name.",v:"Thực hiện tìm kiếm theo tên tệp."}],
+   tags:["IT","Administration","General"]},
+
+  {stt:69,w:"shut down",tp:"phrase",ph:"/ʃʌt daʊn/",m:"tắt, đóng cửa",
+   noun:null,
+   ex:[{e:"Please <b>shut down</b> your computer before leaving.",v:"Vui lòng tắt máy tính trước khi ra về."},
+       {e:"The factory was <b>shut down</b> due to safety problems.",v:"Nhà máy đã bị đóng cửa do các vấn đề an toàn."}],
+   tags:["IT","Safety","Management"]},
+
+  {stt:70,w:"warning",tp:"n",ph:"/ˈwɔːrnɪŋ/",m:"cảnh báo",
+   noun:{singular:"warning",plural:"warnings",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>warning</b> was ignored. (chủ ngữ)","Give a <b>warning</b>. (tân ngữ)","Without <b>warning</b>... (thành ngữ)"]},
+   ex:[{e:"The flashing light is a <b>warning</b> that the battery is low.",v:"Đèn nhấp nháy là cảnh báo pin sắp hết."},
+       {e:"Read all <b>warnings</b> before using the machine.",v:"Đọc tất cả cảnh báo trước khi sử dụng máy."}],
+   tags:["Safety","IT","HR"]}
+]},
+
+// ── NGÀY 8: STT 71–80 ─────────────────────────────
+{topic:"Ngày 8 · STT 71–80", words:[
+  {stt:71,w:"affordable",tp:"adj",ph:"/əˈfɔːrdəbl/",m:"giá cả phải chăng",
+   noun:null,
+   ex:[{e:"This hotel is <b>affordable</b> and has good services.",v:"Khách sạn này có giá cả phải chăng và dịch vụ tốt."},
+       {e:"We need an <b>affordable</b> solution for small businesses.",v:"Chúng ta cần giải pháp phải chăng cho các doanh nghiệp nhỏ."}],
+   tags:["Finance","Retail","HR"]},
+
+  {stt:72,w:"as needed",tp:"phrase",ph:"/æz ˈniːdɪd/",m:"khi cần thiết",
+   noun:null,
+   ex:[{e:"The machines are repaired <b>as needed</b>.",v:"Máy móc được sửa chữa khi cần thiết."},
+       {e:"You can take a break <b>as needed</b> during the test.",v:"Bạn có thể nghỉ khi cần thiết trong bài kiểm tra."}],
+   tags:["Manufacturing","HR","General"]},
+
+  {stt:73,w:"capacity",tp:"n",ph:"/kəˈpæsɪti/",m:"sức chứa; năng lực",
+   noun:{singular:"capacity",plural:"capacities",rule:"Đuôi -y sau phụ âm → đổi thành -ies",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>capacity</b> is 200 people. (chủ ngữ)","Work at full <b>capacity</b>. (sau giới từ)","Beyond our <b>capacity</b>. (sau giới từ)"]},
+   ex:[{e:"The stadium has a seating <b>capacity</b> of 50,000 people.",v:"Sân vận động có sức chứa 50.000 chỗ ngồi."},
+       {e:"The factory is working at full <b>capacity</b>.",v:"Nhà máy đang hoạt động hết công suất."}],
+   tags:["Facility","Manufacturing","HR"]},
+
+  {stt:74,w:"durable",tp:"adj",ph:"/ˈdjʊərəbl/",m:"bền, lâu bền",
+   noun:null,
+   ex:[{e:"This fabric is very <b>durable</b> and can last for years.",v:"Loại vải này rất bền và có thể dùng được nhiều năm."},
+       {e:"We need <b>durable</b> materials for outdoor equipment.",v:"Chúng ta cần vật liệu bền cho thiết bị ngoài trời."}],
+   tags:["Manufacturing","Retail","Quality"]},
+
+  {stt:75,w:"be in charge of",tp:"phrase",ph:"/biː ɪn tʃɑːrdʒ əv/",m:"phụ trách, chịu trách nhiệm về",
+   noun:null,
+   ex:[{e:"He is <b>in charge of</b> the marketing department.",v:"Anh ấy phụ trách bộ phận marketing."},
+       {e:"Who is <b>in charge of</b> this project?",v:"Ai phụ trách dự án này?"}],
+   tags:["Management","HR","Responsibility"]},
+
+  {stt:76,w:"initiative",tp:"n",ph:"/ɪˈnɪʃətɪv/",m:"sáng kiến; sự chủ động",
+   noun:{singular:"initiative",plural:"initiatives",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["The <b>initiative</b> was a success. (chủ ngữ)","Take the <b>initiative</b>. (tân ngữ - thành ngữ)"]},
+   ex:[{e:"He took the <b>initiative</b> and started the project early.",v:"Anh ấy đã chủ động và bắt đầu dự án sớm."},
+       {e:"The government launched a new <b>initiative</b> to help small businesses.",v:"Chính phủ đã khởi động sáng kiến mới để giúp doanh nghiệp nhỏ."}],
+   tags:["Management","Leadership","Government"]},
+
+  {stt:77,w:"physically",tp:"adv",ph:"/ˈfɪzɪkli/",m:"về thể chất; thực thể",
+   noun:null,
+   ex:[{e:"The work is <b>physically</b> demanding but rewarding.",v:"Công việc đòi hỏi nhiều về thể chất nhưng rất xứng đáng."},
+       {e:"Please be <b>physically</b> present at the meeting.",v:"Vui lòng có mặt trực tiếp tại cuộc họp."}],
+   tags:["HR","Health","General"]},
+
+  {stt:78,w:"provider",tp:"n",ph:"/prəˈvaɪdər/",m:"nhà cung cấp",
+   noun:{singular:"provider",plural:"providers",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>provider</b> sent the bill. (chủ ngữ)","Choose a good <b>provider</b>. (tân ngữ)","From your <b>provider</b>... (sau giới từ)"]},
+   ex:[{e:"Who is your internet service <b>provider</b>?",v:"Nhà cung cấp dịch vụ internet của bạn là ai?"},
+       {e:"We changed our healthcare <b>provider</b> last year.",v:"Chúng tôi đã đổi nhà cung cấp dịch vụ y tế năm ngoái."}],
+   tags:["IT","Healthcare","Service"]},
+
+  {stt:79,w:"recur",tp:"v",ph:"/rɪˈkɜːr/",m:"tái diễn, xảy ra lại",
+   noun:null,
+   ex:[{e:"The same error seems to <b>recur</b> every time I open it.",v:"Lỗi tương tự dường như tái diễn mỗi khi tôi mở nó."},
+       {e:"We must fix the root cause so the problem does not <b>recur</b>.",v:"Chúng ta phải sửa nguyên nhân gốc rễ để vấn đề không tái diễn."}],
+   tags:["IT","Quality","Management"]},
+
+  {stt:80,w:"reduction",tp:"n",ph:"/rɪˈdʌkʃn/",m:"sự giảm, sự cắt giảm",
+   noun:{singular:"reduction",plural:"reductions",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["A <b>reduction</b> in cost is needed. (chủ ngữ)","We saw a price <b>reduction</b>. (tân ngữ)","After the <b>reduction</b>... (sau giới từ)"]},
+   ex:[{e:"The company announced a <b>reduction</b> in its workforce.",v:"Công ty thông báo cắt giảm lực lượng lao động."},
+       {e:"A <b>reduction</b> in prices helped attract more customers.",v:"Việc giảm giá đã giúp thu hút thêm nhiều khách hàng."}],
+   tags:["Finance","HR","Management"]}
+]},
+
+// ── NGÀY 9: STT 81–90 ─────────────────────────────
+{topic:"Ngày 9 · STT 81–90", words:[
+  {stt:81,w:"stay on top of",tp:"phrase",ph:"/steɪ ɒn tɒp əv/",m:"theo kịp, cập nhật",
+   noun:null,
+   ex:[{e:"It's important to <b>stay on top of</b> the latest trends.",v:"Điều quan trọng là phải theo kịp các xu hướng mới nhất."},
+       {e:"She always <b>stays on top of</b> her work and never misses deadlines.",v:"Cô ấy luôn cập nhật công việc và không bao giờ bỏ lỡ thời hạn."}],
+   tags:["Work","Management","Professional"]},
+
+  {stt:82,w:"stock",tp:"n",ph:"/stɒk/",m:"kho hàng; cổ phiếu",
+   noun:{singular:"stock",plural:"stocks",rule:"Khi nghĩa 'kho hàng' thường không đếm được; khi nghĩa 'cổ phiếu' đếm được",countable:false,
+         positions:["Tân ngữ","Chủ ngữ","Sau giới từ"],
+         posEx:["We have <b>stock</b> ready. (tân ngữ - kho hàng, không đếm)","Our <b>stocks</b> rose 10%. (chủ ngữ - cổ phiếu, đếm được)","In <b>stock</b>... (thành ngữ)"]},
+   ex:[{e:"We have a lot of goods in <b>stock</b> right now.",v:"Chúng tôi hiện có rất nhiều hàng trong kho."},
+       {e:"The company's <b>stocks</b> rose 10% today.",v:"Cổ phiếu của công ty đã tăng 10% hôm nay."}],
+   tags:["Retail","Finance","Inventory"]},
+
+  {stt:83,w:"appreciation",tp:"n",ph:"/əˌpriːʃiˈeɪʃn/",m:"sự đánh giá cao; lòng biết ơn",
+   noun:{singular:"appreciation",plural:null,rule:"Không đếm được (uncountable)",countable:false,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["<b>Appreciation</b> motivates employees. (chủ ngữ)","Show your <b>appreciation</b>. (tân ngữ)","In <b>appreciation</b> of... (thành ngữ)"]},
+   ex:[{e:"He received a bonus in <b>appreciation</b> of his hard work.",v:"Anh ấy nhận được tiền thưởng để đánh giá cao nỗ lực làm việc."},
+       {e:"Please show your <b>appreciation</b> by clapping for the speaker.",v:"Hãy bày tỏ lòng biết ơn bằng cách vỗ tay cho diễn giả."}],
+   tags:["HR","Communication","Culture"]},
+
+  {stt:84,w:"bring in",tp:"phrase",ph:"/brɪŋ ɪn/",m:"mời đến; tạo ra (lợi nhuận)",
+   noun:null,
+   ex:[{e:"We need to <b>bring in</b> more experts for this project.",v:"Chúng ta cần mời thêm các chuyên gia cho dự án này."},
+       {e:"The new product will <b>bring in</b> more revenue.",v:"Sản phẩm mới sẽ tạo ra nhiều doanh thu hơn."}],
+   tags:["HR","Management","Business"]},
+
+  {stt:85,w:"casually",tp:"adv",ph:"/ˈkæʒuəli/",m:"thoải mái, bình thường",
+   noun:null,
+   ex:[{e:"The employees were dressed <b>casually</b> for the picnic.",v:"Các nhân viên ăn mặc thoải mái cho buổi dã ngoại."},
+       {e:"He mentioned it <b>casually</b> in the meeting.",v:"Anh ấy đề cập đến nó một cách bình thường trong cuộc họp."}],
+   tags:["HR","Communication","Culture"]},
+
+  {stt:86,w:"code",tp:"n",ph:"/koʊd/",m:"quy tắc, mã; code lập trình",
+   noun:{singular:"code",plural:"codes",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>code</b> of conduct is clear. (chủ ngữ)","Follow the <b>code</b>. (tân ngữ)","Under this <b>code</b>... (sau giới từ)"]},
+   ex:[{e:"Every employee must follow the <b>code</b> of conduct.",v:"Mỗi nhân viên phải tuân theo quy tắc ứng xử."},
+       {e:"Enter the security <b>code</b> to open the door.",v:"Nhập mã bảo mật để mở cửa."}],
+   tags:["HR","IT","Legal"]},
+
+  {stt:87,w:"expose",tp:"v",ph:"/ɪkˈspoʊz/",m:"phơi bày; vạch trần; tiếp xúc",
+   noun:null,
+   ex:[{e:"The report <b>exposed</b> the company's financial problems.",v:"Báo cáo đã vạch trần các vấn đề tài chính của công ty."},
+       {e:"Don't <b>expose</b> your password to anyone.",v:"Đừng để lộ mật khẩu của bạn cho bất kỳ ai."}],
+   tags:["IT","Legal","Communication"]},
+
+  {stt:88,w:"glimpse",tp:"n/v",ph:"/ɡlɪmps/",m:"cái nhìn thoáng qua; nhìn thoáng",
+   noun:{singular:"glimpse",plural:"glimpses",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ"],
+         posEx:["A <b>glimpse</b> is enough. (chủ ngữ)","Catch a <b>glimpse</b>. (tân ngữ - thành ngữ)"]},
+   ex:[{e:"I caught a <b>glimpse</b> of the CEO as he walked past.",v:"Tôi bắt gặp thoáng thấy CEO khi ông đi qua."},
+       {e:"The tour gave us a <b>glimpse</b> of life in the factory.",v:"Chuyến tham quan cho chúng tôi cái nhìn thoáng về cuộc sống trong nhà máy."}],
+   tags:["General","Communication"]},
+
+  {stt:89,w:"be made of",tp:"phrase",ph:"/biː meɪd əv/",m:"được làm từ (vật liệu)",
+   noun:null,
+   ex:[{e:"This table is <b>made of</b> high quality wood.",v:"Cái bàn này được làm từ gỗ chất lượng cao."},
+       {e:"The bag is <b>made of</b> genuine leather.",v:"Chiếc túi được làm từ da thật."}],
+   tags:["Manufacturing","Retail","General"]},
+
+  {stt:90,w:"out of",tp:"phrase",ph:"/aʊt əv/",m:"hết (hàng); thiếu",
+   noun:null,
+   ex:[{e:"We are <b>out of</b> paper for the printer.",v:"Chúng ta đã hết giấy cho máy in."},
+       {e:"Sorry, we are <b>out of</b> stock for that item.",v:"Xin lỗi, chúng tôi đã hết hàng mặt hàng đó."}],
+   tags:["Inventory","Retail","General"]}
+]},
+
+// ── NGÀY 10: STT 91–100 ───────────────────────────
+{topic:"Ngày 10 · STT 91–100", words:[
+  {stt:91,w:"outdated",tp:"adj",ph:"/ˌaʊtˈdeɪtɪd/",m:"lỗi thời, cũ kỹ",
+   noun:null,
+   ex:[{e:"The computer system is completely <b>outdated</b>.",v:"Hệ thống máy tính hoàn toàn lỗi thời."},
+       {e:"Many companies still use <b>outdated</b> methods.",v:"Nhiều công ty vẫn sử dụng các phương pháp lỗi thời."}],
+   tags:["IT","Management","Change"]},
+
+  {stt:92,w:"practice",tp:"n/v",ph:"/ˈpræktɪs/",m:"luyện tập; thực hành; thói quen",
+   noun:{singular:"practice",plural:"practices",rule:"Thêm -s bình thường; 'practice' có thể đếm hoặc không đếm tùy ngữ cảnh",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["<b>Practice</b> makes perfect. (chủ ngữ - không đếm, nghĩa chung)","Regular <b>practices</b> improve skills. (chủ ngữ - đếm được, số nhiều)","Through <b>practice</b>... (sau giới từ)"]},
+   ex:[{e:"It takes a lot of <b>practice</b> to master a language.",v:"Cần rất nhiều luyện tập để thành thạo một ngôn ngữ."},
+       {e:"This is a common business <b>practice</b> in Asia.",v:"Đây là thực hành kinh doanh phổ biến ở châu Á."}],
+   tags:["HR","Education","Business"]},
+
+  {stt:93,w:"reinforce",tp:"v",ph:"/ˌriːɪnˈfɔːrs/",m:"củng cố, gia cố",
+   noun:null,
+   ex:[{e:"The new beams will <b>reinforce</b> the structure of the building.",v:"Các dầm mới sẽ gia cố cấu trúc của tòa nhà."},
+       {e:"Positive feedback <b>reinforces</b> good behavior at work.",v:"Phản hồi tích cực củng cố hành vi tốt tại nơi làm việc."}],
+   tags:["Construction","HR","Training"]},
+
+  {stt:94,w:"verbally",tp:"adv",ph:"/ˈvɜːrbəli/",m:"bằng lời nói, miệng",
+   noun:null,
+   ex:[{e:"The agreement was made <b>verbally</b>, not in writing.",v:"Thỏa thuận được thực hiện bằng miệng, không bằng văn bản."},
+       {e:"Please confirm <b>verbally</b> that you understand the instructions.",v:"Vui lòng xác nhận bằng lời rằng bạn hiểu các hướng dẫn."}],
+   tags:["Communication","Legal","HR"]},
+
+  {stt:95,w:"device",tp:"n",ph:"/dɪˈvaɪs/",m:"thiết bị, dụng cụ",
+   noun:{singular:"device",plural:"devices",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>device</b> is easy to use. (chủ ngữ)","Use this <b>device</b> carefully. (tân ngữ)","On your <b>device</b>... (sau giới từ)"]},
+   ex:[{e:"This <b>device</b> can measure your heart rate accurately.",v:"Thiết bị này có thể đo nhịp tim của bạn một cách chính xác."},
+       {e:"All personal <b>devices</b> must be registered with IT.",v:"Tất cả thiết bị cá nhân phải đăng ký với bộ phận IT."}],
+   tags:["IT","Healthcare","Office"]},
+
+  {stt:96,w:"facilitate",tp:"v",ph:"/fəˈsɪlɪteɪt/",m:"tạo điều kiện, hỗ trợ",
+   noun:null,
+   ex:[{e:"The software will <b>facilitate</b> communication between teams.",v:"Phần mềm sẽ hỗ trợ giao tiếp giữa các nhóm."},
+       {e:"Good management <b>facilitates</b> better performance.",v:"Quản lý tốt tạo điều kiện cho hiệu suất tốt hơn."}],
+   tags:["IT","Management","Communication"]},
+
+  {stt:97,w:"network",tp:"n",ph:"/ˈnetwɜːrk/",m:"mạng lưới",
+   noun:{singular:"network",plural:"networks",rule:"Thêm -s bình thường",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>network</b> is down. (chủ ngữ)","Build a strong <b>network</b>. (tân ngữ)","On the <b>network</b>... (sau giới từ)"]},
+   ex:[{e:"The company has a large <b>network</b> of distributors.",v:"Công ty có mạng lưới nhà phân phối rộng lớn."},
+       {e:"Please connect your laptop to the Wi-Fi <b>network</b>.",v:"Vui lòng kết nối máy tính xách tay với mạng Wi-Fi."}],
+   tags:["IT","Business","Communication"]},
+
+  {stt:98,w:"popularity",tp:"n",ph:"/ˌpɒpjəˈlærɪti/",m:"sự phổ biến, độ nổi tiếng",
+   noun:{singular:"popularity",plural:null,rule:"Không đếm được (uncountable)",countable:false,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>popularity</b> of this app is growing. (chủ ngữ)","Gain <b>popularity</b>. (tân ngữ)","Due to its <b>popularity</b>... (sau giới từ)"]},
+   ex:[{e:"The <b>popularity</b> of online shopping is increasing.",v:"Sự phổ biến của mua sắm trực tuyến ngày càng tăng."},
+       {e:"This product gained <b>popularity</b> quickly after launch.",v:"Sản phẩm này nhanh chóng được biết đến sau khi ra mắt."}],
+   tags:["Marketing","Consumer","Social media"]},
+
+  {stt:99,w:"process",tp:"n/v",ph:"/ˈprɒses/",m:"quy trình; xử lý",
+   noun:{singular:"process",plural:"processes",rule:"Đuôi -s → thêm -es",countable:true,
+         positions:["Chủ ngữ","Tân ngữ","Sau giới từ"],
+         posEx:["The <b>process</b> takes 3 days. (chủ ngữ)","Follow the <b>process</b>. (tân ngữ)","In the <b>process</b>... (thành ngữ)"]},
+   ex:[{e:"It will take some time to <b>process</b> your application.",v:"Sẽ mất một khoảng thời gian để xử lý đơn của bạn."},
+       {e:"The approval <b>process</b> usually takes two weeks.",v:"Quy trình phê duyệt thường mất hai tuần."}],
+   tags:["Administration","IT","Manufacturing"]},
+
+  {stt:100,w:"replace",tp:"v",ph:"/rɪˈpleɪs/",m:"thay thế",
+   noun:null,
+   ex:[{e:"We need to <b>replace</b> the old equipment.",v:"Chúng ta cần thay thế thiết bị cũ."},
+       {e:"You can <b>replace</b> butter with oil in this recipe.",v:"Bạn có thể thay thế bơ bằng dầu trong công thức này."}],
+   tags:["IT","Manufacturing","General"]}
 ]}
 ];
 
-// ============================================================
+// ══════════════════════════════════════════════════
 // STATE
-// ============================================================
-const state = {
-  day:0, tab:'list',
+// ══════════════════════════════════════════════════
+const S={
+  day:0,tab:'list',
   flash:{idx:0,flipped:false},
   quiz:{idx:0,correct:0,total:0,answered:false,shuffled:[]},
   fill:{idx:0,correct:0,total:0,answered:false,shuffled:[]},
-  learned: JSON.parse(localStorage.getItem('tt_learned')||'[]')
+  gram:{subtab:'theory',qIdx:0,correct:0,total:0,answered:false},
+  learned:JSON.parse(localStorage.getItem('tt_l')||'[]')
 };
+function save(){localStorage.setItem('tt_l',JSON.stringify(S.learned));}
+function shuf(a){return a.slice().sort(()=>Math.random()-.5);}
+function gw(){return DAYS[S.day].words;}
+function tl(){return S.learned.length;}
+function markL(w){if(!S.learned.includes(w)){S.learned.push(w);save();}upProg();}
+function upProg(){document.getElementById('totalProg').textContent=tl()+' / 100 từ';}
+function esc(s){return s.replace(/'/g,"\\'").replace(/"/g,'&quot;');}
 
-function saveState(){localStorage.setItem('tt_learned',JSON.stringify(state.learned));}
-function shuffle(a){return a.slice().sort(()=>Math.random()-0.5);}
-function getWords(){return DAYS[state.day].words;}
-function totalLearned(){return state.learned.length;}
-function markLearned(w){
-  if(!state.learned.includes(w)){state.learned.push(w);saveState();}
-  document.getElementById('totalProg').textContent=totalLearned()+' / 1000 từ';
-}
-
-// ============================================================
-// SIDEBAR
-// ============================================================
+// ── SIDEBAR ───────────────────────────────────────
 function renderSidebar(){
-  const sb=document.getElementById('sidebar');
   let h='<div class="sidebar-title">Lịch học</div>';
   DAYS.forEach((d,i)=>{
-    const done=d.words.every(w=>state.learned.includes(w.w));
-    h+=`<div class="day-item${state.day===i?' active':''}" onclick="selectDay(${i})">
-      <span class="day-num">Ngày ${i+1}</span>
-      <span class="day-topic">${d.topic}</span>
-      ${done?'<span style="color:var(--green);margin-left:auto">✓</span>':''}
+    const done=d.words.every(w=>S.learned.includes(w.w));
+    const first=d.words[0].stt, last=d.words[d.words.length-1].stt;
+    h+=`<div class="day-item${S.day===i?' active':''}" onclick="selDay(${i})">
+      <span class="dn">Ngày ${i+1}</span>
+      <span class="dt">STT ${first}–${last}</span>
+      ${done?'<span style="color:var(--green);font-size:13px;margin-left:auto">✓</span>':''}
     </div>`;
   });
-  sb.innerHTML=h;
+  document.getElementById('sidebar').innerHTML=h;
 }
 
-function selectDay(i){
-  state.day=i; state.tab='list';
-  state.flash={idx:0,flipped:false};
-  state.quiz={idx:0,correct:0,total:0,answered:false,shuffled:shuffle(DAYS[i].words)};
-  state.fill={idx:0,correct:0,total:0,answered:false,shuffled:shuffle(DAYS[i].words)};
-  renderSidebar(); renderMain();
+function selDay(i){
+  S.day=i;S.tab='list';
+  S.flash={idx:0,flipped:false};
+  S.quiz={idx:0,correct:0,total:0,answered:false,shuffled:shuf(DAYS[i].words)};
+  S.fill={idx:0,correct:0,total:0,answered:false,shuffled:shuf(DAYS[i].words)};
+  S.gram={subtab:'theory',qIdx:0,correct:0,total:0,answered:false};
+  renderSidebar();renderMain();
 }
 
-// ============================================================
-// MAIN
-// ============================================================
+// ── MAIN ──────────────────────────────────────────
 function renderMain(){
-  const d=DAYS[state.day];
-  const lc=d.words.filter(w=>state.learned.includes(w.w)).length;
+  const d=DAYS[S.day];
+  const lc=d.words.filter(w=>S.learned.includes(w.w)).length;
   const pct=Math.round(lc/d.words.length*100);
+  const first=d.words[0].stt,last=d.words[d.words.length-1].stt;
   document.getElementById('mainContent').innerHTML=`
   <div class="topic-header">
-    <h2>Ngày ${state.day+1}: ${d.topic}</h2>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <h2>Ngày ${S.day+1}: ${d.topic}</h2>
+    <div>
       <span class="badge badge-purple">${d.words.length} từ</span>
       <span class="badge badge-teal">${lc} đã học</span>
+      <span class="badge badge-amber">STT ${first}–${last}</span>
     </div>
-    <div class="progress-label" style="margin-top:10px"><span>Tiến độ hôm nay</span><span>${pct}%</span></div>
+    <div class="progress-label"><span>Tiến độ hôm nay</span><span>${pct}%</span></div>
     <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
   </div>
   <div class="tabs">
-    <div class="tab${state.tab==='list'?' active':''}" onclick="switchTab('list')">📋 Từ vựng</div>
-    <div class="tab${state.tab==='flash'?' active':''}" onclick="switchTab('flash')">🃏 Flashcard</div>
-    <div class="tab${state.tab==='quiz'?' active':''}" onclick="switchTab('quiz')">❓ Trắc nghiệm</div>
-    <div class="tab${state.tab==='fill'?' active':''}" onclick="switchTab('fill')">✍️ Điền từ</div>
-    <div class="tab${state.tab==='match'?' active':''}" onclick="switchTab('match')">🔗 Ghép đôi</div>
+    <div class="tab${S.tab==='list'?' active':''}" onclick="swTab('list')">📋 Từ vựng</div>
+    <div class="tab${S.tab==='flash'?' active':''}" onclick="swTab('flash')">🃏 Flashcard</div>
+    <div class="tab${S.tab==='quiz'?' active':''}" onclick="swTab('quiz')">❓ Trắc nghiệm</div>
+    <div class="tab${S.tab==='fill'?' active':''}" onclick="swTab('fill')">✍️ Điền từ</div>
+    <div class="tab${S.tab==='match'?' active':''}" onclick="swTab('match')">🔗 Ghép đôi</div>
+    <div class="tab${S.tab==='gram'?' active':''}" onclick="swTab('gram')">📐 Luyện Danh Từ</div>
   </div>
-  <div id="tabContent"></div>`;
-  document.getElementById('totalProg').textContent=totalLearned()+' / 1000 từ';
-  renderTab();
+  <div id="tc"></div>`;
+  upProg();renderTab();
 }
 
-function switchTab(t){
-  state.tab=t;
-  if(t==='quiz') state.quiz={idx:0,correct:0,total:0,answered:false,shuffled:shuffle(getWords())};
-  if(t==='fill') state.fill={idx:0,correct:0,total:0,answered:false,shuffled:shuffle(getWords())};
+function swTab(t){
+  S.tab=t;
+  if(t==='quiz')S.quiz={idx:0,correct:0,total:0,answered:false,shuffled:shuf(gw())};
+  if(t==='fill')S.fill={idx:0,correct:0,total:0,answered:false,shuffled:shuf(gw())};
   document.querySelectorAll('.tab').forEach((el,i)=>{
-    el.className='tab'+(['list','flash','quiz','fill','match'][i]===t?' active':'');
+    el.className='tab'+(['list','flash','quiz','fill','match','gram'][i]===t?' active':'');
   });
   renderTab();
 }
 
 function renderTab(){
-  const tc=document.getElementById('tabContent');
-  if(!tc)return;
-  switch(state.tab){
-    case 'list':  tc.innerHTML=renderList(); break;
-    case 'flash': tc.innerHTML=renderFlash(); break;
-    case 'quiz':  tc.innerHTML=renderQuiz(); break;
-    case 'fill':  tc.innerHTML=renderFill(); setupFillEvents(); break;
-    case 'match': tc.innerHTML=renderMatch(); break;
-  }
+  const tc=document.getElementById('tc');if(!tc)return;
+  if(S.tab==='list')tc.innerHTML=renderList();
+  else if(S.tab==='flash')tc.innerHTML=renderFlash();
+  else if(S.tab==='quiz')tc.innerHTML=renderQuiz();
+  else if(S.tab==='fill'){tc.innerHTML=renderFill();setupFill();}
+  else if(S.tab==='match')tc.innerHTML=renderMatch();
+  else if(S.tab==='gram')tc.innerHTML=renderGram();
 }
 
-// ============================================================
-// LIST — có ví dụ câu + tags + phát âm
-// ============================================================
+// ── LIST ──────────────────────────────────────────
 function renderList(){
-  const words=getWords();
-  return '<div class="word-cards">'+words.map((w,i)=>{
-    const known=state.learned.includes(w.w);
-    const exHtml=w.ex.map(e=>`
-      <div class="example-item">
-        <div class="example-en">${e.e.replace(/<b>(.*?)<\/b>/g,'<span class="highlight">$1</span>')}</div>
-        <div class="example-vi">${e.v}</div>
-      </div>`).join('');
-    const tagHtml=(w.tags||[]).map(t=>`<span class="usage-tag">${t}</span>`).join('');
-    return `
-    <div class="word-card" id="wc_${i}">
-      <div class="word-card-header" onclick="toggleCard(${i})">
-        <div class="word-main">
-          <span class="word-en">${w.w}</span>
-          <span class="word-ph">${w.ph}</span>
-          <span class="word-type">${w.tp}</span>
-          <span class="word-vi">${w.m}</span>
-        </div>
-        <button class="btn-audio" onclick="event.stopPropagation();speak('${w.w}')" title="Nghe phát âm">🔊</button>
-        <button class="btn-mark${known?' marked':''}" onclick="event.stopPropagation();markLearned('${w.w}');this.textContent='✓ Đã học';this.classList.add('marked')">
-          ${known?'✓ Đã học':'Đánh dấu'}
-        </button>
+  return '<div class="word-cards">'+gw().map((w,i)=>{
+    const known=S.learned.includes(w.w);
+    const exH=w.ex.map(e=>`<div class="ex-item">
+      <div class="ex-en">${e.e.replace(/<b>(.*?)<\/b>/g,'<span class="hl">$1</span>')}</div>
+      <div class="ex-vi">${e.v}</div>
+    </div>`).join('');
+    const tagH=(w.tags||[]).map(t=>`<span class="utag">${t}</span>`).join('');
+    const nounH=w.noun?`<div class="noun-info">
+      📌 <b>Danh từ:</b> số ít: <b>${w.noun.singular}</b>${w.noun.plural?' · số nhiều: <b>'+w.noun.plural+'</b>':' · không có số nhiều'}
+      &nbsp;·&nbsp; ${w.noun.countable?'✅ Đếm được':'⚠️ Không đếm được'}
+      &nbsp;·&nbsp; Quy tắc: ${w.noun.rule}
+    </div>`:'';
+    return `<div class="word-card">
+      <div class="wch" onclick="toggleW(${i})">
+        <span class="wc-stt">#${w.stt}</span>
+        <span class="wc-en">${w.w}</span>
+        <span class="wc-ph">${w.ph}</span>
+        <span class="wc-tp">${w.tp}</span>
+        <span class="wc-vi">${w.m}</span>
+        <button class="btn-audio" onclick="event.stopPropagation();speak('${w.w.split(' ')[0]}')" title="Phát âm">🔊</button>
+        <button class="btn-mark${known?' marked':''}" onclick="event.stopPropagation();markL('${esc(w.w)}');this.textContent='✓ Đã học';this.classList.add('marked')">${known?'✓ Đã học':'Đánh dấu'}</button>
       </div>
-      <div class="word-expand" id="we_${i}" style="display:none">
-        <div class="examples-wrap">
-          <div class="examples-title">📖 Ví dụ câu</div>
-          ${exHtml}
-        </div>
-        <div class="usage-wrap">
-          <div class="usage-title">🏷️ Ngữ cảnh sử dụng</div>
-          <div class="usage-tags">${tagHtml}</div>
-        </div>
+      <div id="wx${i}" style="display:none" class="wce">
+        <div class="ex-title">📖 Ví dụ câu</div>${exH}
+        ${nounH}
+        <div class="ex-title" style="margin-top:8px">🏷️ Ngữ cảnh</div>
+        <div class="tag-row">${tagH}</div>
       </div>
     </div>`;
   }).join('')+'</div>';
 }
+function toggleW(i){const e=document.getElementById('wx'+i);if(e)e.style.display=e.style.display==='none'?'block':'none';}
 
-function toggleCard(i){
-  const el=document.getElementById('we_'+i);
-  if(el) el.style.display=el.style.display==='none'?'block':'none';
-}
-
-// ============================================================
-// FLASHCARD — có phát âm + ví dụ
-// ============================================================
+// ── FLASHCARD ─────────────────────────────────────
 function renderFlash(){
-  const words=getWords();
-  const w=words[state.flash.idx];
-  const ex=w.ex&&w.ex[0]?w.ex[0].e.replace(/<b>(.*?)<\/b>/g,'<u>$1</u>'):'';
-  const flipped=state.flash.flipped;
-  return `<div class="fc-container">
-    <div class="flashcard" id="fc" onclick="flipFC()">
-      ${!flipped?`
+  const w=gw()[S.flash.idx];
+  const ex=w.ex[0]?w.ex[0].e.replace(/<b>(.*?)<\/b>/g,'<u>$1</u>'):'';
+  const f=S.flash.flipped;
+  return `<div class="fc-box">
+    <div class="flashcard" onclick="flipFC()">
+      ${!f?`<div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">#${w.stt}</div>
         <div class="fc-word">${w.w}</div>
         <div class="fc-ph">${w.ph}</div>
-        <div class="fc-type">${w.tp}</div>
-        <button class="fc-audio-btn" onclick="event.stopPropagation();speak('${w.w}')">🔊 Nghe phát âm</button>
+        <div class="fc-tp">${w.tp}</div>
+        <button class="fc-abtn" onclick="event.stopPropagation();speak('${w.w.split(' ')[0]}')">🔊 Nghe phát âm</button>
         <div class="fc-hint">Nhấn thẻ để xem nghĩa</div>
-      `:`
-        <div class="fc-meaning">${w.m}</div>
-        <div style="font-size:15px;color:var(--text-muted)">${w.w} — ${w.ph}</div>
-        ${ex?`<div class="fc-example">${ex}</div>`:''}
-        <div class="fc-rating">
-          <button class="fc-rating btn-dontknow" onclick="event.stopPropagation();rateFC(false)">😕 Chưa nhớ</button>
-          <button class="fc-rating btn-know" onclick="event.stopPropagation();rateFC(true)">✅ Đã nhớ</button>
-        </div>
-      `}
+      `:`<div class="fc-mean">${w.m}</div>
+        <div style="font-size:14px;color:var(--text-muted)">${w.w} · ${w.ph}</div>
+        ${ex?`<div class="fc-ex">${ex}</div>`:''}
+        <div class="fc-rat">
+          <button class="btn-no" onclick="event.stopPropagation();rateFC(false)">😕 Chưa nhớ</button>
+          <button class="btn-know" onclick="event.stopPropagation();rateFC(true)">✅ Đã nhớ</button>
+        </div>`}
     </div>
     <div class="fc-nav">
       <button onclick="prevFC()">← Trước</button>
-      <span class="fc-counter">${state.flash.idx+1} / ${words.length}</span>
+      <span class="fc-cnt">${S.flash.idx+1}/${gw().length}</span>
       <button onclick="nextFC()">Tiếp →</button>
     </div>
-    <div style="font-size:13px;color:var(--text-muted);text-align:center">Dùng ← → để chuyển thẻ</div>
+    <div style="font-size:12px;color:var(--text-muted);text-align:center">← → để chuyển · Space để lật</div>
   </div>`;
 }
-
-function flipFC(){state.flash.flipped=!state.flash.flipped;renderTab();}
-function nextFC(){const w=getWords();state.flash.idx=(state.flash.idx+1)%w.length;state.flash.flipped=false;renderTab();}
-function prevFC(){const w=getWords();state.flash.idx=(state.flash.idx-1+w.length)%w.length;state.flash.flipped=false;renderTab();}
-function rateFC(knew){if(knew)markLearned(getWords()[state.flash.idx].w);nextFC();}
-
+function flipFC(){S.flash.flipped=!S.flash.flipped;renderTab();}
+function nextFC(){S.flash.idx=(S.flash.idx+1)%gw().length;S.flash.flipped=false;renderTab();}
+function prevFC(){S.flash.idx=(S.flash.idx-1+gw().length)%gw().length;S.flash.flipped=false;renderTab();}
+function rateFC(k){if(k)markL(gw()[S.flash.idx].w);nextFC();}
 document.addEventListener('keydown',e=>{
-  if(state.tab!=='flash')return;
+  if(S.tab!=='flash')return;
   if(e.key==='ArrowRight')nextFC();
-  if(e.key==='ArrowLeft')prevFC();
-  if(e.key===' '){e.preventDefault();flipFC();}
+  else if(e.key==='ArrowLeft')prevFC();
+  else if(e.key===' '){e.preventDefault();flipFC();}
 });
 
-// ============================================================
-// QUIZ — câu hỏi có ngữ cảnh câu
-// ============================================================
+// ── QUIZ ──────────────────────────────────────────
 function renderQuiz(){
-  const q=state.quiz;
-  const words=q.shuffled;
-  const qw=words[q.idx%words.length];
-  const wrongs=shuffle(getWords().filter(x=>x.w!==qw.w)).slice(0,3).map(x=>x.m);
-  const opts=shuffle([qw.m,...wrongs]);
-  const ctxEx=qw.ex&&qw.ex[0]?qw.ex[0].e.replace(/<b>(.*?)<\/b>/g,'<b>______</b>'):'';
-  return `<div class="quiz-wrap">
+  const q=S.quiz;
+  const qw=q.shuffled[q.idx%q.shuffled.length];
+  const wrong=shuf(gw().filter(x=>x.w!==qw.w)).slice(0,3).map(x=>x.m);
+  const opts=shuf([qw.m,...wrong]);
+  const ctx=qw.ex[0]?qw.ex[0].e.replace(/<b>(.*?)<\/b>/g,'<b>______</b>'):'';
+  return `<div class="qwrap">
     <div class="score-row">
-      <span class="score-chip correct">✓ ${q.correct}</span>
-      <span class="score-chip wrong">✗ ${q.total-q.correct}</span>
-      <span class="score-chip total">Tổng: ${q.total}</span>
+      <span class="sc ok">✓ ${q.correct}</span>
+      <span class="sc err">✗ ${q.total-q.correct}</span>
+      <span class="sc tot">Tổng: ${q.total}</span>
     </div>
     <div class="quiz-q">
-      Từ <strong>"${qw.w}"</strong> <span style="color:var(--text-muted);font-size:14px">${qw.ph}</span> có nghĩa là gì?
-      ${ctxEx?`<div class="quiz-context">💬 ${ctxEx}</div>`:''}
+      <span style="font-size:12px;color:var(--text-muted)">#${qw.stt}</span>&nbsp;
+      Từ <strong>"${qw.w}"</strong> <span style="color:var(--text-muted);font-size:13px">${qw.ph}</span> có nghĩa là gì?
+      ${ctx?`<div class="qctx">💬 ${ctx}</div>`:''}
     </div>
-    <div class="quiz-opts">
-      ${opts.map(o=>`<button class="opt" onclick="answerQuiz(this,'${esc(o)}','${esc(qw.m)}','${esc(qw.w)}')">${o}</button>`).join('')}
-    </div>
+    <div class="opts">${opts.map(o=>`<button class="opt" onclick="ansQ(this,'${esc(o)}','${esc(qw.m)}','${esc(qw.w)}')">${o}</button>`).join('')}</div>
     <div id="qfb"></div>
-    <button class="btn-primary" id="nextQ" style="display:none" onclick="nextQuiz()">Câu tiếp →</button>
+    <button class="btn-p" id="nq" style="display:none" onclick="nextQ()">Câu tiếp →</button>
   </div>`;
 }
-
-function esc(s){return s.replace(/'/g,"\\'").replace(/"/g,'&quot;');}
-
-function answerQuiz(btn,chosen,correct,word){
-  if(state.quiz.answered)return;
-  state.quiz.answered=true;
-  state.quiz.total++;
+function ansQ(btn,chosen,correct,word){
+  if(S.quiz.answered)return;
+  S.quiz.answered=true;S.quiz.total++;
   document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
-  if(chosen===correct){
-    state.quiz.correct++;
-    btn.classList.add('correct');
-    document.getElementById('qfb').innerHTML=`<div class="feedback ok">✅ Chính xác! <strong>${word}</strong> = ${correct}</div>`;
-    markLearned(word);
-  } else {
-    btn.classList.add('wrong');
-    document.querySelectorAll('.opt').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});
-    document.getElementById('qfb').innerHTML=`<div class="feedback fail">❌ Sai! Đáp án: <strong>${correct}</strong></div>`;
-  }
-  document.getElementById('nextQ').style.display='inline-block';
+  if(chosen===correct){S.quiz.correct++;btn.classList.add('correct');document.getElementById('qfb').innerHTML=`<div class="fb ok">✅ Đúng! <b>${word}</b> = ${correct}</div>`;markL(word);}
+  else{btn.classList.add('wrong');document.querySelectorAll('.opt').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});document.getElementById('qfb').innerHTML=`<div class="fb fail">❌ Sai! Đáp án: <b>${correct}</b></div>`;}
+  document.getElementById('nq').style.display='inline-block';
 }
-function nextQuiz(){state.quiz.idx++;state.quiz.answered=false;renderTab();}
+function nextQ(){S.quiz.idx++;S.quiz.answered=false;renderTab();}
 
-// ============================================================
-// FILL
-// ============================================================
+// ── FILL ──────────────────────────────────────────
 function renderFill(){
-  const f=state.fill;
+  const f=S.fill;
   const qw=f.shuffled[f.idx%f.shuffled.length];
-  const ex=qw.ex&&qw.ex[0]?qw.ex[0].e.replace(/<b>(.*?)<\/b>/g,'______'):'';
-  return `<div class="fill-wrap">
-    <div class="score-row">
-      <span class="score-chip correct">✓ ${f.correct}</span>
-      <span class="score-chip wrong">✗ ${f.total-f.correct}</span>
-      <span class="score-chip total">Tổng: ${f.total}</span>
-    </div>
+  const ctx=qw.ex[0]?qw.ex[0].e.replace(/<b>(.*?)<\/b>/g,'______'):'';
+  return `<div class="qwrap">
+    <div class="score-row"><span class="sc ok">✓ ${f.correct}</span><span class="sc err">✗ ${f.total-f.correct}</span><span class="sc tot">Tổng: ${f.total}</span></div>
     <div class="quiz-q">
+      <span style="font-size:12px;color:var(--text-muted)">#${qw.stt}</span>&nbsp;
       Nghĩa: <strong>${qw.m}</strong><br>
-      <span style="font-size:13px;color:var(--text-muted)">Loại từ: ${qw.tp} | ${qw.ph}</span>
-      ${ex?`<div class="quiz-context">💬 ${ex}</div>`:''}
+      <span style="font-size:13px;color:var(--text-muted)">${qw.tp} · ${qw.ph}</span>
+      ${ctx?`<div class="qctx">💬 ${ctx}</div>`:''}
     </div>
-    <input class="fill-input" id="fillInp" type="text" placeholder="Nhập từ tiếng Anh..." autocomplete="off"/>
+    <input class="fill-input" id="fi" type="text" placeholder="Nhập từ tiếng Anh..." autocomplete="off"/>
     <div class="fill-actions">
-      <button class="btn-primary" onclick="checkFill('${esc(qw.w)}')">Kiểm tra</button>
-      <button style="padding:9px 16px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;font-family:inherit" onclick="speak('${qw.w}')">🔊 Gợi ý âm</button>
-      <button style="padding:9px 16px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:14px;font-family:inherit" onclick="hintFill('${esc(qw.w)}')">💡 Gợi ý chữ</button>
+      <button class="btn-p" onclick="checkFill('${esc(qw.w)}')">Kiểm tra</button>
+      <button style="padding:8px 14px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:13px;font-family:inherit" onclick="speak('${qw.w.split(' ')[0]}')">🔊 Gợi ý âm</button>
+      <button style="padding:8px 14px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:13px;font-family:inherit" onclick="hintF('${esc(qw.w)}')">💡 Gợi ý chữ</button>
     </div>
     <div id="ffb"></div>
-    <button class="btn-primary" id="nextF" style="display:none;margin-top:10px" onclick="nextFill()">Câu tiếp →</button>
+    <button class="btn-p" id="nf" style="display:none;margin-top:10px" onclick="nextFill()">Câu tiếp →</button>
   </div>`;
 }
-
-function setupFillEvents(){
-  const inp=document.getElementById('fillInp');
-  if(inp){
-    inp.focus();
-    const qw=state.fill.shuffled[state.fill.idx%state.fill.shuffled.length];
-    inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkFill(qw.w);});
-  }
-}
-
-function hintFill(correct){const inp=document.getElementById('fillInp');if(inp)inp.value=correct[0]+'_'.repeat(correct.length-1);}
+function setupFill(){const i=document.getElementById('fi');if(i){i.focus();const qw=S.fill.shuffled[S.fill.idx%S.fill.shuffled.length];i.onkeydown=e=>{if(e.key==='Enter')checkFill(qw.w);};}}
+function hintF(c){const i=document.getElementById('fi');if(i)i.value=c[0]+'_'.repeat(c.length-1);}
 function checkFill(correct){
-  if(state.fill.answered)return;
-  const inp=document.getElementById('fillInp');
-  if(!inp)return;
-  const val=inp.value.trim().toLowerCase();
-  state.fill.answered=true;
-  state.fill.total++;
-  inp.disabled=true;
-  if(val===correct.toLowerCase()){
-    state.fill.correct++;
-    document.getElementById('ffb').innerHTML=`<div class="feedback ok">✅ Chính xác!</div>`;
-    markLearned(correct);
-  } else {
-    document.getElementById('ffb').innerHTML=`<div class="feedback fail">❌ Sai! Đáp án: <strong>${correct}</strong></div>`;
-  }
-  document.getElementById('nextF').style.display='inline-block';
-  speak(correct);
+  if(S.fill.answered)return;
+  const i=document.getElementById('fi');if(!i)return;
+  const v=i.value.trim().toLowerCase();
+  S.fill.answered=true;S.fill.total++;i.disabled=true;
+  if(v===correct.toLowerCase()){S.fill.correct++;document.getElementById('ffb').innerHTML=`<div class="fb ok">✅ Chính xác!</div>`;markL(correct);}
+  else document.getElementById('ffb').innerHTML=`<div class="fb fail">❌ Sai! Đáp án: <b>${correct}</b></div>`;
+  document.getElementById('nf').style.display='inline-block';
+  speak(correct.split(' ')[0]);
 }
-function nextFill(){state.fill.idx++;state.fill.answered=false;renderTab();setupFillEvents();}
+function nextFill(){S.fill.idx++;S.fill.answered=false;renderTab();setupFill();}
 
-// ============================================================
-// MATCH
-// ============================================================
+// ── MATCH ─────────────────────────────────────────
 let MS={sel:null,done:0,words:[],meanings:[],matched:new Set()};
 function renderMatch(){
-  const pairs=shuffle(getWords()).slice(0,7);
-  MS={sel:null,done:0,words:shuffle(pairs.map(p=>p.w)),meanings:shuffle(pairs.map(p=>({id:p.w,m:p.m}))),matched:new Set()};
-  const leftCol=MS.words.map(w=>`<button class="match-btn" id="mw_${w}" onclick="selMatch('word','${esc(w)}')">${w}</button>`).join('');
-  const rightCol=MS.meanings.map(m=>`<button class="match-btn" id="mm_${m.id}" onclick="selMatch('meaning','${esc(m.id)}')">${m.m}</button>`).join('');
-  return `<div class="match-info">Nhấn từ tiếng Anh → nhấn nghĩa tương ứng để ghép đôi (7 cặp)</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-    <div style="display:flex;flex-direction:column;gap:8px">${leftCol}</div>
-    <div style="display:flex;flex-direction:column;gap:8px">${rightCol}</div>
-  </div>
-  <div id="matchMsg"></div>`;
+  const pairs=shuf(gw()).slice(0,6);
+  MS={sel:null,done:0,words:shuf(pairs.map(p=>p.w)),meanings:shuf(pairs.map(p=>({id:p.w,m:p.m}))),matched:new Set()};
+  const L=MS.words.map(w=>`<button class="match-btn" id="mw_${w.replace(/\s/g,'_')}" onclick="selM('word','${esc(w)}')">${w}</button>`).join('');
+  const R=MS.meanings.map(m=>`<button class="match-btn" id="mm_${m.id.replace(/\s/g,'_')}" onclick="selM('meaning','${esc(m.id)}')">${m.m}</button>`).join('');
+  return `<div style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Nhấn từ tiếng Anh → nhấn nghĩa tương ứng (6 cặp)</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px">
+    <div style="display:flex;flex-direction:column;gap:7px">${L}</div>
+    <div style="display:flex;flex-direction:column;gap:7px">${R}</div>
+  </div><div id="mm"></div>`;
 }
-
-function selMatch(type,id){
-  const btnId=type==='word'?'mw_'+id:'mm_'+id;
-  const btn=document.getElementById(btnId);
+function selM(type,id){
+  const bId=type==='word'?'mw_'+id.replace(/\s/g,'_'):'mm_'+id.replace(/\s/g,'_');
+  const btn=document.getElementById(bId);
   if(!btn||btn.disabled)return;
-  if(!MS.sel){
-    document.querySelectorAll('.match-btn.selected').forEach(b=>b.classList.remove('selected'));
-    btn.classList.add('selected');MS.sel={type,id,btn};return;
-  }
+  if(!MS.sel){document.querySelectorAll('.match-btn.selected').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');MS.sel={type,id,btn};return;}
   if(MS.sel.btn===btn){btn.classList.remove('selected');MS.sel=null;return;}
   if(MS.sel.type===type){MS.sel.btn.classList.remove('selected');btn.classList.add('selected');MS.sel={type,id,btn};return;}
   const wId=type==='word'?id:MS.sel.id;
   const mId=type==='meaning'?id:MS.sel.id;
-  const wBtn=type==='word'?btn:MS.sel.btn;
-  const mBtn=type==='meaning'?btn:MS.sel.btn;
-  if(wId===mId){
-    [wBtn,mBtn].forEach(b=>{b.classList.remove('selected');b.classList.add('matched');b.disabled=true;});
-    MS.matched.add(wId);MS.done++;markLearned(wId);
-    if(MS.done===MS.words.length)
-      document.getElementById('matchMsg').innerHTML=`<div class="feedback ok">🎉 Xuất sắc! Ghép đúng tất cả ${MS.done} cặp! <button class="btn-primary" style="margin-left:10px" onclick="switchTab('match')">Chơi lại</button></div>`;
-  } else {
-    [wBtn,mBtn].forEach(b=>b.classList.add('err'));
-    setTimeout(()=>[wBtn,mBtn].forEach(b=>b.classList.remove('err','selected')),700);
-  }
+  const wb=type==='word'?btn:MS.sel.btn;
+  const mb=type==='meaning'?btn:MS.sel.btn;
+  if(wId===mId){[wb,mb].forEach(b=>{b.classList.remove('selected');b.classList.add('matched');b.disabled=true;});MS.matched.add(wId);MS.done++;markL(wId);
+    if(MS.done===MS.words.length)document.getElementById('mm').innerHTML=`<div class="fb ok">🎉 Xuất sắc! Ghép đúng tất cả! <button class="btn-p" style="margin-left:10px" onclick="swTab('match')">Chơi lại</button></div>`;}
+  else{[wb,mb].forEach(b=>b.classList.add('err'));setTimeout(()=>[wb,mb].forEach(b=>b.classList.remove('err','selected')),700);}
   MS.sel=null;
 }
 
-// ============================================================
-// INIT
-// ============================================================
+// ══════════════════════════════════════════════════
+// GRAMMAR MODULE
+// ══════════════════════════════════════════════════
+const PLURAL_QS=[
+  {q:"Điền số nhiều của: <b>agreement</b>",a:"agreements",hint:"Thêm -s",explain:"'agreement' là danh từ đếm được thông thường → thêm -s → <b>agreements</b>"},
+  {q:"Điền số nhiều của: <b>party</b> (nghĩa 'bên trong hợp đồng')",a:"parties",hint:"Đuôi -y → -ies",explain:"Đuôi -y sau phụ âm 't' → đổi thành -ies → <b>parties</b>"},
+  {q:"Điền số nhiều của: <b>strategy</b>",a:"strategies",hint:"Đuôi -y → -ies",explain:"Đuôi -y sau phụ âm → -ies → <b>strategies</b>"},
+  {q:"Điền số nhiều của: <b>variety</b>",a:"varieties",hint:"Đuôi -y → -ies",explain:"Đuôi -y sau phụ âm → -ies → <b>varieties</b>"},
+  {q:"Điền số nhiều của: <b>search</b>",a:"searches",hint:"Đuôi -ch → -es",explain:"Đuôi -ch, -sh, -x, -ss → thêm -es → <b>searches</b>"},
+  {q:"Điền số nhiều của: <b>process</b>",a:"processes",hint:"Đuôi -ss → -es",explain:"Đuôi -s/-ss → thêm -es → <b>processes</b>"},
+  {q:"Điền số nhiều của: <b>address</b>",a:"addresses",hint:"Đuôi -ss → -es",explain:"Đuôi -ss → thêm -es → <b>addresses</b>"},
+  {q:"Điền số nhiều của: <b>capacity</b>",a:"capacities",hint:"Đuôi -y → -ies",explain:"Đuôi -y sau phụ âm → -ies → <b>capacities</b>"},
+  {q:"Từ nào KHÔNG đếm được (không có số nhiều)?",opts:["satisfaction","agreement","session","strategy"],a:"satisfaction",explain:"'satisfaction' là uncountable — không nói 'satisfactions'. Ba từ còn lại đều đếm được."},
+  {q:"Từ nào KHÔNG đếm được?",opts:["persuasion","offer","risk","provision"],a:"persuasion",explain:"'persuasion' là uncountable — không dùng 'a persuasion'. Ba từ kia đều countable."},
+  {q:"Từ nào KHÔNG đếm được?",opts:["appreciation","cancellation","competition","arrangement"],a:"appreciation",explain:"'appreciation' là uncountable — không nói 'an appreciation'. Ba từ kia đều countable."},
+  {q:"Điền số nhiều của: <b>initiative</b>",a:"initiatives",hint:"Thêm -s bình thường",explain:"Đuôi -e → thêm -s → <b>initiatives</b>"},
+];
+
+const POSITION_QS=[
+  {sent:"The agreement was signed yesterday.",noun:"agreement",role:"Chủ ngữ (Subject)",explain:"'The agreement' đứng ở đầu câu, trước động từ 'was' → đây là chủ ngữ."},
+  {sent:"Both parties must sign the contract.",noun:"parties",role:"Chủ ngữ (Subject)",explain:"'Both parties' đứng trước động từ 'must sign' → chủ ngữ."},
+  {sent:"We reached an agreement last week.",noun:"agreement",role:"Tân ngữ (Object)",explain:"'an agreement' đứng sau động từ 'reached' → tân ngữ trực tiếp."},
+  {sent:"The manager gave us his assurance.",noun:"assurance",role:"Tân ngữ (Object)",explain:"'his assurance' đứng sau 'gave us' → tân ngữ."},
+  {sent:"We talked about the agreement.",noun:"agreement",role:"Sau giới từ 'about'",explain:"'the agreement' đứng sau giới từ 'about' → bổ ngữ giới từ."},
+  {sent:"The cancellation of the meeting surprised us.",noun:"cancellation",role:"Chủ ngữ (Subject)",explain:"'The cancellation' đứng đầu câu trước động từ 'surprised' → chủ ngữ."},
+  {sent:"There is a risk of losing money.",noun:"risk",role:"Tân ngữ (Object)",explain:"'a risk' đứng sau động từ 'is' trong cấu trúc 'there is' → complement/tân ngữ."},
+  {sent:"Access is denied to all visitors.",noun:"access",role:"Chủ ngữ (Subject)",explain:"'Access' đứng đầu câu, trước động từ 'is' → chủ ngữ."},
+  {sent:"We need to bring in more experts.",noun:"experts",role:"Tân ngữ (Object)",explain:"'more experts' đứng sau cụm động từ 'bring in' → tân ngữ."},
+  {sent:"Please check the expiration date.",noun:"expiration",role:"Tân ngữ (Object)",explain:"'the expiration date' đứng sau động từ 'check' → tân ngữ."},
+];
+
+const ARTICLE_QS=[
+  {q:"______ agreement was signed by both parties.",opts:["A","An","The","∅"],a:"The",explain:"Dùng 'The' vì đây là thỏa thuận cụ thể mà cả hai đều biết đến.",rule:"The = xác định (đã biết, đã đề cập)"},
+  {q:"We reached ______ agreement after the meeting.",opts:["a","an","the","∅"],a:"an",explain:"Dùng 'an' vì 'agreement' bắt đầu bằng nguyên âm /ə/, lần đầu đề cập.",rule:"a/an = lần đầu đề cập, chưa xác định"},
+  {q:"______ satisfaction is our top priority.",opts:["A","The","∅","An"],a:"∅",explain:"'Satisfaction' là uncountable dùng theo nghĩa chung → không cần mạo từ.",rule:"∅ = danh từ không đếm được, nghĩa chung"},
+  {q:"He is ______ member of the association.",opts:["a","an","the","∅"],a:"a",explain:"'a member' = một thành viên, lần đầu đề cập. 'member' bắt đầu bằng phụ âm /m/ → 'a'.",rule:"a = danh từ số ít, phụ âm, lần đầu đề cập"},
+  {q:"______ strategies are important for business.",opts:["A","The","∅","An"],a:"∅",explain:"Danh từ số nhiều dùng theo nghĩa chung → không dùng mạo từ.",rule:"∅ = danh từ số nhiều, nghĩa chung"},
+  {q:"Please read ______ provisions of the contract.",opts:["a","the","∅","an"],a:"the",explain:"'the provisions' = các điều khoản của hợp đồng cụ thể → dùng 'the'.",rule:"The = chỉ định cụ thể"},
+  {q:"It was ______ risk we had to take.",opts:["a","an","the","∅"],a:"a",explain:"'a risk' = một rủi ro, lần đầu đề cập. 'risk' bắt đầu bằng phụ âm → 'a'.",rule:"a = lần đầu đề cập, phụ âm"},
+  {q:"______ access to the server is limited.",opts:["A","The","∅","An"],a:"∅",explain:"'Access' là uncountable, dùng theo nghĩa chung → không cần mạo từ.",rule:"∅ = uncountable dùng chung"},
+];
+
+function renderGram(){
+  const st=S.gram.subtab;
+  const tabs=[
+    {id:'theory',label:'📚 Lý thuyết'},
+    {id:'plural',label:'📝 Số ít/Số nhiều'},
+    {id:'position',label:'🎯 Vị trí Danh từ'},
+    {id:'article',label:'🔤 Mạo từ a/an/the'},
+  ];
+  const tabH=`<div class="gram-tabs">${tabs.map(t=>`<button class="gram-tab${st===t.id?' active':''}" onclick="swGram('${t.id}')">${t.label}</button>`).join('')}</div>`;
+  if(st==='theory')return tabH+renderGramTheory();
+  if(st==='plural')return tabH+renderGramEx(PLURAL_QS);
+  if(st==='position')return tabH+renderGramPosition();
+  if(st==='article')return tabH+renderGramEx(ARTICLE_QS);
+  return tabH;
+}
+function swGram(t){S.gram={subtab:t,qIdx:0,correct:0,total:0,answered:false};renderTab();}
+
+function renderGramTheory(){
+  return `
+  <div class="gram-section">
+    <div class="gram-title">📌 Danh từ là gì?</div>
+    <div class="gram-desc">Danh từ (Noun) là từ dùng để chỉ <b>người, vật, nơi chốn, ý tưởng</b>. Trong TOEIC, danh từ xuất hiện rất nhiều trong văn bản kinh doanh.</div>
+    <div class="gram-rule"><b>Ví dụ trong 100 từ này:</b><br>
+    • <b>agreement</b> (thỏa thuận) · <b>risk</b> (rủi ro) · <b>strategy</b> (chiến lược)<br>
+    • <b>satisfaction</b> (sự hài lòng) · <b>capacity</b> (sức chứa) · <b>party</b> (bên trong HĐ)</div>
+  </div>
+  <div class="gram-section">
+    <div class="gram-title">1️⃣ Đếm được vs Không đếm được</div>
+    <div class="gram-desc"><b>Đếm được (Countable):</b> dùng số (1,2...), có dạng số ít và số nhiều.<br><b>Không đếm được (Uncountable):</b> không dùng số, không có số nhiều, không dùng a/an.</div>
+    <div class="gram-eg"><div class="en">✅ one <span class="hl">agreement</span> → two <span class="hl">agreements</span> <i>(đếm được)</i></div></div>
+    <div class="gram-eg"><div class="en">✅ <span class="hl">Customer satisfaction</span> is important. <i>(không đếm được — không nói "a satisfaction")</i></div></div>
+    <div class="gram-eg"><div class="en">✅ It took a lot of <span class="hl">persuasion</span>. <i>(không đếm được)</i></div></div>
+  </div>
+  <div class="gram-section">
+    <div class="gram-title">2️⃣ Quy tắc tạo số nhiều</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:var(--purple-light)"><th style="padding:8px;text-align:left">Quy tắc</th><th style="padding:8px;text-align:left">Ví dụ trong bộ từ</th></tr>
+      <tr style="border-bottom:1px solid var(--gray-border)"><td style="padding:8px">Thêm <b>-s</b> (thông thường)</td><td style="padding:8px">agreement → <b>agreements</b>, risk → <b>risks</b></td></tr>
+      <tr style="border-bottom:1px solid var(--gray-border)"><td style="padding:8px">Đuôi <b>-y</b> sau phụ âm → <b>-ies</b></td><td style="padding:8px">strategy → <b>strategies</b>, party → <b>parties</b>, variety → <b>varieties</b></td></tr>
+      <tr style="border-bottom:1px solid var(--gray-border)"><td style="padding:8px">Đuôi <b>-ch/-sh/-s/-x</b> → <b>-es</b></td><td style="padding:8px">search → <b>searches</b>, process → <b>processes</b>, address → <b>addresses</b></td></tr>
+      <tr><td style="padding:8px">Không đếm được → <b>không có số nhiều</b></td><td style="padding:8px">satisfaction, persuasion, inspiration, access, appreciation, popularity</td></tr>
+    </table>
+  </div>
+  <div class="gram-section">
+    <div class="gram-title">3️⃣ Vị trí của Danh từ trong câu</div>
+    <div class="gram-rule"><b>① Chủ ngữ (Subject)</b> — đứng TRƯỚC động từ<br><b>② Tân ngữ (Object)</b> — đứng SAU động từ<br><b>③ Sau giới từ</b> — đứng sau: in, on, at, of, about, with, for...</div>
+    <div class="gram-eg"><div class="en"><span class="hl">The agreement</span> was signed. → <b>Chủ ngữ</b></div><div class="vi">Thỏa thuận đã được ký.</div></div>
+    <div class="gram-eg"><div class="en">We reached <span class="hl">an agreement</span>. → <b>Tân ngữ</b></div><div class="vi">Chúng tôi đã đạt được thỏa thuận.</div></div>
+    <div class="gram-eg"><div class="en">We talked about <span class="hl">the agreement</span>. → <b>Sau giới từ 'about'</b></div><div class="vi">Chúng tôi đã nói về thỏa thuận.</div></div>
+  </div>
+  <div class="gram-section">
+    <div class="gram-title">4️⃣ Mạo từ a / an / the / ∅</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:var(--purple-light)"><th style="padding:8px;text-align:left">Mạo từ</th><th style="padding:8px;text-align:left">Dùng khi nào</th><th style="padding:8px;text-align:left">Ví dụ</th></tr>
+      <tr style="border-bottom:1px solid var(--gray-border)"><td style="padding:8px"><b>a</b></td><td style="padding:8px">Số ít, lần đầu đề cập, bắt đầu bằng phụ âm</td><td style="padding:8px">a <b>strategy</b>, a <b>risk</b>, a <b>party</b></td></tr>
+      <tr style="border-bottom:1px solid var(--gray-border)"><td style="padding:8px"><b>an</b></td><td style="padding:8px">Số ít, lần đầu đề cập, bắt đầu bằng nguyên âm</td><td style="padding:8px">an <b>agreement</b>, an <b>offer</b>, an <b>arrangement</b></td></tr>
+      <tr style="border-bottom:1px solid var(--gray-border)"><td style="padding:8px"><b>the</b></td><td style="padding:8px">Đã biết, đã đề cập, hoặc chỉ định cụ thể</td><td style="padding:8px">the <b>contract</b>, the <b>meeting</b>, the <b>provisions</b></td></tr>
+      <tr><td style="padding:8px"><b>∅</b></td><td style="padding:8px">Uncountable (chung) hoặc số nhiều chung</td><td style="padding:8px"><b>Satisfaction</b> is key. <b>Strategies</b> matter.</td></tr>
+    </table>
+  </div>`;
+}
+
+function renderGramEx(questions){
+  const g=S.gram;
+  const q=questions[g.qIdx%questions.length];
+  const isOpts=!!q.opts;
+  const optsH=isOpts?`<div class="noun-opts">${q.opts.map(o=>`<button class="noun-opt" onclick="ansGram(this,'${esc(o)}','${esc(q.a)}')">${o}</button>`).join('')}</div>`:'';
+  const fillH=!isOpts?`<input class="fill-input" id="gfi" type="text" placeholder="Nhập đáp án..." autocomplete="off"/><div class="fill-actions">
+    <button class="btn-p" onclick="ansGramFill('${esc(q.a)}')">Kiểm tra</button>
+    ${q.hint?`<button style="padding:8px 14px;border:1px solid var(--gray-border);border-radius:var(--radius);background:var(--card);cursor:pointer;font-size:13px;font-family:inherit" onclick="document.getElementById('gfi').placeholder='Gợi ý: ${esc(q.hint)}'">💡 Gợi ý</button>`:''}
+  </div>`:'';
+  return `<div class="gram-section">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <span class="sc tot" style="display:inline-block">Điểm: ${g.correct}/${g.total}</span>
+      <span style="font-size:13px;color:var(--text-muted)">Câu ${g.qIdx%questions.length+1}/${questions.length}</span>
+    </div>
+    <div class="noun-ex-q">${q.q}${q.rule?`<div style="font-size:12px;color:var(--text-muted);margin-top:4px">💡 Quy tắc: ${q.rule}</div>`:''}</div>
+    ${optsH}${fillH}
+    <div class="explain-box" id="expbox">${q.explain||''}</div>
+    <button class="btn-p" id="ngram" style="display:none;margin-top:4px" onclick="nextGram(${questions.length})">Câu tiếp →</button>
+  </div>`;
+}
+
+function ansGram(btn,chosen,correct){
+  if(S.gram.answered)return;
+  S.gram.answered=true;S.gram.total++;
+  document.querySelectorAll('.noun-opt').forEach(b=>b.disabled=true);
+  if(chosen===correct){S.gram.correct++;btn.classList.add('correct');}
+  else{btn.classList.add('wrong');document.querySelectorAll('.noun-opt').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});}
+  const ex=document.getElementById('expbox');if(ex)ex.classList.add('show');
+  document.getElementById('ngram').style.display='inline-block';
+}
+function ansGramFill(correct){
+  if(S.gram.answered)return;
+  const i=document.getElementById('gfi');if(!i)return;
+  const v=i.value.trim().toLowerCase();
+  S.gram.answered=true;S.gram.total++;i.disabled=true;
+  if(v===correct.toLowerCase()){S.gram.correct++;i.style.borderColor='var(--green)';}
+  else{i.style.borderColor='var(--red)';i.value='❌ Đáp án đúng: '+correct;}
+  const ex=document.getElementById('expbox');if(ex)ex.classList.add('show');
+  document.getElementById('ngram').style.display='inline-block';
+}
+function nextGram(len){S.gram.qIdx++;S.gram.answered=false;renderTab();}
+
+function renderGramPosition(){
+  const g=S.gram;
+  const q=POSITION_QS[g.qIdx%POSITION_QS.length];
+  const words=q.sent.replace(/[.,!?]/g,'').split(' ');
+  const partsH=words.map((w,i)=>`<span class="sent-part" id="sp_${i}" onclick="selPos(${i},'${esc(w)}','${esc(q.noun)}')">${w}</span>`).join(' ');
+  return `<div class="gram-section">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <span class="sc tot" style="display:inline-block">Điểm: ${g.correct}/${g.total}</span>
+      <span style="font-size:13px;color:var(--text-muted)">Câu ${g.qIdx%POSITION_QS.length+1}/${POSITION_QS.length}</span>
+    </div>
+    <div class="noun-ex-q">Nhấn vào <b>danh từ</b> <span style="color:var(--purple)">"${q.noun}"</span> trong câu dưới đây:</div>
+    <div class="sent-parts">${partsH}</div>
+    <div class="explain-box" id="posexp">${q.explain}<br><br>📌 Vị trí: <b style="color:var(--purple)">${q.role}</b></div>
+    <button class="btn-p" id="npos" style="display:none;margin-top:8px" onclick="nextGram(${POSITION_QS.length})">Câu tiếp →</button>
+  </div>`;
+}
+function selPos(idx,word,noun){
+  if(S.gram.answered)return;
+  S.gram.answered=true;S.gram.total++;
+  const clean=word.replace(/[.,!?]/g,'').toLowerCase();
+  const sp=document.getElementById('sp_'+idx);
+  if(clean===noun.toLowerCase()){S.gram.correct++;sp.classList.add('correct-pos');}
+  else{sp.classList.add('wrong-pos');
+    document.querySelectorAll('.sent-part').forEach(el=>{if(el.textContent.replace(/[.,!?]/g,'').toLowerCase()===noun.toLowerCase())el.classList.add('correct-pos');});}
+  const ex=document.getElementById('posexp');if(ex)ex.classList.add('show');
+  document.getElementById('npos').style.display='inline-block';
+}
+
+// ── INIT ──────────────────────────────────────────
 window.onload=()=>{
-  // Preload voices
   window.speechSynthesis.getVoices();
   window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
-  state.quiz.shuffled=shuffle(DAYS[0].words);
-  state.fill.shuffled=shuffle(DAYS[0].words);
-  renderSidebar();renderMain();
-  document.getElementById('totalProg').textContent=totalLearned()+' / 1000 từ';
+  S.quiz.shuffled=shuf(DAYS[0].words);
+  S.fill.shuffled=shuf(DAYS[0].words);
+  renderSidebar();renderMain();upProg();
 };
-
-window.selectDay=selectDay;window.switchTab=switchTab;
-window.flipFC=flipFC;window.nextFC=nextFC;window.prevFC=prevFC;window.rateFC=rateFC;
-window.answerQuiz=answerQuiz;window.nextQuiz=nextQuiz;
-window.checkFill=checkFill;window.hintFill=hintFill;window.nextFill=nextFill;
-window.selMatch=selMatch;window.markLearned=markLearned;
-window.speak=speak;window.toggleCard=toggleCard;
+[selDay,swTab,toggleW,flipFC,nextFC,prevFC,rateFC,ansQ,nextQ,checkFill,hintF,nextFill,
+ selM,swGram,ansGram,ansGramFill,nextGram,selPos,speak,markL].forEach(f=>window[f.name]=f);
 </script>
 </body>
 </html>
